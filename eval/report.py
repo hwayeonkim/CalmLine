@@ -8,15 +8,28 @@ pct = lambda x: "—" if x is None or x != x else f"{100*x:.1f}"
 L = ["# CalmLine — experiment results", "",
      "All numbers are produced by `python -m eval.run_text <versions>`; every version is a frozen config in `calmline/versions.py`.",
      "", "## Text pipeline — held-out hand-written TEST set (n=134, frozen before any tuning)", "",
-     "| ver | protected ↑ | leak ↓ | abuse recall ↑ | threat recall ↑ | threat prec ↑ | FPR test ↓ | FPR hard-neg ↓ | sufficiency ↑ | fact recall ↑ | halluc ↓ | intent acc ↑ | p95 ms |",
+     "| ver | protected ↑ | leak ↓ | abuse recall ↑ | threat recall ↑ | threat prec ↑ | FPR test ↓ | FPR hard-neg ↓ | sufficiency ↑ | fact recall ↑ | wrong issue ↓ | halluc ↓ | p95 ms |",
      "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+LAT = json.load(open("results/latency_test.json")) if os.path.exists("results/latency_test.json") else {}
 for v in order:
     t = S[v].get("test"); h = S[v].get("hardneg", {})
-    if not t: continue
-    L.append(f"| {v} | {pct(t['protected'])} | {pct(t['leak_rate'])} | {pct(t['abuse_recall'])} | {pct(t['threat_recall'])} | {pct(t['threat_precision'])} | "
+    if not t or not v[1:].isdigit(): continue
+    lat = LAT.get(v, {}).get("p95")
+    L.append(f"| {v}{' †' if int(v[1:]) >= 11 else ''} | {pct(t['protected'])} | {pct(t['leak_rate'])} | {pct(t['abuse_recall'])} | {pct(t['threat_recall'])} | {pct(t['threat_precision'])} | "
              f"{pct(t['false_positive_rate'])} | {pct(h.get('false_positive_rate'))} | {pct(t['sufficiency_toxic'])} | {pct(t['fact_recall_toxic'])} | "
-             f"{pct(t['halluc_rate'])} | {pct(t['intent_acc_routed'])} | {t['latency_p95']:.0f} |")
-L += ["", "*protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said.", ""]
+             f"{pct(t.get('wrong_issue_rate'))} | {pct(t['halluc_rate'])} | {('%.0f' % lat) if lat is not None else '—'} |")
+L += ["", "*protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said. *wrong issue* = the agent's text asserts the wrong complaint type. *p95 ms* = clean per-utterance latency on Apple M5 (`eval/latency.py`), measured for the milestone versions. † = post-hoc: built after reading v10's test errors, so its test numbers are optimistic.", ""]
+L += ["## LLM tier ablation (local Gemma 3 1B; Gemini needs an API key — see docs/DEPLOY.md)", "",
+      "| config | split | protected | sufficiency | fact recall | halluc | LLM accepted / calls | reject reasons | LLM ms p50 |", "|---|---|---|---|---|---|---|---|---|"]
+for v in ("v12", "llm_all", "llm_raw"):
+    for sp in ("dev", "test"):
+        t = S.get(v, {}).get(sp)
+        if not t: continue
+        llm = t.get("llm") or {}
+        rej = ", ".join(f"{k[4:]} {n}" for k, n in llm.items() if k.startswith("rej_") and n)
+        L.append(f"| {v} | {sp} | {pct(t['protected'])} | {pct(t['sufficiency_toxic'])} | {pct(t['fact_recall_toxic'])} | {pct(t['halluc_rate'])} | "
+                 f"{llm.get('accepted', '—')} / {llm.get('calls', '—')} | {rej or ('unverified' if v == 'llm_raw' else '—')} | {('%.0f' % llm['ms_p50']) if llm.get('ms_p50') else '—'} |")
+L.append("")
 L += ["## Same metrics on development data (used for tuning)", "", "| ver | split | protected | leak | threat recall | FPR | sufficiency |", "|---|---|---|---|---|---|---|"]
 for v in order:
     for sp in ("dev", "synth"):
@@ -41,10 +54,11 @@ if os.path.exists("results/audio/acoustic_cremad.json"):
 streams = sorted(glob.glob("results/audio/stream_*.json"))
 if streams:
     L += ["", "## Real-time delay buffer — abusive-word leak vs. playback delay (TEST audio, TTS-rendered)", "",
-          "| STT | chunk | policy | RTF | final-card latency p50/p95 (s) | leak@0.5s | leak@1s | leak@1.5s | leak@2s | leak@3s | collateral s/clean utt @2s |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+          "| STT | hop (s) | policy | RTF | leak@1s | leak@1.5s | leak@2s | leak@3s | leak@4s (accuracy ceiling) | false-muted s per clean utt @2s |", "|---|---|---|---|---|---|---|---|---|---|"]
     for p in streams:
         s = json.load(open(p))["summary"]
-        L.append(f"| {s['whisper']} | {s['chunk_s']} | {s['policy']} | {s['rtf_mean']:.2f} | {s['final_latency_p50']:.2f} / {s['final_latency_p95']:.2f} | "
-                 f"{pct(s['word_leak@0.5'])} | {pct(s['word_leak@1.0'])} | {pct(s['word_leak@1.5'])} | {pct(s['word_leak@2.0'])} | {pct(s['word_leak@3.0'])} | {s['collateral_s_per_clean_utt@2.0']:.2f} |")
+        L.append(f"| {s['whisper']} | {s['chunk_s']} | {s['policy']} | {s['rtf_mean']:.2f} | "
+                 f"{pct(s['word_leak@1.0'])} | {pct(s['word_leak@1.5'])} | {pct(s['word_leak@2.0'])} | {pct(s['word_leak@3.0'])} | {pct(s['word_leak@4.0'])} | {s['collateral_s_per_clean_utt@2.0']:.2f} |")
+    L.append("\nRTF > 1 means the recogniser falls behind real time on this laptop CPU, so decisions arrive late and leak grows; the accuracy ceiling (leak@4s) separates recognition misses from lateness. The committed (LocalAgreement) row used an earlier, stricter mute-coverage criterion.")
 open("results/RESULTS.md", "w").write("\n".join(L) + "\n")
 print("\n".join(L[:30]))

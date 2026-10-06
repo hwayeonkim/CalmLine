@@ -4,19 +4,34 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 
 ## Text pipeline — held-out hand-written TEST set (n=134, frozen before any tuning)
 
-| ver | protected ↑ | leak ↓ | abuse recall ↑ | threat recall ↑ | threat prec ↑ | FPR test ↓ | FPR hard-neg ↓ | sufficiency ↑ | fact recall ↑ | halluc ↓ | intent acc ↑ | p95 ms |
+| ver | protected ↑ | leak ↓ | abuse recall ↑ | threat recall ↑ | threat prec ↑ | FPR test ↓ | FPR hard-neg ↓ | sufficiency ↑ | fact recall ↑ | wrong issue ↓ | halluc ↓ | p95 ms |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| v0 | 87.9 | 12.0 | 92.8 | 100.0 | 92.9 | 2.1 | 1.0 | 44.6 | 71.5 | 0.0 | 66.7 | 0 |
-| v1 | 92.8 | 7.2 | 98.8 | 100.0 | 81.2 | 12.8 | 10.2 | 38.6 | 68.7 | 0.0 | 82.4 | 25 |
-| v2 | 78.3 | 21.7 | 98.8 | 100.0 | 81.2 | 12.8 | 10.2 | 81.9 | 90.3 | 0.0 | 82.4 | 24 |
-| v3 | 84.3 | 15.7 | 98.8 | 100.0 | 92.9 | 4.3 | 1.0 | 85.5 | 92.3 | 0.0 | 82.3 | 41 |
-| v4 | 91.6 | 8.4 | 98.8 | 100.0 | 92.9 | 4.3 | 4.1 | 81.9 | 91.0 | 0.0 | 83.5 | 44 |
-| v5 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 4.1 | 81.9 | 91.4 | 0.0 | 84.1 | 105 |
-| v6 | 91.6 | 8.4 | 97.6 | 100.0 | 86.7 | 8.5 | 4.1 | 81.9 | 91.4 | 0.0 | 84.1 | 119 |
-| v7 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 3.1 | 81.9 | 91.4 | 0.0 | 84.1 | 40 |
-| v8 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 1.0 | 81.9 | 91.4 | 0.0 | 84.1 | 39 |
+| v0 | 87.9 | 12.0 | 92.8 | 100.0 | 92.9 | 2.1 | 1.0 | 44.6 | 71.5 | 29.5 | 0.0 | 0 |
+| v1 | 92.8 | 7.2 | 98.8 | 100.0 | 81.2 | 12.8 | 10.2 | 38.6 | 68.7 | 12.1 | 0.0 | 31 |
+| v2 | 78.3 | 21.7 | 98.8 | 100.0 | 81.2 | 12.8 | 10.2 | 81.9 | 90.3 | 12.1 | 0.0 | — |
+| v3 | 84.3 | 15.7 | 98.8 | 100.0 | 92.9 | 4.3 | 1.0 | 85.5 | 92.3 | 12.9 | 0.0 | — |
+| v4 | 91.6 | 8.4 | 98.8 | 100.0 | 92.9 | 4.3 | 4.1 | 81.9 | 91.0 | 11.8 | 0.0 | 57 |
+| v5 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 4.1 | 81.9 | 91.4 | 11.4 | 0.0 | — |
+| v6 | 91.6 | 8.4 | 97.6 | 100.0 | 86.7 | 8.5 | 4.1 | 81.9 | 91.4 | 11.4 | 0.0 | — |
+| v7 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 3.1 | 81.9 | 91.4 | 11.4 | 0.0 | — |
+| v8 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 1.0 | 81.9 | 91.4 | 11.4 | 0.0 | 51 |
+| v9 | 91.6 | 8.4 | 97.6 | 100.0 | 92.9 | 8.5 | 1.0 | 84.3 | 91.6 | 2.3 | 0.0 | — |
+| v10 | 92.8 | 7.2 | 97.6 | 100.0 | 92.9 | 8.5 | 1.0 | 83.1 | 90.4 | 2.3 | 0.0 | 48 |
+| v11 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | 1.0 | 78.3 | 85.8 | 3.5 | 0.0 | 50 |
+| v12 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 78.3 | 85.8 | 3.5 | 0.0 | — |
 
-*protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said.
+*protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said. *wrong issue* = the agent's text asserts the wrong complaint type. *p95 ms* = clean per-utterance latency on Apple M5 (`eval/latency.py`), measured for the milestone versions. † = post-hoc: built after reading v10's test errors, so its test numbers are optimistic.
+
+## LLM tier ablation (local Gemma 3 1B; Gemini needs an API key — see docs/DEPLOY.md)
+
+| config | split | protected | sufficiency | fact recall | halluc | LLM accepted / calls | reject reasons | LLM ms p50 |
+|---|---|---|---|---|---|---|---|---|
+| v12 | dev | 100.0 | 77.3 | 85.8 | 0.0 | 0 / 3 | halluc 2, unsupported 1 | 2046 |
+| v12 | test | 98.8 | 78.3 | 85.8 | 0.0 | 2 / 10 | halluc 5, unsupported 3 | 1959 |
+| llm_all | dev | 100.0 | 77.3 | 88.0 | 0.0 | 8 / 23 | toxic 1, halluc 6, unsupported 8 | 1478 |
+| llm_all | test | 97.6 | 74.7 | 86.4 | 0.0 | 43 / 110 | toxic 2, halluc 23, facts 2, unsupported 40 | 1193 |
+| llm_raw | dev | 95.5 | 77.3 | 89.3 | 15.0 | — / — | unverified | — |
+| llm_raw | test | 91.6 | 74.7 | 90.0 | 13.4 | — / — | unverified | — |
 
 ## Same metrics on development data (used for tuning)
 
@@ -40,6 +55,13 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 | v7 | synth | 97.4 | 2.6 | 100.0 | 0.0 | 84.5 |
 | v8 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 72.7 |
 | v8 | synth | 97.4 | 2.6 | 100.0 | 0.0 | 84.5 |
+| v9 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 77.3 |
+| v9 | synth | 97.4 | 2.6 | 100.0 | 0.0 | 88.3 |
+| v10 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 81.8 |
+| v10 | synth | 98.2 | 1.8 | 100.0 | 0.0 | 88.3 |
+| v11 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 77.3 |
+| v11 | synth | 97.7 | 2.3 | 100.0 | 0.0 | 81.6 |
+| v12 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 77.3 |
 
 ## Version log
 
@@ -52,6 +74,10 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 - **v6** — v5 + zero-shot NLI safety net for threats/self-harm (DeBERTa-v3 zeroshot, entailment >= 0.9)
 - **v7** — Detector: lexicon(v7) ∪ unbiased-toxic-roberta with directedness gate, but threats bypass the gate (third-party threats escalate); self-harm needs a first-person subject
 - **v8** — v7 + context filter: model-only flags dropped in figurative ('killing me') or concern ('worried someone could die') clauses without first-person intent
+- **v9** — v8 + confidence-gated header: the issue type is only asserted in the agent's text when intent similarity >= 0.70 (92.5% precision on dev), otherwise a neutral header + the caller's cleaned words
+- **v10** — v9 + slots extracted from masked text (a verbatim slot can never carry abuse — bug found in live demo)
+- **v11** — POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.
+- **v12** — v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown
 
 ## Detector benchmark (utterance level)
 
@@ -99,6 +125,14 @@ Look-ahead compressor: peak loudness reduced by **11.8 dB** on high-intensity an
 
 ## Real-time delay buffer — abusive-word leak vs. playback delay (TEST audio, TTS-rendered)
 
-| STT | chunk | policy | RTF | final-card latency p50/p95 (s) | leak@0.5s | leak@1s | leak@1.5s | leak@2s | leak@3s | collateral s/clean utt @2s |
-|---|---|---|---|---|---|---|---|---|---|---|
-| base.en | 0.5 | committed | 1.00 | 1.58 / 4.58 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.00 |
+| STT | hop (s) | policy | RTF | leak@1s | leak@1.5s | leak@2s | leak@3s | leak@4s (accuracy ceiling) | false-muted s per clean utt @2s |
+|---|---|---|---|---|---|---|---|---|---|
+| base.en | 0.5 | committed | 1.12 | 94.5 | 66.9 | 49.2 | 40.6 | 37.0 | 0.08 |
+| base.en | 0.5 | window | 1.18 | 64.2 | 41.7 | 31.9 | 26.0 | 25.6 | 0.03 |
+| base.en | 0.5 | window+bias | 1.62 | 81.9 | 71.3 | 64.6 | 44.1 | 37.0 | 0.03 |
+| small.en | 0.5 | window+bias | 3.20 | 100.0 | 90.9 | 73.2 | 46.1 | 24.4 | 0.07 |
+| tiny.en | 0.25 | window+bias | 1.02 | 32.7 | 19.7 | 18.1 | 16.5 | 15.7 | 0.32 |
+| tiny.en | 0.5 | window_edge | 0.38 | 59.8 | 25.6 | 20.5 | 19.3 | 18.1 | 0.13 |
+| tiny.en | 0.5 | window | 0.39 | 37.4 | 21.7 | 18.1 | 17.7 | 16.9 | 0.18 |
+
+RTF > 1 means the recogniser falls behind real time on this laptop CPU, so decisions arrive late and leak grows; the accuracy ceiling (leak@4s) separates recognition misses from lateness. The committed (LocalAgreement) row used an earlier, stricter mute-coverage criterion.

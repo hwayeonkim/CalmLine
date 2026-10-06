@@ -4,7 +4,7 @@ from .toxicity import LexiconDetector, ModelDetector, HybridDetector
 from .intent_clf import KeywordIntent, EmbeddingIntent
 from .render import TemplateRenderer, HybridRenderer, MaskRenderer, ConfidenceGatedRenderer
 
-BEST = "v10"   # updated as experiments conclude
+BEST = "v11"   # updated as experiments conclude
 
 DESCRIPTIONS = {
     "v0": "Baseline: regex lexicon + keyword intent + pure template (the original 'pre-written phrases' idea)",

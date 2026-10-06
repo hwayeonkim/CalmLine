@@ -131,6 +131,7 @@ class WindowSpotter:
         segs, _ = self.model.transcribe(seg, language="en", beam_size=1, word_timestamps=True, initial_prompt=self.prompt,
                                         condition_on_previous_text=False, vad_filter=False, without_timestamps=False)
         out = [Word(w.start + start, w.end + start, w.word.strip()) for s in segs for w in (s.words or []) if w.word.strip()]
+        self.window_end = len(self.audio) / SR
         if self.prompt and len(out) >= 4 and " ".join(w.text for w in out).lower().strip(" .") in self.prompt.lower():
             return []   # prompt echo
         return out

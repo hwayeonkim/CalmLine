@@ -19,12 +19,13 @@ split, size, C = sys.argv[1], sys.argv[2], float(sys.argv[3])
 policy = sys.argv[4] if len(sys.argv) > 4 else "committed"
 limit = int(sys.argv[5]) if len(sys.argv) > 5 else 10**9
 DS = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0]
+EDGE = 0.35
 PAD = float(os.getenv("MUTE_PAD", "0.25"))
 gold = {json.loads(l)["id"]: json.loads(l) for l in open(f"data/gold/{split}.jsonl")}
 det = HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended="v4"), directed_gate=True)
 det("warm up")
 BIAS = os.getenv("BIAS", "1") == "1"
-sw = WindowSpotter(size, float(os.getenv("WINDOW_S", "3.0")), bias_prompt=BIAS) if policy == "window" else StreamingWhisper(size)
+sw = WindowSpotter(size, float(os.getenv("WINDOW_S", "3.0")), bias_prompt=BIAS) if policy.startswith("window") else StreamingWhisper(size)
 REF_CACHE = f"data/audio/{split}/ref_words.json"
 ref_cache = json.load(open(REF_CACHE)) if os.path.exists(REF_CACHE) else {}
 
@@ -72,6 +73,7 @@ for m in meta[:limit]:
     x = sf.read(m["path"])[0].astype(np.float32); dur = len(x) / 16000
     ref = ref_words(m["id"], m["path"])
     gt = gold_toxic_idx(ref, g["toxic_spans"])
+    pending = []
     sw.reset(); wall = 0.0; consumed = 0.0; decisions = []; computes = []
     while consumed < dur - 1e-6:
         wall = max(wall, min(dur, consumed + C))
@@ -79,8 +81,16 @@ for m in meta[:limit]:
         final = end >= dur - 1e-6
         t0 = time.perf_counter()
         got = sw.feed(x[int(consumed * 16000):int(end * 16000)], final=final)
-        if policy == "window":
+        if policy.startswith("window"):
             fw, ddt, _ = flagged_words(got)
+            if policy == "window_edge":
+                # a flag on a word cut off by the window edge must be confirmed by the next window
+                conf = []
+                for w in fw:
+                    if w.end < sw.window_end - EDGE or final or any(abs(p.start - w.start) < 0.3 and _norm(p.text) == _norm(w.text) for p in pending):
+                        conf.append(w)
+                pending = [w for w in fw if w not in conf]
+                fw = conf
         else:
             extra = sw.prev if policy == "tentative" else []
             fw, ddt, _ = flagged_words(sw.committed, extra)
@@ -111,7 +121,7 @@ for m in meta[:limit]:
           "leak@2:", rec["leak_words@2.0"], "/", len(gt), flush=True)
 json.dump(ref_cache, open(REF_CACHE, "w"))
 tox = [r for r in records if r["n_toxic_words"] > 0]
-summ = dict(split=split, whisper=size, chunk_s=C, policy=policy + ("+bias" if policy == "window" and BIAS else ""), n=len(records), n_toxic_utts=len(tox),
+summ = dict(split=split, whisper=size, chunk_s=C, policy=policy + ("+bias" if policy.startswith("window") and BIAS else ""), n=len(records), n_toxic_utts=len(tox),
             rtf_mean=float(np.mean([r["rtf"] for r in records])),
             final_latency_p50=float(np.percentile([r["final_latency"] for r in records], 50)),
             final_latency_p95=float(np.percentile([r["final_latency"] for r in records], 95)))
@@ -123,5 +133,5 @@ for D in DS:
     summ[f"collateral_s_per_clean_utt@{D}"] = float(np.mean([r[f"collateral_s@{D}"] for r in clean])) if clean else 0
 print(json.dumps(summ, indent=1))
 os.makedirs("results/audio", exist_ok=True)
-tag = f"{split}_{size}_c{C}_{policy}" + (f"_w{os.getenv('WINDOW_S', '3.0')}" + ("_bias" if BIAS else "") if policy == "window" else "")
+tag = f"{split}_{size}_c{C}_{policy}" + (f"_w{os.getenv('WINDOW_S', '3.0')}" + ("_bias" if BIAS else "") if policy.startswith("window") else "")
 json.dump(dict(summary=summ, records=records), open(f"results/audio/stream_{tag}.json", "w"), indent=1)
