@@ -9,6 +9,7 @@ DESCRIPTIONS = {
     "v1": "Detection: lexicon ∪ toxic-bert (Jigsaw, clause-level) · Intent: bge-small nearest-prototype (open-set τ=0.6) · pure template",
     "v2": "v1 + hybrid renderer: template header for tone + extractive detail clauses with abusive spans removed (condBERT-style)",
     "v3": "v2 + directedness gate on model-only flags (Waseem et al. 2017) + render-then-verify detail clauses + threats never echo wording + generic header for unknown intents",
+    "v4": "v3 + residue-free masking: abusive clauses with no slot content are dropped, mild profanity stripped in rewrites, generalised threat/self-harm/identity lexicon (synthetic-dev errors)",
 }
 
 
@@ -22,4 +23,8 @@ def build(version: str) -> Pipeline:
     if version == "v3":
         det = HybridDetector(ModelDetector("unitary/toxic-bert"), directed_gate=True)
         return Pipeline(det, EmbeddingIntent(threshold=0.6), HybridRenderer(verify=det), name="v3", unknown_mode="generic")
+    if version == "v4":
+        det = HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended="v4"), directed_gate=True)
+        return Pipeline(det, EmbeddingIntent(threshold=0.6), HybridRenderer(verify=det, drop_residue=True), name="v4",
+                        unknown_mode="generic", mask_mild=True)
     raise KeyError(version)

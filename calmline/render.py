@@ -100,6 +100,11 @@ _RHETORICAL = re.compile(r"^(?:are you|do you|did you|is it|what kind|who the|wh
                          r"okay so|ok so|ok listen|hey)\b", re.I)
 
 
+def _slot_spans(text):
+    from .slots import spans
+    return [(a, b, n) for a, b, n in spans(text) if n not in ("time", "duration", "request", "prior_contact")]
+
+
 class HybridRenderer:
     """Template header for tone + verbatim detail clauses so facts survive (extractive detox).
 
@@ -108,9 +113,10 @@ class HybridRenderer:
     abuse are dropped entirely rather than masked."""
     name = "hybrid"
 
-    def __init__(self, min_new_tokens=2, verify=None):
+    def __init__(self, min_new_tokens=2, verify=None, drop_residue=False):
         self.min_new = min_new_tokens
         self.verify = verify
+        self.drop_residue = drop_residue  # v4: drop abusive clauses that carry no slot/fact content
 
     def __call__(self, text, intent, slots, tox):
         head = compose(intent, slots)
@@ -123,6 +129,11 @@ class HybridRenderer:
                 if any(sp.label in ("threat", "self_harm") for sp in inner) or (tox.is_threat and self.verify is not None):
                     continue
                 c = mask(text[s:e], [type(sp)(sp.start - s, sp.end - s, sp.label, sp.text) for sp in inner])
+                if self.drop_residue:
+                    has_slot = any(ss >= s and se <= e for ss, se, _ in _slot_spans(text))
+                    cover = sum(min(sp.end, e) - max(sp.start, s) for sp in inner) / max(1, e - s)
+                    if not has_slot and (cover >= 0.4 or len(content_tokens(c)) < 5):
+                        continue
             c = c.strip(" ,.!?")
             if not c or _RHETORICAL.match(c) or c.endswith("?") and len(content_tokens(c)) < 6:
                 continue

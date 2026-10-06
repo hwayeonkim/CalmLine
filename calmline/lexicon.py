@@ -59,13 +59,29 @@ def _compile(cats):
     return {k: [re.compile(r"(?<![\w])" + p + r"(?![\w])", re.I) for p in v] for k, v in cats.items()}
 
 
+# v4 additions (from synthetic-dev error analysis): generalised threat / self-harm / identity forms
+EXTENSIONS_V4 = {
+    "mild": [r"bloody"],
+    "threat": [r"(?:put|pump) (?:a )?(?:bullet|bullets|hole) in", r"(?:find|get|wait for|follow) you after (?:work|your shift)",
+               r"bring(?:ing)? (?:a|my) (?:bat|gun|knife|weapon)", r"smash your (?:face|head|skull)", r"(?:beat|kick) the (?:crap|shit|hell) out of",
+               r"(?:know|found out) where (?:you|your \w+) (?:work|works|live|lives|is|are)", r"(?:burn|blow) (?:\w+ ){0,2}(?:down|up)\b"],
+    "self_harm": [r"end(?:ing)? (?:it all|my life|myself)", r"(?:want|wanna|going) to die", r"(?:no|not any) (?:reason|point) (?:to|in) (?:live|living)"],
+    "identity": [r"(?:put|get) (?:someone|somebody) on who speaks english", r"go back (?:to )?where you came from",
+                 r"(?:want|need) (?:a )?real american", r"your kind"],
+    "sexual": [r"(?:sit|sitting) on my (?:lap|face)", r"(?:you )?(?:sound|look|are) (?:so |really |very )?(?:sexy|hot|cute)", r"i bet you(?:'re| are)? ?(?:look )?(?:hot|sexy|naked)"],
+    "insult": [r"(?:get|pull) your head out of your ass", r"are you even listening", r"num(?:b)?skulls?", r"halfwits?"],
+}
+
 COMPILED_V0 = _compile(CATEGORIES)
-COMPILED = _compile({k: v + EXTENSIONS.get(k, []) for k, v in CATEGORIES.items()})
+COMPILED_V3 = _compile({k: v + EXTENSIONS.get(k, []) for k, v in CATEGORIES.items()})
+COMPILED = _compile({k: v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) for k, v in CATEGORIES.items()})
 
 
-def find_spans(text: str, include_mild: bool = True, extended: bool = True):
+def find_spans(text: str, include_mild: bool = True, extended=True):
+    """extended: False -> v0 lexicon, True/'v3' -> v3 lexicon, 'v4' -> v4 lexicon."""
+    table = {False: COMPILED_V0, True: COMPILED_V3, "v3": COMPILED_V3, "v4": COMPILED}[extended]
     out = []
-    for cat, pats in (COMPILED if extended else COMPILED_V0).items():
+    for cat, pats in table.items():
         if cat == "mild" and not include_mild:
             continue
         for p in pats:

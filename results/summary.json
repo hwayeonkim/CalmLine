@@ -46,6 +46,29 @@
    },
    "latency_p50": 0.1974,
    "latency_p95": 0.3164
+  },
+  "synth": {
+   "n": 600,
+   "route_acc": 0.8967,
+   "abuse_recall": 0.8394,
+   "leak_rate": 0.215,
+   "protected": 0.7668,
+   "threat_recall": 0.7368,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.7577,
+   "sufficiency_toxic": 0.3756,
+   "fact_recall_all": 0.8441,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.5679,
+   "tier_dist": {
+    "0": 276,
+    "1": 276,
+    "2": 0,
+    "3": 48
+   },
+   "latency_p50": 0.1974,
+   "latency_p95": 0.3935
   }
  },
  "v1": {
@@ -95,6 +118,29 @@
    },
    "latency_p50": 15.4454,
    "latency_p95": 24.8477
+  },
+  "synth": {
+   "n": 600,
+   "route_acc": 0.915,
+   "abuse_recall": 0.886,
+   "leak_rate": 0.1373,
+   "protected": 0.8446,
+   "threat_recall": 0.807,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0327,
+   "fact_recall_toxic": 0.739,
+   "sufficiency_toxic": 0.3316,
+   "fact_recall_all": 0.8306,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.8653,
+   "tier_dist": {
+    "0": 251,
+    "1": 331,
+    "2": 0,
+    "3": 18
+   },
+   "latency_p50": 15.7524,
+   "latency_p95": 26.2747
   }
  },
  "v2": {
@@ -144,6 +190,29 @@
    },
    "latency_p50": 15.2786,
    "latency_p95": 24.1636
+  },
+  "synth": {
+   "n": 600,
+   "route_acc": 0.915,
+   "abuse_recall": 0.886,
+   "leak_rate": 0.3394,
+   "protected": 0.6425,
+   "threat_recall": 0.807,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0327,
+   "fact_recall_toxic": 0.9637,
+   "sufficiency_toxic": 0.8782,
+   "fact_recall_all": 0.9763,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.8653,
+   "tier_dist": {
+    "0": 251,
+    "1": 331,
+    "2": 0,
+    "3": 18
+   },
+   "latency_p50": 15.6961,
+   "latency_p95": 24.9251
   }
  },
  "v3": {
@@ -193,6 +262,101 @@
    },
    "latency_p50": 22.7733,
    "latency_p95": 41.1495
+  },
+  "synth": {
+   "n": 600,
+   "route_acc": 0.9183,
+   "abuse_recall": 0.8731,
+   "leak_rate": 0.3135,
+   "protected": 0.6684,
+   "threat_recall": 0.7368,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.9595,
+   "sufficiency_toxic": 0.8627,
+   "fact_recall_all": 0.974,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.8605,
+   "tier_dist": {
+    "0": 263,
+    "1": 319,
+    "2": 0,
+    "3": 18
+   },
+   "latency_p50": 22.2499,
+   "latency_p95": 38.6283
+  }
+ },
+ "v4": {
+  "synth": {
+   "n": 600,
+   "route_acc": 1.0,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0181,
+   "protected": 0.9819,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.9498,
+   "sufficiency_toxic": 0.8394,
+   "fact_recall_all": 0.9677,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.8679,
+   "tier_dist": {
+    "0": 214,
+    "1": 369,
+    "2": 0,
+    "3": 17
+   },
+   "latency_p50": 22.9935,
+   "latency_p95": 38.5719
+  },
+  "desc": "v3 + residue-free masking: abusive clauses with no slot content are dropped, mild profanity stripped in rewrites, generalised threat/self-harm/identity lexicon (synthetic-dev errors)",
+  "dev": {
+   "n": 40,
+   "route_acc": 1.0,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.8803,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.9279,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8182,
+   "tier_dist": {
+    "0": 18,
+    "1": 19,
+    "2": 0,
+    "3": 3
+   },
+   "latency_p50": 15.2514,
+   "latency_p95": 32.7464
+  },
+  "test": {
+   "n": 134,
+   "route_acc": 0.9776,
+   "abuse_recall": 0.988,
+   "leak_rate": 0.0843,
+   "protected": 0.9157,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0426,
+   "fact_recall_toxic": 0.9102,
+   "sufficiency_toxic": 0.8193,
+   "fact_recall_all": 0.9394,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8353,
+   "tier_dist": {
+    "0": 49,
+    "1": 78,
+    "2": 0,
+    "3": 7
+   },
+   "latency_p50": 22.081,
+   "latency_p95": 43.5616
   }
  }
 }

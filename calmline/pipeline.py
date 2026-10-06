@@ -11,12 +11,13 @@ ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A 
 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
-                 mask_for_intent=True, unknown_mode="mask"):
+                 mask_for_intent=True, unknown_mode="mask", mask_mild=False):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
         self.name, self.intent_min, self.mask_for_intent = name, intent_min, mask_for_intent
-        self.unknown_mode = unknown_mode  # "mask": tier-3 masked transcript; "generic": template with generic header
+        self.unknown_mode = unknown_mode
+        self.mask_mild = mask_mild        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
         t = {}
@@ -28,6 +29,13 @@ class Pipeline:
         if route == "PASS":
             d.timings_ms = t
             return d
+        if self.mask_mild:
+            from .lexicon import COMPILED
+            from .schema import Span
+            for p in COMPILED["mild"]:
+                for m in p.finditer(text):
+                    if not any(sp.start <= m.start() and sp.end >= m.end() for sp in tox.spans):
+                        tox.spans.append(Span(m.start(), m.end(), "mild", m.group(0)))
         t1 = time.perf_counter()
         from .render import mask
         clean = mask(text, tox.spans) if self.mask_for_intent else text
