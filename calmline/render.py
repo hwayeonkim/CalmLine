@@ -31,7 +31,7 @@ _REQ_LEAD = re.compile(r"^(?:i want|i need|i'd like|can you|could you|please|can
 
 
 def compose(intent: str, slots: dict) -> str:
-    issue = INTENTS[intent]["issue"] if intent in INTENTS else "a problem"
+    issue = INTENTS[intent]["issue"] if intent in INTENTS else "an issue that may not fit a standard category"
     loc = []
     if slots.get("apartment"):
         loc.append("apartment " + re.sub(r"^(?:apartment|apt\.?|unit|in|from|at|,)\s*", "", slots["apartment"][0], flags=re.I).strip())
@@ -42,7 +42,8 @@ def compose(intent: str, slots: dict) -> str:
             loc.append(_strip_lead(v))
     if slots.get("borough"):
         loc.append(slots["borough"][0].title())
-    s = [f"Hello, I'm calling to report {issue}" + (f" at {_join(loc)}" if loc else "") + "."]
+    verb = "report" if intent in INTENTS else "ask about"
+    s = [f"Hello, I'm calling to {verb} {issue}" + (f" at {_join(loc)}" if loc else "") + "."]
     veh = slots.get("vehicle", [])[-1:] + [("plate " + p if not p.lower().startswith(("plate", "license")) else p) for p in slots.get("plate", [])]
     if veh:
         s.append(f"The vehicle involved: {_join(veh)}.")
@@ -100,11 +101,16 @@ _RHETORICAL = re.compile(r"^(?:are you|do you|did you|is it|what kind|who the|wh
 
 
 class HybridRenderer:
-    """Template header for tone + verbatim detail clauses so facts survive (extractive detox)."""
+    """Template header for tone + verbatim detail clauses so facts survive (extractive detox).
+
+    verify (v3): every candidate detail clause is re-scored by the detector after masking and
+    dropped if it is still abusive (render-then-verify). For threats, clauses that contained any
+    abuse are dropped entirely rather than masked."""
     name = "hybrid"
 
-    def __init__(self, min_new_tokens=2):
+    def __init__(self, min_new_tokens=2, verify=None):
         self.min_new = min_new_tokens
+        self.verify = verify
 
     def __call__(self, text, intent, slots, tox):
         head = compose(intent, slots)
@@ -114,13 +120,17 @@ class HybridRenderer:
             if any(not (sp.end <= s or sp.start >= e) for sp in tox.spans):
                 # clause contains abuse: keep only if, after masking, real content remains
                 inner = [sp for sp in tox.spans if not (sp.end <= s or sp.start >= e)]
-                if any(sp.label == "threat" for sp in inner):
+                if any(sp.label in ("threat", "self_harm") for sp in inner) or (tox.is_threat and self.verify is not None):
                     continue
                 c = mask(text[s:e], [type(sp)(sp.start - s, sp.end - s, sp.label, sp.text) for sp in inner])
             c = c.strip(" ,.!?")
             if not c or _RHETORICAL.match(c) or c.endswith("?") and len(content_tokens(c)) < 6:
                 continue
             new = [w for w in content_tokens(c) if w not in have]
+            if len(new) >= self.min_new and self.verify is not None:
+                v = self.verify(c)
+                if v.is_toxic or v.is_threat:
+                    continue
             if len(new) >= self.min_new:
                 details.append(c[0].upper() + c[1:])
                 have |= set(new)

@@ -23,6 +23,22 @@ class KeywordIntent:
         return best, float(bs)
 
 
+def nyc_descriptors(intent):
+    """Prototype phrases from real NYC 311 (complaint type, descriptor) pairs mapped to this intent."""
+    import json, os
+    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw", "nyc311_type_desc_2026q3.json")
+    if not os.path.exists(path):
+        return []
+    types = set(INTENTS[intent]["nyc"])
+    out = []
+    for r in json.load(open(path)):
+        d = (r.get("descriptor") or "").strip()
+        if r["complaint_type"] in types and d and d.upper() not in ("N/A", "OTHER"):
+            d = re.sub(r"\s*\((?:[A-Z0-9]+|use comments)\)", "", d, flags=re.I)
+            out.append(f"{r['complaint_type'].lower()}: {d.lower()}")
+    return out
+
+
 @lru_cache(maxsize=2)
 def _st(model_id):
     from sentence_transformers import SentenceTransformer
@@ -36,12 +52,13 @@ class EmbeddingIntent:
     Prototypes = catalog examples + issue phrase. Score = max cosine similarity.
     Below `threshold` -> UNKNOWN (open-set rejection)."""
 
-    def __init__(self, model_id="BAAI/bge-small-en-v1.5", threshold=0.6, extra_examples=None):
+    def __init__(self, model_id="BAAI/bge-small-en-v1.5", threshold=0.6, extra_examples=None, use_descriptors=False):
         self.model_id, self.threshold = model_id, threshold
         self.name = f"emb({model_id.split('/')[-1]})"
         self.labels, texts = [], []
         for k, v in INTENTS.items():
-            for ex in v["examples"] + [v["issue"]] + (extra_examples or {}).get(k, []):
+            descs = nyc_descriptors(k) if use_descriptors else []
+            for ex in v["examples"] + [v["issue"]] + (extra_examples or {}).get(k, []) + descs:
                 self.labels.append(k)
                 texts.append(ex)
         self.proto = self._enc(texts)

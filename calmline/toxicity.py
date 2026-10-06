@@ -114,21 +114,45 @@ _MAP = {"obscene": "profanity", "insult": "insult", "identity_hate": "identity",
         "toxicity": "insult"}
 
 
+DIRECTED = re.compile(r"\b(?:you|your|you're|youre|ya|u|ur|yours|yourself|y'all|lady|sir|ma'am|miss|operator|agent|"
+                      r"people like you|whoever|your (?:office|supervisor|boss|agency|department))\b", re.I)
+
+
 class HybridDetector:
-    def __init__(self, model: ModelDetector, lex: LexiconDetector | None = None, model_threat=True):
+    """Union of lexicon and model.
+
+    directed_gate (v3): a clause flagged *only* by the model must also be directed at a person
+    (second-person/addressee reference) unless the model is very confident. Motivated by the
+    abuse typology of Waseem et al. (2017): abuse aimed at the agent is 'directed'; figurative
+    venting ("these rats are killing me") is not, and Jigsaw-trained models over-flag it."""
+
+    def __init__(self, model: ModelDetector, lex: LexiconDetector | None = None, model_threat=True,
+                 directed_gate=False, confident=0.9):
         self.model, self.lex = model, lex or LexiconDetector()
-        self.model_threat = model_threat
+        self.model_threat, self.directed_gate, self.confident = model_threat, directed_gate, confident
         self.name = f"hybrid({model.name})"
 
     def __call__(self, text: str) -> ToxicityResult:
         a, b = self.lex(text), self.model(text)
         spans = list(a.spans)
+        model_toxic = model_threat = False
         for sp in b.spans:  # add model clause spans only where lexicon found nothing inside that clause
-            if not any(x.start >= sp.start and x.end <= sp.end for x in a.spans):
-                if sp.label == "threat" and not self.model_threat:
+            if any(x.start >= sp.start and x.end <= sp.end for x in a.spans):
+                continue
+            if self.directed_gate and sp.score < self.confident and not DIRECTED.search(sp.text):
+                continue
+            if sp.label == "threat" and not self.model_threat:
+                sp.label = "insult"
+            if sp.label == "threat":
+                if self.directed_gate and not DIRECTED.search(sp.text) and not re.search(r"\b(?:i'?ll|i will|i'?m (?:gonna|going to)|gonna)\b", sp.text, re.I):
                     sp.label = "insult"
-                spans.append(sp)
-        threat = a.is_threat or (self.model_threat and b.is_threat)
-        return ToxicityResult(is_toxic=a.is_toxic or b.is_toxic or threat, is_threat=threat,
+                else:
+                    model_threat = True
+            model_toxic = True
+            spans.append(sp)
+        if not self.directed_gate:
+            model_toxic, model_threat = b.is_toxic, b.is_threat
+        threat = a.is_threat or (self.model_threat and model_threat)
+        return ToxicityResult(is_toxic=a.is_toxic or model_toxic or threat, is_threat=threat,
                               score=max(a.score, b.score), threat_score=max(a.threat_score, b.threat_score),
                               spans=sorted(spans, key=lambda s: s.start), labels=b.labels)

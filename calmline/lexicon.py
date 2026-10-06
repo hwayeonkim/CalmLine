@@ -10,7 +10,8 @@ PROFANITY = [
     r"f+u+c+k+\w*", r"f[\*\#@]+c?k\w*", r"f\*+\w*", r"motherf\w*", r"effing", r"frigging", r"freaking",
     r"sh[i\*]t+\w*", r"bullsh\w*", r"b[i\*]tch\w*", r"bastards?", r"assholes?", r"a\*\*hole\w*", r"jackass\w*", r"dumbass\w*",
     r"dick(?:head)?s?", r"cunts?", r"pricks?", r"douche\w*", r"wtf", r"stfu", r"pissed off", r"piss off",
-    r"sons? of a bitch", r"screw you", r"goddamn\w*", r"god damn\w*",
+    r"sons? of a bitch", r"screw (?:you|this|that|off)", r"goddam\w*", r"god damn\w*",
+    r"f\w*ck (?:off|you|this|that|it|me)", r"(?:the|a) f\w*ck",
 ]
 MILD = [r"damn\w*", r"hell", r"crap\w*", r"pissed", r"sucks?"]
 INSULT = [
@@ -19,9 +20,10 @@ INSULT = [
     r"(?:stupid|dumb|useless|worthless|incompetent|pathetic|lazy)\s+(?:\w+\s+){0,2}(?:people|bureaucrats?|workers?|operators?|lady|woman|man|girl|boy|clerks?|agents?)",
     r"shut up", r"shut your (?:mouth|face|trap)", r"get a brain", r"retard\w*", r"half[- ]?wit", r"waste of (?:space|air|oxygen|a salary|my taxes)",
     r"do you even (?:speak|understand|have a brain)", r"are you (?:deaf|stupid|dumb|an idiot|slow|retarded)",
+    r"jerks?", r"twits?", r"(?:the )?dumbest \w+(?: \w+)?", r"who (?:the (?:hell|fuck|heck) )?(?:trained|hired|raised) you",
 ]
 SEXUAL = [
-    r"sweet(?:ie|heart|cheeks)", r"\bbabe\b", r"hey baby", r"\bsexy\b", r"what (?:are|r) you wearing", r"your (?:body|legs|boobs|tits|ass|butt|lips)",
+    r"sweet(?:ie|heart|cheeks)", r"cutie(?: pie)?", r"\bhoney\b", r"\bdarling\b", r"\bbabe\b", r"hey baby", r"\bsexy\b", r"what (?:are|r) you wearing", r"your (?:body|legs|boobs|tits|ass|butt|lips)",
     r"suck my", r"blow ?job", r"\bnaked\b", r"\bhorny\b", r"sit on my", r"come (?:over|to my place) (?:and|to)", r"in (?:my|your) bed",
     r"turn(?:s|ing)? me on", r"i(?:'d| would) (?:love to )?(?:do|bang|screw|f\w+) you", r"hot (?:voice|lady|girl)", r"talk dirty",
 ]

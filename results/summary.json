@@ -47,5 +47,152 @@
    "latency_p50": 0.1909,
    "latency_p95": 0.3073
   }
+ },
+ "v1": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.925,
+   "abuse_recall": 0.9545,
+   "leak_rate": 0.1364,
+   "protected": 0.8636,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.1111,
+   "fact_recall_toxic": 0.7477,
+   "sufficiency_toxic": 0.4545,
+   "fact_recall_all": 0.8383,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.7826,
+   "tier_dist": {
+    "0": 17,
+    "1": 21,
+    "2": 0,
+    "3": 2
+   },
+   "latency_p50": 17.5365,
+   "latency_p95": 141.5633
+  },
+  "desc": "Detection: lexicon \u222a toxic-bert (Jigsaw, clause-level) \u00b7 Intent: bge-small nearest-prototype (open-set \u03c4=0.6) \u00b7 pure template",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9403,
+   "abuse_recall": 0.988,
+   "leak_rate": 0.0723,
+   "protected": 0.9277,
+   "threat_recall": 1.0,
+   "threat_precision": 0.8125,
+   "false_positive_rate": 0.1277,
+   "fact_recall_toxic": 0.6867,
+   "sufficiency_toxic": 0.3855,
+   "fact_recall_all": 0.7736,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8242,
+   "tier_dist": {
+    "0": 43,
+    "1": 83,
+    "2": 0,
+    "3": 8
+   },
+   "latency_p50": 15.9472,
+   "latency_p95": 45.1317
+  }
+ },
+ "v2": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.925,
+   "abuse_recall": 0.9545,
+   "leak_rate": 0.1818,
+   "protected": 0.8182,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.1111,
+   "fact_recall_toxic": 0.878,
+   "sufficiency_toxic": 0.7273,
+   "fact_recall_all": 0.9183,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.7826,
+   "tier_dist": {
+    "0": 17,
+    "1": 21,
+    "2": 0,
+    "3": 2
+   },
+   "latency_p50": 14.0914,
+   "latency_p95": 18.6208
+  },
+  "desc": "v1 + hybrid renderer: template header for tone + extractive detail clauses with abusive spans removed (condBERT-style)",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9403,
+   "abuse_recall": 0.988,
+   "leak_rate": 0.2169,
+   "protected": 0.7831,
+   "threat_recall": 1.0,
+   "threat_precision": 0.8125,
+   "false_positive_rate": 0.1277,
+   "fact_recall_toxic": 0.9028,
+   "sufficiency_toxic": 0.8193,
+   "fact_recall_all": 0.9224,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8242,
+   "tier_dist": {
+    "0": 43,
+    "1": 83,
+    "2": 0,
+    "3": 8
+   },
+   "latency_p50": 15.5027,
+   "latency_p95": 24.4127
+  }
+ },
+ "v3": {
+  "dev": {
+   "n": 40,
+   "route_acc": 1.0,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0455,
+   "protected": 0.9545,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.8803,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.9279,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8182,
+   "tier_dist": {
+    "0": 18,
+    "1": 19,
+    "2": 0,
+    "3": 3
+   },
+   "latency_p50": 18.3036,
+   "latency_p95": 102.3308
+  },
+  "desc": "v2 + directedness gate on model-only flags (Waseem et al. 2017) + render-then-verify detail clauses + threats never echo wording + generic header for unknown intents",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9776,
+   "abuse_recall": 0.988,
+   "leak_rate": 0.1566,
+   "protected": 0.8434,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0426,
+   "fact_recall_toxic": 0.9233,
+   "sufficiency_toxic": 0.8554,
+   "fact_recall_all": 0.9475,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8235,
+   "tier_dist": {
+    "0": 49,
+    "1": 78,
+    "2": 0,
+    "3": 7
+   },
+   "latency_p50": 22.2636,
+   "latency_p95": 43.3442
+  }
  }
 }

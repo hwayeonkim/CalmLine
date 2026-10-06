@@ -11,11 +11,12 @@ ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A 
 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
-                 mask_for_intent=True):
+                 mask_for_intent=True, unknown_mode="mask"):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
         self.name, self.intent_min, self.mask_for_intent = name, intent_min, mask_for_intent
+        self.unknown_mode = unknown_mode  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
         t = {}
@@ -39,6 +40,8 @@ class Pipeline:
         t3 = time.perf_counter()
         if intent != UNKNOWN and isc >= self.intent_min:
             d.tier, out = 1, self.renderer(text, intent, sl, tox)
+        elif self.unknown_mode == "generic" and self.llm is None:
+            d.tier, out = 3, self.renderer(text, UNKNOWN, sl, tox)
         elif self.llm is not None:
             d.tier, out = 2, self.llm(text, intent, sl, tox)
         else:
