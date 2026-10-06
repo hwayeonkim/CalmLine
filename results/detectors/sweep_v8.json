@@ -1,0 +1,434 @@
+[
+ {
+  "tox_th": 0.5,
+  "conf": 0.85,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.85,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.85,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.9,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.9,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.9,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.95,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.95,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.95,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.99,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.99,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.5,
+  "conf": 0.99,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.85,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.85,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.85,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.9,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.9,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.9,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.95,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.95,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.95,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.99,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.99,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.6,
+  "conf": 0.99,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.85,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.85,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.85,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.9,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.9,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.9,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.95,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.95,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.95,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9950980392156863,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.99,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.99,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.7,
+  "conf": 0.99,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.85,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.85,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.85,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.9,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.9,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.9,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.95,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.95,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.95,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9926470588235294,
+  "fpr": 0.006060606060606061,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.99,
+  "threat_th": 0.3,
+  "abuse_recall": 0.9901960784313726,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.99,
+  "threat_th": 0.5,
+  "abuse_recall": 0.9901960784313726,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ },
+ {
+  "tox_th": 0.8,
+  "conf": 0.99,
+  "threat_th": 0.7,
+  "abuse_recall": 0.9901960784313726,
+  "fpr": 0.0030303030303030303,
+  "threat_recall": 1.0,
+  "threat_prec": 0.9838709677419355
+ }
+]

@@ -1,0 +1,72 @@
+{
+ "n_train": 1511,
+ "n_test": 722,
+ "n_test_speakers": 30,
+ "anger_share_test": 0.15789473684210525,
+ "loudness_only/logreg": {
+  "auc": 0.8684499076638966,
+  "f1": 0.5477707006369427,
+  "precision": 0.43,
+  "recall": 0.7543859649122807,
+  "recall_anger_HI_MD": 0.9
+ },
+ "loudness_only+spknorm/logreg": {
+  "auc": 0.8886051477377653,
+  "f1": 0.5871559633027523,
+  "precision": 0.4507042253521127,
+  "recall": 0.8421052631578947,
+  "recall_anger_HI_MD": 1.0
+ },
+ "prosody/logreg": {
+  "auc": 0.8734851108033241,
+  "f1": 0.5555555555555556,
+  "precision": 0.4427083333333333,
+  "recall": 0.7456140350877193,
+  "recall_anger_HI_MD": 0.8
+ },
+ "prosody/gbm": {
+  "auc": 0.8505309325946445,
+  "f1": 0.5333333333333333,
+  "precision": 0.5405405405405406,
+  "recall": 0.5263157894736842,
+  "recall_anger_HI_MD": 0.7
+ },
+ "prosody+spknorm/logreg": {
+  "auc": 0.9085295475530932,
+  "f1": 0.6182965299684543,
+  "precision": 0.4827586206896552,
+  "recall": 0.8596491228070176,
+  "recall_anger_HI_MD": 0.95
+ },
+ "prosody+spknorm/gbm": {
+  "auc": 0.8782750461680516,
+  "f1": 0.6134453781512605,
+  "precision": 0.5887096774193549,
+  "recall": 0.6403508771929824,
+  "recall_anger_HI_MD": 0.6
+ },
+ "prosody+mfcc+spknorm/logreg": {
+  "auc": 0.9208795013850415,
+  "f1": 0.6412698412698413,
+  "precision": 0.5024875621890548,
+  "recall": 0.8859649122807017,
+  "recall_anger_HI_MD": 1.0
+ },
+ "prosody+mfcc+spknorm/gbm": {
+  "auc": 0.8921831717451524,
+  "f1": 0.6194690265486725,
+  "precision": 0.625,
+  "recall": 0.6140350877192983,
+  "recall_anger_HI_MD": 0.7
+ },
+ "compressor_peak_reduction_db": {
+  "ANG_HI": {
+   "mean": 11.84087253385057,
+   "n": 29
+  },
+  "NEU": {
+   "mean": 0.2877129061218864,
+   "n": 326
+  }
+ }
+}

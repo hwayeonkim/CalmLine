@@ -5,3 +5,5 @@ data/audio/
 data/external/
 results/tmp/
 *.wav
+!app/static/samples/*.wav
+evidence/

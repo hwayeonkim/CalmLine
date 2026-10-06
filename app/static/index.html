@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><header><h1>CalmLine</h1><span class="tag">Shielding public-service call agents from verbal abuse — in real time</span></header>
+<main>
+<div class="card"><p style="margin-top:0"><b>The industry trains the people being abused. CalmLine reduces the exposure.</b></p>
+<p class="muted">Caller audio reaches the agent a couple of seconds late — like a broadcast delay. In that window CalmLine transcribes the call, mutes abusive words, turns shouting down to conversational loudness, and hands the agent a calm card with every fact preserved. Threats raise a supervisor alert. The original is sealed as evidence; the agent stays in control.</p>
+<div class="row"><label>Room <input id="room" value="demo" size="10"></label>
+<button class="primary" onclick="go('/demo')">Open split-screen demo</button>
+<button onclick="go('/caller')">Caller console</button><button onclick="go('/agent')">Agent console</button></div></div>
+<p class="muted">Tip: open the split-screen demo and press a sample call. Left: what the caller says. Right: what the agent receives.</p>
+</main>
+<script>function go(p){location.href=p+'?room='+encodeURIComponent(document.getElementById('room').value||'demo')}</script></body></html>

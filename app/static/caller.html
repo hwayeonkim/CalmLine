@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — Caller</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><header><h1>Caller</h1><span class="tag" id="roomtag"></span></header>
+<main>
+<div class="card"><div class="row"><button class="primary" id="mic">🎙 Speak into microphone</button><button id="stop" disabled>End call</button><span class="muted" id="micstate"></span></div>
+<p class="muted" style="margin-bottom:0">Notice played to callers: <i>“This call is relayed for agent protection. Abusive language is filtered and the original is preserved.”</i></p></div>
+<h3 style="margin:18px 0 6px">Sample calls <span class="muted">(acted / synthetic — no real callers)</span></h3>
+<div id="samples"></div>
+</main>
+<script>
+const q=new URLSearchParams(location.search), room=q.get('room')||'demo';
+document.getElementById('roomtag').textContent='room '+room;
+const proto=location.protocol==='https:'?'wss':'ws';
+let ctx,src,node,ws,stream;
+async function startMic(){
+  ws=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);ws.binaryType='arraybuffer';
+  await new Promise(r=>ws.onopen=r);
+  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}});
+  ctx=new AudioContext();src=ctx.createMediaStreamSource(stream);
+  node=ctx.createScriptProcessor(4096,1,1);const ratio=ctx.sampleRate/16000;
+  node.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0);const n=Math.floor(x.length/ratio);const out=new Int16Array(n);
+    for(let i=0;i<n;i++){out[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]))*32767}if(ws.readyState===1)ws.send(out.buffer)};
+  src.connect(node);node.connect(ctx.destination);
+  document.getElementById('mic').disabled=true;document.getElementById('stop').disabled=false;document.getElementById('micstate').textContent='live';
+}
+function stopMic(){try{ws.send(JSON.stringify({type:'end'}))}catch(e){};node&&node.disconnect();stream&&stream.getTracks().forEach(t=>t.stop());
+  document.getElementById('mic').disabled=false;document.getElementById('stop').disabled=true;document.getElementById('micstate').textContent='ended'}
+document.getElementById('mic').onclick=startMic;document.getElementById('stop').onclick=stopMic;
+async function loadSamples(){
+  const list=await (await fetch('/api/samples')).json();const box=document.getElementById('samples');
+  list.forEach(s=>{const d=document.createElement('div');d.className='card sample';
+    d.innerHTML=`<div><b>${s.title}</b><p>${s.text.replace(/</g,'&lt;')}</p></div><div class="row"><audio src="/static/samples/${s.id}.wav" preload="none"></audio><button>▶ Play call</button><span class="muted"></span></div>`;
+    const btn=d.querySelector('button'),st=d.querySelector('.muted'),au=d.querySelector('audio');
+    btn.onclick=()=>{const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
+      setTimeout(()=>{au.currentTime=0;au.play().catch(()=>{})},150);
+      w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='progress')st.textContent=m.t.toFixed(1)+' / '+m.dur.toFixed(1)+' s';if(m.type==='done'){st.textContent='done';btn.disabled=false}}};
+    box.appendChild(d)});
+}
+loadSamples();
+</script></body></html>

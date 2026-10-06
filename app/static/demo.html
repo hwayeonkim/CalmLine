@@ -1,0 +1,4 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — split screen</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><header><h1>CalmLine</h1><span class="tag">Left: the caller · Right: the agent</span></header>
+<div class="split"><iframe id="c"></iframe><iframe id="a" allow="autoplay"></iframe></div>
+<script>const r=new URLSearchParams(location.search).get('room')||'demo';document.getElementById('c').src='/caller?embed=1&room='+r;document.getElementById('a').src='/agent?embed=1&room='+r;</script></body></html>

@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {"name": "calmline", "runtimeExecutable": ".venv/bin/python", "runtimeArgs": ["-m", "uvicorn", "app.server:app", "--port", "8765"], "port": 8765}
+  ]
+}

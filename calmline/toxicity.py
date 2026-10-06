@@ -78,7 +78,18 @@ class ModelDetector:
         self.per_clause = per_clause
         self.name = model_id.split("/")[-1]
 
+    _memo: dict = {}
+
     def scores(self, texts):
+        key = (self.model_id, tuple(texts))
+        if key in ModelDetector._memo:
+            return ModelDetector._memo[key]
+        res = self._scores(texts)
+        if len(ModelDetector._memo) < 200000:
+            ModelDetector._memo[key] = res
+        return res
+
+    def _scores(self, texts):
         import torch
         tok, mdl = _load(self.model_id, self.device)
         with torch.no_grad():
@@ -118,6 +129,37 @@ DIRECTED = re.compile(r"\b(?:you|your|you're|youre|ya|u|ur|yours|yourself|y'all|
                       r"people like you|whoever|your (?:office|supervisor|boss|agency|department))\b", re.I)
 
 
+class SafetyNetDetector:
+    """Wraps a detector and adds a zero-shot NLI check for threats / self-harm only (v6).
+
+    Threat recall must be ~100%, but lexicons and Jigsaw models miss novel phrasings
+    ("I'll put a bullet in someone"). NLI runs only on clauses not already flagged as threats."""
+
+    def __init__(self, base, nli=None, th=0.9):
+        self.base = base
+        self.nli = nli or NLIDetector(cats=["threat", "self_harm"], th={"threat": th, "self_harm": th})
+        self.name = f"{base.name}+nli"
+
+    def __call__(self, text):
+        r = self.base(text)
+        if r.is_threat:
+            return r
+        n = self.nli(text)
+        if n.is_threat:
+            r.spans = sorted(r.spans + [s for s in n.spans if s.label in ("threat", "self_harm")], key=lambda s: s.start)
+            r.is_threat = r.is_toxic = True
+            r.threat_score = max(r.threat_score, n.threat_score)
+        return r
+
+
+# v8: model-only flags in these contexts are venting / concern, not abuse (hyperbole: Troiano et al., 2018)
+FIGURATIVE = re.compile(r"\b(?:kill(?:ing|s)?|murder(?:ing)?|death|dying|die|crazy|insane|nightmare)\b(?:\W+\w+){0,3}?\W+(?:me|us|myself|ourselves)\b|"
+                        r"\bto death\b|\b(?:i'?m|we'?re|i am|we are) dying\b|\b(?:wake|raise) the dead\b|\bdeath ?trap\b|\bsmells? like death\b", re.I)
+CONCERN = re.compile(r"\b(?:worried|afraid|scared|terrified|concerned|fear(?:ful)?|frightened|before (?:someone|somebody|anyone)|"
+                     r"could (?:get|be)|might (?:get|be)|going to get (?:hurt|killed)|someone (?:could|will|is going to) (?:die|get))\b", re.I)
+FIRST_PERSON_INTENT = re.compile(r"\b(?:i'?ll|i will|i'?m (?:gonna|going to)|im gonna|gonna|i swear)\b", re.I)
+
+
 class HybridDetector:
     """Union of lexicon and model.
 
@@ -127,9 +169,11 @@ class HybridDetector:
     venting ("these rats are killing me") is not, and Jigsaw-trained models over-flag it."""
 
     def __init__(self, model: ModelDetector, lex: LexiconDetector | None = None, model_threat=True,
-                 directed_gate=False, confident=0.9):
+                 directed_gate=False, confident=0.9, threat_bypass=False, context_filter=False):
         self.model, self.lex = model, lex or LexiconDetector()
         self.model_threat, self.directed_gate, self.confident = model_threat, directed_gate, confident
+        self.threat_bypass = threat_bypass   # v7: threats escalate even when aimed at a third party
+        self.context_filter = context_filter # v8: drop model-only flags in figurative / concern contexts
         self.name = f"hybrid({model.name})"
 
     def __call__(self, text: str) -> ToxicityResult:
@@ -139,12 +183,16 @@ class HybridDetector:
         for sp in b.spans:  # add model clause spans only where lexicon found nothing inside that clause
             if any(x.start >= sp.start and x.end <= sp.end for x in a.spans):
                 continue
-            if self.directed_gate and sp.score < self.confident and not DIRECTED.search(sp.text):
+            if self.directed_gate and sp.score < self.confident and not DIRECTED.search(sp.text) \
+                    and not (self.threat_bypass and sp.label == "threat"):
+                continue
+            if self.context_filter and not FIRST_PERSON_INTENT.search(sp.text) and \
+                    (FIGURATIVE.search(sp.text) or (CONCERN.search(sp.text) and not DIRECTED.search(sp.text))):
                 continue
             if sp.label == "threat" and not self.model_threat:
                 sp.label = "insult"
             if sp.label == "threat":
-                if self.directed_gate and not DIRECTED.search(sp.text) and not re.search(r"\b(?:i'?ll|i will|i'?m (?:gonna|going to)|gonna)\b", sp.text, re.I):
+                if self.directed_gate and not self.threat_bypass and not DIRECTED.search(sp.text) and not re.search(r"\b(?:i'?ll|i will|i'?m (?:gonna|going to)|gonna)\b", sp.text, re.I):
                     sp.label = "insult"
                 else:
                     model_threat = True
@@ -156,3 +204,65 @@ class HybridDetector:
         return ToxicityResult(is_toxic=a.is_toxic or model_toxic or threat, is_threat=threat,
                               score=max(a.score, b.score), threat_score=max(a.threat_score, b.threat_score),
                               spans=sorted(spans, key=lambda s: s.start), labels=b.labels)
+
+
+HYPOTHESES = {
+    "threat": "The speaker threatens to physically harm someone.",
+    "self_harm": "The speaker says they want to hurt or kill themselves.",
+    "sexual": "The speaker makes a sexual or flirtatious comment to the listener.",
+    "insult": "The speaker insults or demeans the listener.",
+    "identity": "The speaker attacks the listener's ethnicity, nationality, accent, or language.",
+}
+
+
+@lru_cache(maxsize=2)
+def _load_nli(model_id, device):
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(model_id)
+    mdl = AutoModelForSequenceClassification.from_pretrained(model_id).eval().to(device)
+    return tok, mdl
+
+
+class NLIDetector:
+    """Zero-shot NLI abuse detector (Yin et al., 2019 'entailment as zero-shot classification').
+
+    Each clause is the premise; each CalmLine category is a natural-language hypothesis.
+    No abuse-specific training data -> does not depend on any lexicon, so it is used as a
+    semantic safety net for the categories lexicons miss (implicit threats, harassment)."""
+
+    def __init__(self, model_id="MoritzLaurer/deberta-v3-base-zeroshot-v2.0", th=None, cats=None, device=None):
+        self.model_id = model_id
+        self.th = {"threat": 0.9, "self_harm": 0.9, "sexual": 0.9, "insult": 0.95, "identity": 0.9}
+        self.th.update(th or {})
+        self.cats = cats or list(HYPOTHESES)
+        self.device = device or _device()
+        self.name = "nli(" + model_id.split("/")[-1] + ")"
+
+    def clause_scores(self, units):
+        import torch
+        tok, mdl = _load_nli(self.model_id, self.device)
+        pairs = [(u, HYPOTHESES[c]) for u in units for c in self.cats]
+        with torch.no_grad():
+            enc = tok([p for p, _ in pairs], [h for _, h in pairs], return_tensors="pt", padding=True, truncation=True, max_length=160).to(self.device)
+            logits = mdl(**enc).logits.float()
+        lab = {v.lower(): k for k, v in mdl.config.id2label.items()}
+        ent = lab.get("entailment", 0)
+        probs = torch.softmax(logits, -1)[:, ent].cpu().numpy() if logits.shape[1] > 1 else torch.sigmoid(logits[:, 0]).cpu().numpy()
+        out = []
+        for i in range(len(units)):
+            out.append({c: float(probs[i * len(self.cats) + j]) for j, c in enumerate(self.cats)})
+        return out
+
+    def __call__(self, text: str) -> ToxicityResult:
+        cl = clauses(text) or [(0, len(text), text)]
+        sc = self.clause_scores([c[2] for c in cl])
+        spans = []
+        for (s, e, t), d in zip(cl, sc):
+            hits = [c for c in self.cats if d[c] >= self.th[c]]
+            if hits:
+                lab = "threat" if "threat" in hits else ("self_harm" if "self_harm" in hits else max(hits, key=lambda c: d[c]))
+                spans.append(Span(s, e, lab, t, d[lab]))
+        thr = max([max(d.get("threat", 0), d.get("self_harm", 0)) for d in sc] + [0])
+        tox = max([max(d[c] for c in self.cats) for d in sc] + [0])
+        is_thr = any(sp.label in ("threat", "self_harm") for sp in spans)
+        return ToxicityResult(is_toxic=bool(spans), is_threat=is_thr, score=tox, threat_score=thr, spans=spans)

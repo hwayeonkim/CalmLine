@@ -1,0 +1,98 @@
+{
+ "lexicon_v0": {
+  "n": 40,
+  "abuse_P": 1.0,
+  "abuse_R": 0.7273,
+  "abuse_F1": 0.8421,
+  "abuse_AUC": NaN,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": NaN,
+  "ms": 0.0748
+ },
+ "lexicon_v4": {
+  "n": 40,
+  "abuse_P": 1.0,
+  "abuse_R": 0.9545,
+  "abuse_F1": 0.9767,
+  "abuse_AUC": NaN,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": NaN,
+  "ms": 0.1028
+ },
+ "toxic-bert": {
+  "n": 40,
+  "abuse_P": 0.8889,
+  "abuse_R": 0.7273,
+  "abuse_F1": 0.8,
+  "abuse_AUC": 0.8864,
+  "threat_P": 1.0,
+  "threat_R": 0.25,
+  "threat_F1": 0.4,
+  "threat_AUC": 0.7639,
+  "ms": 12.0313
+ },
+ "unbiased-roberta": {
+  "n": 40,
+  "abuse_P": 0.8889,
+  "abuse_R": 0.7273,
+  "abuse_F1": 0.8,
+  "abuse_AUC": 0.8687,
+  "threat_P": 1.0,
+  "threat_R": 0.5,
+  "threat_F1": 0.6667,
+  "threat_AUC": 0.7222,
+  "ms": 11.0828
+ },
+ "hybrid_v4": {
+  "n": 40,
+  "abuse_P": 1.0,
+  "abuse_R": 1.0,
+  "abuse_F1": 1.0,
+  "abuse_AUC": 0.9975,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": 1.0,
+  "ms": 10.6599
+ },
+ "nli": {
+  "n": 40,
+  "abuse_P": 0.9231,
+  "abuse_R": 0.5455,
+  "abuse_F1": 0.6857,
+  "abuse_AUC": 0.8737,
+  "threat_P": 1.0,
+  "threat_R": 0.5,
+  "threat_F1": 0.6667,
+  "threat_AUC": 1.0,
+  "ms": 55.6065
+ },
+ "hybrid_v4_tb": {
+  "n": 40,
+  "abuse_P": 1.0,
+  "abuse_R": 1.0,
+  "abuse_F1": 1.0,
+  "abuse_AUC": 0.9975,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": 1.0,
+  "ms": 12.2718
+ },
+ "hybrid_unb_tb": {
+  "n": 40,
+  "abuse_P": 0.9167,
+  "abuse_R": 1.0,
+  "abuse_F1": 0.9565,
+  "abuse_AUC": 1.0,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": 1.0,
+  "ms": 10.6243
+ }
+}

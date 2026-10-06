@@ -72,14 +72,23 @@ EXTENSIONS_V4 = {
     "insult": [r"(?:get|pull) your head out of your ass", r"are you even listening", r"num(?:b)?skulls?", r"halfwits?"],
 }
 
+# v7: fix over-broad self-harm pattern found on Gemma-written hard negatives
+#     ("I'm worried someone is going to die" is concern, not self-harm) -> require a first-person subject.
+V7_REMOVE = {"self_harm": [r"(?:want|wanna|going) to die"]}
+V7_ADD = {"self_harm": [r"(?:i|i'm|im|i am)\s+(?:\w+\s+)?(?:want|wanna|going|gonna|ready) to die", r"\bi want to die\b"]}
+
 COMPILED_V0 = _compile(CATEGORIES)
 COMPILED_V3 = _compile({k: v + EXTENSIONS.get(k, []) for k, v in CATEGORIES.items()})
 COMPILED = _compile({k: v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) for k, v in CATEGORIES.items()})
 
 
+COMPILED_V7 = _compile({k: [p for p in v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) if p not in V7_REMOVE.get(k, [])] + V7_ADD.get(k, [])
+                        for k, v in CATEGORIES.items()})
+
+
 def find_spans(text: str, include_mild: bool = True, extended=True):
-    """extended: False -> v0 lexicon, True/'v3' -> v3 lexicon, 'v4' -> v4 lexicon."""
-    table = {False: COMPILED_V0, True: COMPILED_V3, "v3": COMPILED_V3, "v4": COMPILED}[extended]
+    """extended: False -> v0 lexicon, True/'v3' -> v3 lexicon, 'v4' -> v4 lexicon, 'v7' -> v7 lexicon."""
+    table = {False: COMPILED_V0, True: COMPILED_V3, "v3": COMPILED_V3, "v4": COMPILED, "v7": COMPILED_V7}[extended]
     out = []
     for cat, pats in table.items():
         if cat == "mild" and not include_mild:

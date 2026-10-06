@@ -1,0 +1,98 @@
+{
+ "lexicon_v0": {
+  "n": 3182,
+  "abuse_P": 0.9528,
+  "abuse_R": 0.2166,
+  "abuse_F1": 0.3529,
+  "abuse_AUC": NaN,
+  "threat_P": 0.4815,
+  "threat_R": 0.1176,
+  "threat_F1": 0.1891,
+  "threat_AUC": NaN,
+  "ms": 0.225
+ },
+ "lexicon_v4": {
+  "n": 3182,
+  "abuse_P": 0.9505,
+  "abuse_R": 0.2291,
+  "abuse_F1": 0.3692,
+  "abuse_AUC": NaN,
+  "threat_P": 0.4667,
+  "threat_R": 0.1267,
+  "threat_F1": 0.1993,
+  "threat_AUC": NaN,
+  "ms": 0.3073
+ },
+ "toxic-bert": {
+  "n": 3182,
+  "abuse_P": 0.952,
+  "abuse_R": 0.6975,
+  "abuse_F1": 0.8051,
+  "abuse_AUC": 0.9405,
+  "threat_P": 0.7738,
+  "threat_R": 0.2941,
+  "threat_F1": 0.4262,
+  "threat_AUC": 0.9187,
+  "ms": 44.8528
+ },
+ "unbiased-roberta": {
+  "n": 3182,
+  "abuse_P": 0.9515,
+  "abuse_R": 0.8777,
+  "abuse_F1": 0.9131,
+  "abuse_AUC": 0.9754,
+  "threat_P": 0.7124,
+  "threat_R": 0.7285,
+  "threat_F1": 0.7204,
+  "threat_AUC": 0.9647,
+  "ms": 53.5971
+ },
+ "hybrid_v4": {
+  "n": 3182,
+  "abuse_P": 0.9523,
+  "abuse_R": 0.4761,
+  "abuse_F1": 0.6348,
+  "abuse_AUC": 0.9372,
+  "threat_P": 0.5185,
+  "threat_R": 0.19,
+  "threat_F1": 0.2781,
+  "threat_AUC": 0.9159,
+  "ms": 54.5485
+ },
+ "nli": {
+  "n": 3182,
+  "abuse_P": 0.8453,
+  "abuse_R": 0.6653,
+  "abuse_F1": 0.7446,
+  "abuse_AUC": 0.8654,
+  "threat_P": 0.6744,
+  "threat_R": 0.3937,
+  "threat_F1": 0.4971,
+  "threat_AUC": 0.9099,
+  "ms": 117.0472
+ },
+ "hybrid_v4_tb": {
+  "n": 3182,
+  "abuse_P": 0.9502,
+  "abuse_R": 0.4893,
+  "abuse_F1": 0.6459,
+  "abuse_AUC": 0.9372,
+  "threat_P": 0.6111,
+  "threat_R": 0.3484,
+  "threat_F1": 0.4438,
+  "threat_AUC": 0.9159,
+  "ms": 56.0142
+ },
+ "hybrid_unb_tb": {
+  "n": 3182,
+  "abuse_P": 0.962,
+  "abuse_R": 0.7399,
+  "abuse_F1": 0.8364,
+  "abuse_AUC": 0.9666,
+  "threat_P": 0.6375,
+  "threat_R": 0.724,
+  "threat_F1": 0.678,
+  "threat_AUC": 0.9574,
+  "ms": 58.233
+ }
+}
