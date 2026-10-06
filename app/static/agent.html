@@ -11,10 +11,11 @@
 </main>
 <script>
 const q=new URLSearchParams(location.search), room=q.get('room')||'demo';document.getElementById('roomtag').textContent='room '+room;
-const proto=location.protocol==='https:'?'wss':'ws';let ws,ctx,tPlay=0,hiddenN=0,prot='shield';
+const proto=location.protocol==='https:'?'wss':'ws';let ws,ctx,gain,tPlay=0,hiddenN=0,prot='shield',listenOn=true;
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='listen'){listenOn=e.data.on;if(gain)gain.gain.value=listenOn?1:0}});
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 function join(){
-  ctx=new AudioContext({sampleRate:16000});tPlay=ctx.currentTime+0.1;
+  ctx=new AudioContext({sampleRate:16000});gain=ctx.createGain();gain.gain.value=listenOn?1:0;gain.connect(ctx.destination);tPlay=ctx.currentTime+0.1;
   ws=new WebSocket(`${proto}://${location.host}/ws/agent/${room}`);ws.binaryType='arraybuffer';
   ws.onopen=()=>{document.getElementById('state').textContent='connected · caller audio delayed for protection';ws.send(JSON.stringify({type:'protection',value:prot}))};
   ws.onmessage=e=>{if(typeof e.data!=='string'){play(e.data);return}const m=JSON.parse(e.data);
@@ -24,11 +25,12 @@ function join(){
     if(m.type==='alert'){const a=document.createElement('div');a.className='alert';a.textContent=m.label==='self_harm'?'⚠ Caller expressed self-harm intent — supervisor and crisis protocol notified.':'⚠ Threat detected — supervisor notified. You may end the call.';document.getElementById('alerts').prepend(a)}
     if(m.type==='reset'){document.getElementById('cards').innerHTML='';document.getElementById('alerts').innerHTML='';hiddenN=0;document.getElementById('hidden').textContent='';tPlay=ctx.currentTime+0.1}
     if(m.type==='card')card(m);if(m.type==='end_call_ack'){document.getElementById('state').textContent='end-of-call request sent to supervisor'}
-    if(m.type==='ended')document.getElementById('state').textContent='call ended'};
+    if(m.type==='ended')document.getElementById('state').textContent='call ended';
+    if(m.type==='compare_ready'&&parent!==window)parent.postMessage({type:'compare_ready',session:m.session},'*')};
   document.getElementById('join').disabled=true;
 }
 function play(buf){const pcm=new Int16Array(buf);const b=ctx.createBuffer(1,pcm.length,16000);const ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
-  const s=ctx.createBufferSource();s.buffer=b;s.connect(ctx.destination);tPlay=Math.max(tPlay,ctx.currentTime+0.05);s.start(tPlay);tPlay+=b.duration}
+  const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);tPlay=Math.max(tPlay,ctx.currentTime+0.05);s.start(tPlay);tPlay+=b.duration}
 function card(m){const d=document.createElement('div');d.className='card';
   const slots=Object.entries(m.slots||{}).flatMap(([k,v])=>v.map(x=>`<span>${esc(k)}: ${esc(x)}</span>`)).join('');
   const lbl=m.route==='PASS'?'Caller':(m.route==='CALM'?'Calm rendering':'Calm rendering · safety alert');
@@ -37,7 +39,11 @@ function card(m){const d=document.createElement('div');d.className='card';
    ${m.abuse_types&&m.abuse_types.length&&m.route!=='PASS'?`<span class="muted"> · hidden: ${m.abuse_types.filter(x=>x!=='mild').join(', ')}</span>`:''}</div>
    <p style="margin:8px 0 4px;font-size:16px">${esc(text)}</p><div class="chips">${m.route!=='PASS'?slots:''}</div>`;
   document.getElementById('cards').prepend(d);
-  if(prot==='calm_voice'&&'speechSynthesis' in window){const u=new SpeechSynthesisUtterance(text);u.rate=1.0;speechSynthesis.speak(u)}}
+  if(prot==='calm_voice')speak(text)}
+async function speak(text){ // Google TTS (Gemini) via the server; browser voice only as a fallback
+  try{const r=await fetch('/api/tts?text='+encodeURIComponent(text));if(r.ok){const b=await r.arrayBuffer();const buf=await ctx.decodeAudioData(b);
+      const s=ctx.createBufferSource();s.buffer=buf;s.connect(gain);s.start();return}}catch(e){}
+  if('speechSynthesis' in window&&listenOn){const u=new SpeechSynthesisUtterance(text);speechSynthesis.speak(u)}}
 document.getElementById('join').onclick=join;
 document.getElementById('prot').onchange=e=>{prot=e.target.value;ws&&ws.send(JSON.stringify({type:'protection',value:prot}))};
 document.getElementById('endreq').onclick=()=>ws&&ws.send(JSON.stringify({type:'end_call_request'}));

@@ -10,7 +10,8 @@
 const q=new URLSearchParams(location.search), room=q.get('room')||'demo';
 document.getElementById('roomtag').textContent='room '+room;
 const proto=location.protocol==='https:'?'wss':'ws';
-let ctx,src,node,ws,stream;
+let ctx,src,node,ws,stream,listenOn=true;
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='listen'){listenOn=e.data.on;document.querySelectorAll('audio').forEach(a=>a.muted=!listenOn)}});
 async function startMic(){
   ws=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);ws.binaryType='arraybuffer';
   await new Promise(r=>ws.onopen=r);
@@ -28,10 +29,11 @@ document.getElementById('mic').onclick=startMic;document.getElementById('stop').
 async function loadSamples(){
   const list=await (await fetch('/api/samples')).json();const box=document.getElementById('samples');
   list.forEach(s=>{const d=document.createElement('div');d.className='card sample';
-    d.innerHTML=`<div><b>${s.title}</b><p>${s.text.replace(/</g,'&lt;')}</p></div><div class="row"><audio src="/static/samples/${s.id}.wav" preload="none"></audio><button>▶ Play call</button><span class="muted"></span></div>`;
+    d.innerHTML=`<div><b>${s.title}</b><p>${s.text.replace(/</g,'&lt;')}</p><p class="muted" style="margin-top:2px">voice: ${s.voice||'macOS say (placeholder — regenerate with Gemini TTS)'}</p></div><div class="row"><audio src="/static/samples/${s.id}.wav" preload="none"></audio><button>▶ Play call</button><span class="muted"></span></div>`;
     const btn=d.querySelector('button'),st=d.querySelector('.muted'),au=d.querySelector('audio');
     btn.onclick=()=>{const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
-      setTimeout(()=>{au.currentTime=0;au.play().catch(()=>{})},150);
+      parent!==window&&parent.postMessage({type:'call_started'},'*');
+      au.muted=!listenOn;setTimeout(()=>{au.currentTime=0;au.play().catch(()=>{})},150);
       w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='progress')st.textContent=m.t.toFixed(1)+' / '+m.dur.toFixed(1)+' s';if(m.type==='done'){st.textContent='done';btn.disabled=false}}};
     box.appendChild(d)});
 }

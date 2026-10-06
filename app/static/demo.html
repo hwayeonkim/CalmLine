@@ -1,4 +1,35 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — split screen</title><link rel="stylesheet" href="/static/style.css"></head>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — split screen</title><link rel="stylesheet" href="/static/style.css">
+<style>
+.bar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 22px;border-bottom:1px solid var(--line);background:var(--panel)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;border-radius:0;padding:6px 12px}
+.seg button.on{background:var(--accent);color:#fff}
+#cmp{display:none;gap:16px;align-items:center;flex-wrap:wrap;padding:10px 22px;background:#eef3ec;border-bottom:1px solid var(--line)}
+#cmp audio{height:32px}
+.split{height:calc(100vh - 150px)}
+</style></head>
 <body><header><h1>CalmLine</h1><span class="tag">Left: the caller · Right: the agent</span></header>
+<div class="bar"><b>Listen to</b>
+  <div class="seg" id="seg"><button data-v="agent" class="on">Agent (protected)</button><button data-v="caller">Caller (original)</button><button data-v="both">Both</button></div>
+  <span class="muted">Steps: ① <b>Join call</b> on the right ② <b>Play call</b> on the left ③ compare before/after when it ends</span></div>
+<div id="cmp"><b>Before / after</b>
+  <span>Original <audio id="aOrig" controls preload="auto"></audio></span>
+  <span>Agent heard <audio id="aProt" controls preload="auto"></audio></span>
+  <button class="primary" id="seq">▶ Play original, then protected</button></div>
 <div class="split"><iframe id="c"></iframe><iframe id="a" allow="autoplay"></iframe></div>
-<script>const r=new URLSearchParams(location.search).get('room')||'demo';document.getElementById('c').src='/caller?embed=1&room='+r;document.getElementById('a').src='/agent?embed=1&room='+r;</script></body></html>
+<script>
+const r=new URLSearchParams(location.search).get('room')||'demo';
+const C=document.getElementById('c'),A=document.getElementById('a');
+C.src='/caller?embed=1&room='+r;A.src='/agent?embed=1&room='+r;
+let mode='agent';
+function apply(){const m={caller:mode!=='agent',agent:mode!=='caller'};
+  C.contentWindow&&C.contentWindow.postMessage({type:'listen',on:m.caller},'*');A.contentWindow&&A.contentWindow.postMessage({type:'listen',on:m.agent},'*');
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.v===mode))}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{mode=b.dataset.v;apply()});
+C.onload=apply;A.onload=apply;
+async function showCompare(){const j=await (await fetch('/api/compare/'+r)).json();if(!j.ready)return;
+  const o=document.getElementById('aOrig'),p=document.getElementById('aProt');o.src=j.original+'?t='+Date.now();p.src=j.protected+'?t='+Date.now();
+  document.getElementById('cmp').style.display='flex'}
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='compare_ready')setTimeout(showCompare,300);if(e.data&&e.data.type==='call_started')document.getElementById('cmp').style.display='none'});
+document.getElementById('seq').onclick=()=>{mode='agent';apply();const o=document.getElementById('aOrig'),p=document.getElementById('aProt');
+  p.pause();o.currentTime=0;o.play();o.onended=()=>{p.currentTime=0;setTimeout(()=>p.play(),600);o.onended=null}};
+</script></body></html>

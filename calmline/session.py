@@ -157,4 +157,10 @@ class CallSession:
     def save_evidence(self):
         import soundfile as sf
         sf.write(os.path.join(self.evidence_dir, "caller_original.wav"), self.audio, SR)
+        # what the agent heard (Shield mode), saved for the demo's before/after comparison
+        prot = self.s.protection
+        self.s.protection = "shield"
+        heard = self.render_playback(0.0, len(self.audio) / SR)
+        self.s.protection = prot
+        sf.write(os.path.join(self.evidence_dir, "agent_heard.wav"), heard, SR)
         json.dump(dict(mutes=self.mutes, cards=self.cards, audit=self.audit), open(os.path.join(self.evidence_dir, "session.json"), "w"), indent=1)

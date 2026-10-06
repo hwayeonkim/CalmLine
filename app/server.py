@@ -19,7 +19,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from calmline.session import CallSession, Settings, SR
@@ -50,9 +50,12 @@ def pipeline():
     return PIPE
 
 
+EVIDENCE = os.path.join(os.path.dirname(ROOT), "evidence")
+
+
 def new_session():
     p = pipeline()
-    return CallSession(p, p.detector, Settings(delay_s=float(os.getenv("CALMLINE_DELAY", "2.0"))))
+    return CallSession(p, p.detector, Settings(delay_s=float(os.getenv("CALMLINE_DELAY", "2.0"))), evidence_dir=EVIDENCE)
 
 
 def room(name):
@@ -96,6 +99,37 @@ def agent():
 def samples():
     path = os.path.join(ROOT, "static", "samples", "samples.json")
     return JSONResponse(json.load(open(path)) if os.path.exists(path) else [])
+
+
+@app.get("/api/compare/{name}")
+def compare(name: str):
+    """Demo only: original vs. what the agent heard, for the last finished call in the room.
+    (In production the original is sealed and only a supervisor can open it.)"""
+    r = ROOMS.get(name)
+    sid = r and r.get("last_done")
+    if not sid:
+        return JSONResponse({"ready": False})
+    return {"ready": True, "session": sid, "original": f"/api/evidence/{sid}/caller_original.wav",
+            "protected": f"/api/evidence/{sid}/agent_heard.wav"}
+
+
+@app.get("/api/evidence/{sid}/{fname}")
+def evidence(sid: str, fname: str):
+    if fname not in ("caller_original.wav", "agent_heard.wav") or not sid.isalnum():
+        return Response(status_code=404)
+    return FileResponse(os.path.join(EVIDENCE, sid, fname), media_type="audio/wav")
+
+
+@app.get("/api/tts")
+def tts(text: str):
+    from calmline import tts as T
+    try:
+        wav = T.synthesize(text[:600])
+    except Exception as e:
+        return JSONResponse({"error": str(e)[:200]}, status_code=502)
+    if wav is None:
+        return JSONResponse({"error": "no Google TTS backend configured (set GEMINI_API_KEY)"}, status_code=501)
+    return Response(wav, media_type="audio/wav")
 
 
 @app.get("/api/health")
@@ -172,7 +206,8 @@ async def ws_caller(ws: WebSocket, name: str):
     for e in events:
         await broadcast(r, e)
     s.closed = True
-    s.save_evidence()
+    s.save_evidence(); r["last_done"] = s.id
+    await broadcast(r, {"type": "compare_ready", "session": s.id})
 
 
 @app.websocket("/ws/agent/{name}")
@@ -223,5 +258,6 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
         except Exception:
             pass
     s.closed = True
-    s.save_evidence()
-    await ws.send_text(json.dumps({"type": "done"}))
+    s.save_evidence(); r["last_done"] = s.id
+    await broadcast(r, {"type": "compare_ready", "session": s.id})
+    await ws.send_text(json.dumps({"type": "done", "session": s.id}))
