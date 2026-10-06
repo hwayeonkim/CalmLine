@@ -17,7 +17,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 0.6212079997567344,
+  "latency": 0.20754100114572793,
   "delivered": "Hi, I'd like to report a car parked in front of the fire hydrant at 412 Ocean Avenue in Brooklyn. It's been there since 8 this morning.",
   "residual_tox": null
  },
@@ -39,7 +39,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 45.013791999735986,
+  "latency": 0.1585830013937084,
   "delivered": "Yes hello, my upstairs neighbor in apartment 5B has been playing music since midnight. I have work at six.",
   "residual_tox": null
  },
@@ -61,7 +61,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 43.4529999993174,
+  "latency": 0.20491600116656628,
   "delivered": "This is the fourth time I'm calling about the heat. We have had no heat at 1520 Grand Concourse since Friday and it's 40 degrees outside.",
   "residual_tox": null
  },
@@ -83,7 +83,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 35.72162499949627,
+  "latency": 0.18720900152402464,
   "delivered": "I am extremely frustrated. Nobody has picked up our recycling on Bergen Street in three weeks. I want a supervisor to call me back.",
   "residual_tox": null
  },
@@ -105,7 +105,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 37.28483299983054,
+  "latency": 0.14270800056692678,
   "delivered": "there's a huge pothole at the corner of Atlantic and Flatbush, my car's tire blew out yesterday",
   "residual_tox": null
  },
@@ -127,7 +127,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 37.69575000023906,
+  "latency": 0.16970899923762772,
   "delivered": "The street light outside 88 Morningside Drive has been out for two weeks and it's really unsafe at night for the kids.",
   "residual_tox": null
  },
@@ -149,7 +149,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 46.06170799979736,
+  "latency": 0.2198330003011506,
   "delivered": "Someone is blocking my driveway at 23-15 31st Street in Astoria, it's a black Honda, plate KXR 4471. I need to get to the hospital for my dialysis.",
   "residual_tox": null
  },
@@ -171,7 +171,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 47.93762500048615,
+  "latency": 0.16816700008348562,
   "delivered": "I have called three times already, reference number 311-20871455. Water is still leaking through my bathroom ceiling.",
   "residual_tox": null
  },
@@ -195,7 +195,7 @@
   "tier": 1,
   "intent_score": 0.7944160103797913,
   "asserted": true,
-  "latency": 126.99933400017471,
+  "latency": 8.667333997436799,
   "delivered": "Hello, I'm calling to report rats or rodents in the area at 340 East 4th Street. Please note: My kids. Details: My kids are scared to walk outside.",
   "residual_tox": null
  },
@@ -217,7 +217,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 24.67841599991516,
+  "latency": 0.1816669991967501,
   "delivered": "the elevator at 1 Penn Plaza tower B has been broken for ten days and my mother uses a wheelchair, we're on the 14th floor",
   "residual_tox": null
  },
@@ -239,7 +239,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.270875000511296,
+  "latency": 0.21175000074435957,
   "delivered": "I want to know why nobody has done anything. A branch fell on Hillside Avenue near 188th Street two days ago and it's still blocking the sidewalk.",
   "residual_tox": null
  },
@@ -261,7 +261,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 55.42595800034178,
+  "latency": 0.2137079991371138,
   "delivered": "There's a homeless man sleeping in the doorway of 75 Clinton Street, he looks sick and he hasn't moved since this morning. Can someone check on him?",
   "residual_tox": null
  },
@@ -283,7 +283,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 46.97679200035054,
+  "latency": 0.2006659997277893,
   "delivered": "Your agency is failing us. The bar at 211 Bedford Avenue plays music until 4 am every weekend. I want an inspector sent this Saturday.",
   "residual_tox": null
  },
@@ -305,7 +305,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 20.835416000409168,
+  "latency": 0.11487499978102278,
   "delivered": "people keep setting off fireworks on Jamaica Avenue every single night around 1am",
   "residual_tox": null
  },
@@ -327,7 +327,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 26.326082999730716,
+  "latency": 0.16870800027390942,
   "delivered": "I'd like to check on the status of my complaint, the number is 311-19944032, it's about mold in my apartment.",
   "residual_tox": null
  },
@@ -349,7 +349,7 @@
   "tier": 1,
   "intent_score": 0.7717781066894531,
   "asserted": true,
-  "latency": 55.82145799871796,
+  "latency": 7.5362919978942955,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a traffic signal that is not working properly at Queens Boulevard and 63rd Drive. Details: The traffic light at Queens Boulevard and 63rd Drive is stuck on red in all directions.",
   "residual_tox": null
  },
@@ -373,7 +373,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 19.904042000234767,
+  "latency": 0.1492080009484198,
   "delivered": "This noise is killing me. The construction crew next door starts jackhammering at 6am on Sundays.",
   "residual_tox": null
  },
@@ -395,7 +395,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 19.96220799992443,
+  "latency": 0.16962500012596138,
   "delivered": "Can someone shoot me an email with the status? It's about the abandoned van on Victory Boulevard with no plates.",
   "residual_tox": null
  },
@@ -417,7 +417,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.061875000166765,
+  "latency": 0.1675000003160676,
   "delivered": "I'm dying here, it's 95 degrees and we have no water in the whole building at 600 West 162nd Street.",
   "residual_tox": null
  },
@@ -439,7 +439,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.59808300075383,
+  "latency": 0.174540999068995,
   "delivered": "Someone dumped an old mattress and a couch on the sidewalk on Fulton Street near Nostrand. It's been there a week.",
   "residual_tox": null
  },
@@ -461,7 +461,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.80441700006486,
+  "latency": 0.1356250013486715,
   "delivered": "Okay so the garbage trucks skipped Elm Place again, that's the second Tuesday in a row.",
   "residual_tox": null
  },
@@ -483,7 +483,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 20.382583999889903,
+  "latency": 0.12045899893564638,
   "delivered": "I have a question about my property tax bill, I think I was charged twice.",
   "residual_tox": null
  },
@@ -505,7 +505,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.701458000185085,
+  "latency": 0.18158300008508377,
   "delivered": "What the hell is going on with the hydrant on Bay Ridge Parkway? It's been open since noon and the street is flooding.",
   "residual_tox": null
  },
@@ -529,7 +529,7 @@
   "tier": 1,
   "intent_score": 0.8085471391677856,
   "asserted": true,
-  "latency": 39.450209000278846,
+  "latency": 6.678707999526523,
   "delivered": "Hello, I'm calling to report noise coming from vehicles at 72nd Street. Timing: for two hours straight.",
   "residual_tox": null
  },
@@ -551,7 +551,7 @@
   "tier": 1,
   "intent_score": 0.8217325210571289,
   "asserted": true,
-  "latency": 100.5277490021399,
+  "latency": 6.973665998884826,
   "delivered": "Hello, I'm calling to report a sewer backup or clogged catch basin at Seaview Avenue. Details: The catch basin on Seaview Avenue is clogged and the whole intersection floods every time it rains.",
   "residual_tox": null
  },
@@ -573,7 +573,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 35.50074999930075,
+  "latency": 0.1585000009072246,
   "delivered": "Somebody spray painted graffiti all over the front of our building at 19 Orchard Street again last night.",
   "residual_tox": null
  },
@@ -595,7 +595,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 34.95699999984936,
+  "latency": 0.22612499924434815,
   "delivered": "my landlord still hasn't fixed the broken window in my kids' bedroom, it's been a month and it's getting cold, apartment 3F at 909 Prospect Place",
   "residual_tox": null
  },
@@ -617,7 +617,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 33.58408299936855,
+  "latency": 0.17116700109909289,
   "delivered": "The sidewalk in front of 52 Harmon Street is completely cracked and my elderly neighbor tripped and broke her wrist.",
   "residual_tox": null
  },
@@ -639,7 +639,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 36.24424999998155,
+  "latency": 0.19379199875402264,
   "delivered": "I'm calling about the guys on the corner of Lenox and 125th blasting music from a speaker, it goes on past 2 in the morning.",
   "residual_tox": null
  },
@@ -661,7 +661,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 36.64679200028331,
+  "latency": 0.18770799943013117,
   "delivered": "we found roaches and mice in the kitchen, the landlord won't send an exterminator, this is unit 7D, 1400 Sheridan Avenue",
   "residual_tox": null
  },
@@ -683,7 +683,7 @@
   "tier": 1,
   "intent_score": 0.8272086977958679,
   "asserted": true,
-  "latency": 57.033707999835315,
+  "latency": 8.312166997711756,
   "delivered": "Hello, I'm calling to report a vehicle blocking my driveway at 145-20 Rockaway Boulevard. Details: There's a car parked in front of my driveway at 145-20 Rockaway Boulevard and I can't get out to work.",
   "residual_tox": 0.00040643141255714
  },
@@ -705,7 +705,7 @@
   "tier": 1,
   "intent_score": 0.7320631742477417,
   "asserted": true,
-  "latency": 63.15924899990932,
+  "latency": 6.915084000866045,
   "delivered": "Hello, I'm calling to report no heat or hot water in my building at 2700 Ocean Parkway. I have contacted you before (Third call). Details: Third call this week about no hot water at 2700 Ocean Parkway and nobody gives a.",
   "residual_tox": 0.00041807765956036747
  },
@@ -727,7 +727,7 @@
   "tier": 1,
   "intent_score": 0.7565450668334961,
   "asserted": true,
-  "latency": 71.51837500077818,
+  "latency": 7.68758300182526,
   "delivered": "Hello, I'm calling to report rats or rodents in the area at Mott Street. I'm asking you to please get somebody out here. Details: The rats on Mott Street are the size of cats.",
   "residual_tox": 0.13548973202705383
  },
@@ -749,7 +749,7 @@
   "tier": 1,
   "intent_score": 0.7966666221618652,
   "asserted": true,
-  "latency": 104.31145899929106,
+  "latency": 7.0986670016282005,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 4A and 310 Lefferts Avenue. Timing: at 3am. Details: My upstairs neighbor stomps around at 3am every night.",
   "residual_tox": 0.0005921845440752804
  },
@@ -773,7 +773,7 @@
   "tier": 1,
   "intent_score": 0.7764571905136108,
   "asserted": true,
-  "latency": 84.69912500095234,
+  "latency": 6.764333002138301,
   "delivered": "Hello, I'm calling to report a damaged road surface, such as a pothole at Linden Boulevard. Details: The pothole on Linden Boulevard wrecked my rim.",
   "residual_tox": 0.0007896729512140155
  },
@@ -797,7 +797,7 @@
   "tier": 1,
   "intent_score": 0.7967197299003601,
   "asserted": true,
-  "latency": 93.97787499983679,
+  "latency": 7.680999000513111,
   "delivered": "Hello, I'm calling to report a plumbing problem or water leak in my building. Timing: for two weeks. My reference is reference 311-20455617. Details: My ceiling has been leaking for two weeks.",
   "residual_tox": 0.0004031001590192318
  },
@@ -819,7 +819,7 @@
   "tier": 1,
   "intent_score": 0.6999839544296265,
   "asserted": true,
-  "latency": 60.949665999942226,
+  "latency": 7.765958000163664,
   "delivered": "Hello, I'm calling to report litter or illegally dumped trash at Livonia Avenue. Details: Some dumped construction debris all over the lot on Livonia Avenue.",
   "residual_tox": 0.3582179844379425
  },
@@ -841,7 +841,7 @@
   "tier": 1,
   "intent_score": 0.7122771143913269,
   "asserted": true,
-  "latency": 64.28379100088932,
+  "latency": 6.860833000246203,
   "delivered": "Hello, I'm calling to report illegal fireworks being set off at Gates Avenue. Timing: at 2 in the morning. Please note: my baby. Details: These set off fireworks at 2 in the morning on Gates Avenue and my baby can't sleep.",
   "residual_tox": 0.002018583472818136
  },
@@ -863,7 +863,7 @@
   "tier": 1,
   "intent_score": 0.7757933139801025,
   "asserted": true,
-  "latency": 66.55658499948913,
+  "latency": 6.727958001647494,
   "delivered": "Hello, I'm calling to report no heat or hot water in my building at apartment 2C and 1820 Walton Avenue. Timing: Since Wednesday. Please note: Three kids.",
   "residual_tox": 0.0003886449267156422
  },
@@ -885,7 +885,7 @@
   "tier": 1,
   "intent_score": 0.7369832992553711,
   "asserted": true,
-  "latency": 66.44224799947551,
+  "latency": 7.1425009991799016,
   "delivered": "Hello, I'm calling to report a street light that is out or damaged at Bay 34th. Timing: for a month. Details: The street light on Bay 34th has been out for a month and someone got mugged there last week.",
   "residual_tox": 0.0004298338608350605
  },
@@ -907,7 +907,7 @@
   "tier": 1,
   "intent_score": 0.8027626276016235,
   "asserted": true,
-  "latency": 76.20587500059628,
+  "latency": 7.112708000931889,
   "delivered": "Hello, I'm calling to report a damaged, fallen, or overgrown tree at 77 Bowne Street. Details: A dead oak is leaning over my house at 77 Bowne Street and it's gonna fall.",
   "residual_tox": 0.003479449078440666
  },
@@ -929,7 +929,7 @@
   "tier": 1,
   "intent_score": 0.7418895959854126,
   "asserted": true,
-  "latency": 82.96941699882154,
+  "latency": 7.154000999435084,
   "delivered": "Hello, I'm calling to report a missed trash, recycling, or compost pickup at Avenue J. Timing: on Thursday. Details: Sanitation skipped our bulk pickup on Thursday. It's a fridge sitting on the curb on Avenue J.",
   "residual_tox": 0.04433417320251465
  },
@@ -951,7 +951,7 @@
   "tier": 1,
   "intent_score": 0.7071319222450256,
   "asserted": true,
-  "latency": 70.79470899952867,
+  "latency": 7.002250998993986,
   "delivered": "Hello, I'm calling to report noise from a nearby business at Ludlow Street. Timing: until 5am. I have contacted you before (called five times). Details: That bar on Ludlow Street is blasting music until 5am.",
   "residual_tox": 0.0004774904518853873
  },
@@ -973,7 +973,7 @@
   "tier": 1,
   "intent_score": 0.7045120596885681,
   "asserted": true,
-  "latency": 84.23674999994546,
+  "latency": 7.0464169984916225,
   "delivered": "Hello, I'm calling to report a problem with the water supply or a fire hydrant at Kingston Avenue. Details: The hydrant on Kingston Avenue is open again. Water's everywhere.",
   "residual_tox": 0.00039192443364299834
  },
@@ -995,7 +995,7 @@
   "tier": 1,
   "intent_score": 0.8123536109924316,
   "asserted": true,
-  "latency": 61.41216599917243,
+  "latency": 7.2456249999959255,
   "delivered": "Hello, I'm calling to report a broken elevator in my building at on the ninth floor. Please note: 80 years old. Details: My elevator has been broken for three weeks and I'm 80 years old on the ninth floor.",
   "residual_tox": 0.000363360159099102
  },
@@ -1017,7 +1017,7 @@
   "tier": 1,
   "intent_score": 0.7074006795883179,
   "asserted": true,
-  "latency": 63.122999999905005,
+  "latency": 6.752332998075872,
   "delivered": "Hello, I'm calling to report an abandoned vehicle on the street at Coney Island Avenue. Details: I've reported this abandoned car on Coney Island Avenue four times.",
   "residual_tox": 0.0005600588629022241
  },
@@ -1039,7 +1039,7 @@
   "tier": 1,
   "intent_score": 0.7154425382614136,
   "asserted": true,
-  "latency": 96.70358400126133,
+  "latency": 6.712999000228592,
   "delivered": "Hello, I'm calling to report a repair problem inside my apartment that the landlord has not fixed at apartment 6E. Timing: in a month. Details: My kitchen ceiling is falling down. And nobody has come in a month.",
   "residual_tox": 0.0003831434587482363
  },
@@ -1061,7 +1061,7 @@
   "tier": 1,
   "intent_score": 0.7032111883163452,
   "asserted": true,
-  "latency": 70.72391699966829,
+  "latency": 6.6984170025534695,
   "delivered": "Hello, I'm calling to report a traffic signal that is not working properly at Broadway and 96th. Details: The traffic light at Broadway and 96th is out.",
   "residual_tox": 0.00038604059955105186
  },
@@ -1083,7 +1083,7 @@
   "tier": 1,
   "intent_score": 0.7867659330368042,
   "asserted": true,
-  "latency": 67.67808300082834,
+  "latency": 6.510456998512382,
   "delivered": "Hello, I'm calling to report a sewer backup or clogged catch basin at 41 Jewel Street. Details: I said the sewer is backing up into my basement at 41 Jewel Street.",
   "residual_tox": 0.0008956937817856669
  },
@@ -1105,7 +1105,7 @@
   "tier": 1,
   "intent_score": 0.7114571332931519,
   "asserted": true,
-  "latency": 58.58066800101369,
+  "latency": 6.478958997831796,
   "delivered": "Hello, I'm calling to report unsanitary conditions in my apartment, such as pests or mold. Timing: all day. Details: Sit there all day doing nothing while the mold in my bathroom spreads.",
   "residual_tox": 0.0008257474983111024
  },
@@ -1127,7 +1127,7 @@
   "tier": 1,
   "intent_score": 0.7401174306869507,
   "asserted": true,
-  "latency": 70.05620800009638,
+  "latency": 6.840042002295377,
   "delivered": "Hello, I'm calling to report a vehicle that is parked illegally at Second Avenue and 34th Street. Details: The parked truck is blocking the bike lane on Second Avenue at 34th Street right now.",
   "residual_tox": 0.0004302509769331664
  },
@@ -1149,7 +1149,7 @@
   "tier": 1,
   "intent_score": 0.7328593134880066,
   "asserted": true,
-  "latency": 74.83816800049681,
+  "latency": 6.957499999771244,
   "delivered": "Hello, I'm calling to report graffiti that needs to be removed at 600 Grand Street. Details: I just need to report graffiti on the wall at 600 Grand Street.",
   "residual_tox": 0.0019301018910482526
  },
@@ -1171,7 +1171,7 @@
   "tier": 1,
   "intent_score": 0.8247672319412231,
   "asserted": true,
-  "latency": 70.61987599900021,
+  "latency": 6.718709999404382,
   "delivered": "Hello, I'm calling to report a person experiencing homelessness who may need assistance at Manhattan. Details: There's a homeless encampment under the Manhattan Bridge entrance and it's growing.",
   "residual_tox": 0.00043536629527807236
  },
@@ -1196,7 +1196,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 88.2311249997656,
+  "latency": 0.19854099991789553,
   "delivered": "God, you're so slow. The street sign... no, the street LIGHT, on Wyckoff Avenue is flickering. Write it down, genius.",
   "residual_tox": 0.21507984399795532
  },
@@ -1220,7 +1220,7 @@
   "tier": 1,
   "intent_score": 0.6789498329162598,
   "asserted": true,
-  "latency": 61.95495900010428,
+  "latency": 6.938041999092093,
   "delivered": "Hello, I'm calling to report noise from a nearby business at Myrtle Avenue. Details: Not my neighbor.",
   "residual_tox": 0.0005142480367794633
  },
@@ -1242,7 +1242,7 @@
   "tier": 1,
   "intent_score": 0.7702852487564087,
   "asserted": true,
-  "latency": 41.61920899969118,
+  "latency": 6.348500999592943,
   "delivered": "Hello, I'm calling to report a broken sidewalk or curb at 1010 Kings Highway. Timing: for a year.",
   "residual_tox": 0.0006379918195307255
  },
@@ -1264,7 +1264,7 @@
   "tier": 1,
   "intent_score": 0.8367027044296265,
   "asserted": true,
-  "latency": 47.17441699995106,
+  "latency": 6.61187500008964,
   "delivered": "Hello, I'm calling to report no heat or hot water in my building at apartment 1R and 455 Park Place.",
   "residual_tox": 0.0004619960964191705
  },
@@ -1286,7 +1286,7 @@
   "tier": 1,
   "intent_score": 0.6333819627761841,
   "asserted": true,
-  "latency": 81.07279199975892,
+  "latency": 6.9338749981398,
   "delivered": "Hello, I'm calling to report an abandoned vehicle on the street at Remsen Street. The vehicle involved: The car. Timing: since June. Details: That's what you all are. The car with flat tires has been on Remsen Street since June.",
   "residual_tox": 0.0011311310809105635
  },
@@ -1308,7 +1308,7 @@
   "tier": 1,
   "intent_score": 0.8572878837585449,
   "asserted": true,
-  "latency": 38.89812399938819,
+  "latency": 6.6854570013674675,
   "delivered": "Hello, I'm calling to report a vehicle blocking my driveway at Ridgewood Avenue. The vehicle involved: a car.",
   "residual_tox": 0.0005323051009327173
  },
@@ -1330,7 +1330,7 @@
   "tier": 1,
   "intent_score": 0.7546679973602295,
   "asserted": true,
-  "latency": 58.319709000898,
+  "latency": 6.62420900152938,
   "delivered": "Hello, I'm calling to report a damaged road surface, such as a pothole at Metropolitan Avenue. Details: The pothole is on Metropolitan Avenue near Union.",
   "residual_tox": 0.000845302187371999
  },
@@ -1352,7 +1352,7 @@
   "tier": 1,
   "intent_score": 0.7539501786231995,
   "asserted": true,
-  "latency": 57.46100199939974,
+  "latency": 6.429876000765944,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 9C. Details: I want to report noise from upstairs.",
   "residual_tox": 0.00045593042159453034
  },
@@ -1376,7 +1376,7 @@
   "tier": 1,
   "intent_score": 0.6458118557929993,
   "asserted": true,
-  "latency": 39.06799899868929,
+  "latency": 6.3433750001422595,
   "delivered": "Hello, I'm calling to report a broken elevator in my building at 33 Tiffany Place.",
   "residual_tox": 0.0005324733792804182
  },
@@ -1398,7 +1398,7 @@
   "tier": 1,
   "intent_score": 0.7271887063980103,
   "asserted": true,
-  "latency": 75.53854200159549,
+  "latency": 6.890209000630421,
   "delivered": "Hello, I'm calling to report rats or rodents in the area at 80 Dekalb Avenue. Details: They're behind 80 Dekalb Avenue.",
   "residual_tox": 0.02440732531249523
  },
@@ -1420,7 +1420,7 @@
   "tier": 1,
   "intent_score": 0.7373783588409424,
   "asserted": true,
-  "latency": 47.863416998552566,
+  "latency": 6.6045839976141,
   "delivered": "Hello, I'm calling to report a traffic signal that is not working properly at Church Avenue.",
   "residual_tox": 0.0007136796484701335
  },
@@ -1444,7 +1444,7 @@
   "tier": 1,
   "intent_score": 0.6882975101470947,
   "asserted": true,
-  "latency": 57.927207000830094,
+  "latency": 6.522374997075531,
   "delivered": "Hello, I'm calling to report a plumbing problem or water leak in my building. Details: My place and I'll show you the leak in my bedroom.",
   "residual_tox": 0.0004762910248246044
  },
@@ -1466,7 +1466,7 @@
   "tier": 1,
   "intent_score": 0.6447917819023132,
   "asserted": true,
-  "latency": 45.80970699953468,
+  "latency": 6.4725409993116045,
   "delivered": "Hello, I'm calling to report graffiti that needs to be removed at Troutman Street.",
   "residual_tox": 0.038533080369234085
  },
@@ -1490,7 +1490,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.502374999756285,
+  "latency": 0.14191700029186904,
   "delivered": "Can I speak to someone who speaks real English? The sewer drain on 101st Avenue is clogged.",
   "residual_tox": 0.011489607393741608
  },
@@ -1512,7 +1512,7 @@
   "tier": 1,
   "intent_score": 0.6328885555267334,
   "asserted": true,
-  "latency": 41.32087399921147,
+  "latency": 6.301999001152581,
   "delivered": "Hello, I'm calling to report no heat or hot water in my building at 2240 Valentine Avenue.",
   "residual_tox": 0.000493992876727134
  },
@@ -1534,7 +1534,7 @@
   "tier": 1,
   "intent_score": 0.6903427839279175,
   "asserted": true,
-  "latency": 61.305082000217226,
+  "latency": 6.7025400003331015,
   "delivered": "Hello, I'm calling to report an abandoned vehicle on the street. Details: Can't even spell Flatlands Avenue. There's an abandoned truck there.",
   "residual_tox": 0.0004649616312235594
  },
@@ -1556,7 +1556,7 @@
   "tier": 1,
   "intent_score": 0.7664673924446106,
   "asserted": true,
-  "latency": 35.099293001621845,
+  "latency": 6.814083000790561,
   "delivered": "Hello, I'm calling to report a broken elevator in my building at 30 Lincoln Road.",
   "residual_tox": 0.0005558358388952911
  },
@@ -1578,7 +1578,7 @@
   "tier": 1,
   "intent_score": 0.6881904006004333,
   "asserted": true,
-  "latency": 136.59033399926557,
+  "latency": 8.852209000906441,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 3R and 1135 Eastern Parkway. Timing: at 2am and at 8. Please note: my wife and pregnant and. I have contacted you before (called 311 six times). I'm asking you to please the police there tonight. Details: I have called 311 six times about my upstairs neighbor at 1135 Eastern Parkway apartment 3R. They run a washing machine and bang on the floor at 2am. My wife is pregnant and has a doctor's appointment at 8. And nobody ever comes.",
   "residual_tox": 0.0017572245560586452
  },
@@ -1600,7 +1600,7 @@
   "tier": 1,
   "intent_score": 0.6766091585159302,
   "asserted": true,
-  "latency": 265.2698750007403,
+  "latency": 8.177918000001227,
   "delivered": "Hello, I'm calling to report a problem with the water supply or a fire hydrant at Hylan Boulevard. Timing: at like 7am. Please note: elderly and. I have contacted you before (on hold for forty minutes). Details: The water main on Hylan Boulevard broke at like 7am. There's water up to the curb. My basement is flooding. My neighbor at 4410 is elderly and can't get out. And you put me on hold for forty minutes.",
   "residual_tox": 0.0004388103843666613
  },
@@ -1622,7 +1622,7 @@
   "tier": 1,
   "intent_score": 0.7178663015365601,
   "asserted": true,
-  "latency": 146.05300100174645,
+  "latency": 7.580249999591615,
   "delivered": "Hello, I'm calling to report a vehicle that is parked illegally at Court Street. The vehicle involved: a commercial van. Timing: every single day. My reference is Reference number 311-21003378. Details: I got a ticket for parking on Court Street when the sign said I could park there. And now there's a commercial van double parked in the same spot every single day and nobody tickets him.",
   "residual_tox": 0.0003918667498510331
  },
@@ -1644,7 +1644,7 @@
   "tier": 1,
   "intent_score": 0.7237638235092163,
   "asserted": true,
-  "latency": 150.1409179991242,
+  "latency": 8.052832999965176,
   "delivered": "Hello, I'm calling to report no heat or hot water in my building at on the third floor and 2015 Davidson Avenue. Timing: since Monday and for 2 weeks. Please note: four kids and disabled woman. Details: Our building at 2015 Davidson Avenue has no gas for cooking for 2 weeks. And the super won't answer. There are four kids and a disabled woman on the third floor.",
   "residual_tox": 0.0023924512788653374
  },
@@ -1666,7 +1666,7 @@
   "tier": 1,
   "intent_score": 0.7460091710090637,
   "asserted": true,
-  "latency": 148.25049999944895,
+  "latency": 8.16429199949198,
   "delivered": "Hello, I'm calling to report a damaged, fallen, or overgrown tree at Ditmars Boulevard. Timing: last night. I'm asking you to please Get Con Ed. Details: The tree on Ditmars Boulevard came down in the storm last night. It's on top of a parked Toyota and the power line is hanging. Get Con Ed and the parks people out here.",
   "residual_tox": 0.0007700887508690357
  },
@@ -1690,7 +1690,7 @@
   "tier": 1,
   "intent_score": 0.6119849681854248,
   "asserted": true,
-  "latency": 95.64283400050044,
+  "latency": 7.17024999721616,
   "delivered": "Hello, I'm calling to report a sewer backup or clogged catch basin at 88-10 Merrick Boulevard. Timing: every night. Details: The restaurant dumps their grease in the storm drain every night after closing.",
   "residual_tox": 0.0015721784438937902
  },
@@ -1714,7 +1714,7 @@
   "tier": 1,
   "intent_score": 0.8130037784576416,
   "asserted": true,
-  "latency": 128.901250999661,
+  "latency": 7.048582998322672,
   "delivered": "Hello, I'm calling to report a plumbing problem or water leak in my building at apartment 2L and 230 Stanhope Street. Timing: since saturday. Please note: 6 people. Details: My toilet's broken since saturday. 1 bathroom 6 people.",
   "residual_tox": 0.0004314693796914071
  },
@@ -1736,7 +1736,7 @@
   "tier": 3,
   "intent_score": 0.5772680640220642,
   "asserted": false,
-  "latency": 131.5896240002985,
+  "latency": 7.2617080022610025,
   "delivered": "Hello, I'm calling to ask about an issue that may not fit a standard category at 401 Saint Nicholas Avenue. Timing: from 7am. Details: The guy at 401 Saint Nicholas Avenue has been running an illegal body shop on the sidewalk. Cars blocking the hydrant. Loud compressors from 7am.",
   "residual_tox": 0.0006817049579694867
  },
@@ -1760,7 +1760,7 @@
   "tier": 3,
   "intent_score": 0.5959333777427673,
   "asserted": false,
-  "latency": 39.71666599954915,
+  "latency": 6.515832999866689,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to ask about an issue that may not fit a standard category. Timing: tonight.",
   "residual_tox": 0.00041937350761145353
  },
@@ -1784,7 +1784,7 @@
   "tier": 1,
   "intent_score": 0.7088190317153931,
   "asserted": true,
-  "latency": 42.41358299896092,
+  "latency": 5.666457998813712,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a noise problem from a neighboring apartment.",
   "residual_tox": 0.0004613287455867976
  },
@@ -1806,7 +1806,7 @@
   "tier": 1,
   "intent_score": 0.6758562326431274,
   "asserted": true,
-  "latency": 112.89337500056718,
+  "latency": 6.400166999810608,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 6D. Details: He's blasting music again in 6D.",
   "residual_tox": 0.0005031583132222295
  },
@@ -1828,7 +1828,7 @@
   "tier": 1,
   "intent_score": 0.7112342715263367,
   "asserted": true,
-  "latency": 52.400249999664084,
+  "latency": 6.423917999200057,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a damaged road surface, such as a pothole at Rockaway Parkway.",
   "residual_tox": 0.0006267423159442842
  },
@@ -1850,7 +1850,7 @@
   "tier": 3,
   "intent_score": 0.5080131888389587,
   "asserted": false,
-  "latency": 40.986541000165744,
+  "latency": 6.091791998187546,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to ask about an issue that may not fit a standard category.",
   "residual_tox": 0.0004083734820596874
  },
@@ -1872,7 +1872,7 @@
   "tier": 1,
   "intent_score": 0.6827815771102905,
   "asserted": true,
-  "latency": 37.03874999882828,
+  "latency": 5.811414999698172,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a broken elevator in my building.",
   "residual_tox": 0.000460469804238528
  },
@@ -1894,7 +1894,7 @@
   "tier": 1,
   "intent_score": 0.666199803352356,
   "asserted": true,
-  "latency": 56.73058299908007,
+  "latency": 7.078666998495464,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report litter or illegally dumped trash. Details: The guy who keeps dumping trash on my lot.",
   "residual_tox": 0.6653576493263245
  },
@@ -1920,7 +1920,7 @@
   "tier": 1,
   "intent_score": 0.6651593446731567,
   "asserted": true,
-  "latency": 66.23829000000114,
+  "latency": 6.594208998649265,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a vehicle blocking my driveway. The vehicle involved: that car. Timing: in an hour. Details: Come for you.",
   "residual_tox": 0.00048204450285993516
  },
@@ -1942,7 +1942,7 @@
   "tier": 3,
   "intent_score": 0.5299621820449829,
   "asserted": false,
-  "latency": 72.29895900127303,
+  "latency": 6.271791999097331,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to ask about an issue that may not fit a standard category. Details: Nobody ignores me.",
   "residual_tox": 0.0004056774196214974
  },
@@ -1968,7 +1968,7 @@
   "tier": 1,
   "intent_score": 0.7287071347236633,
   "asserted": true,
-  "latency": 88.74408400060929,
+  "latency": 6.544001000293065,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a vehicle that is parked illegally. Details: Maybe it'll be you.",
   "residual_tox": 0.0006935145356692374
  },
@@ -1990,7 +1990,7 @@
   "tier": 3,
   "intent_score": 0.5986547470092773,
   "asserted": false,
-  "latency": 86.69716699932906,
+  "latency": 6.729875000019092,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to ask about an issue that may not fit a standard category. Details: I can't do this anymore. No heat. Nobody helps.",
   "residual_tox": 0.00039023393765091896
  },
@@ -2014,7 +2014,7 @@
   "tier": 1,
   "intent_score": 0.6289162039756775,
   "asserted": true,
-  "latency": 49.88095799944858,
+  "latency": 7.058375002088724,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a plumbing problem or water leak in my building. Details: I have nowhere to go.",
   "residual_tox": 0.0004317664715927094
  },
@@ -2036,7 +2036,7 @@
   "tier": 1,
   "intent_score": 0.7005492448806763,
   "asserted": true,
-  "latency": 52.68520799927501,
+  "latency": 6.223334001333569,
   "delivered": "Hello, I'm calling to report litter or illegally dumped trash at Union Street. Timing: for a week. Details: Bags piled up for a week on Union Street.",
   "residual_tox": null
  },
@@ -2058,7 +2058,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 18.80845799951203,
+  "latency": 0.11866699969687033,
   "delivered": "My neighbor's dog was barking so loud I thought it would wake the dead.",
   "residual_tox": null
  },
@@ -2080,7 +2080,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 20.112000000153785,
+  "latency": 0.13016599950788077,
   "delivered": "Can you kill the request I made earlier? The car moved. Reference 311-20999141.",
   "residual_tox": null
  },
@@ -2102,7 +2102,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.823291999680805,
+  "latency": 0.1332080009888159,
   "delivered": "That intersection at Fordham Road is a deathtrap, the walk signal doesn't work at all.",
   "residual_tox": null
  },
@@ -2124,7 +2124,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.760458999779075,
+  "latency": 0.13404200035438407,
   "delivered": "The rats are going to eat us alive, they chewed through the wall in my kitchen.",
   "residual_tox": null
  },
@@ -2148,7 +2148,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.961250000065775,
+  "latency": 0.14404200010176282,
   "delivered": "We're freezing to death in here, the boiler's been broken since Sunday at 18 Kossuth Place.",
   "residual_tox": null
  },
@@ -2170,7 +2170,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 26.16737500011368,
+  "latency": 0.1447909999114927,
   "delivered": "The drilling is driving me crazy, they're doing construction with no permit at 230 Kent Avenue.",
   "residual_tox": null
  },
@@ -2192,7 +2192,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 27.07479200034868,
+  "latency": 0.1181659990834305,
   "delivered": "Is this the right number to complain about a taxi driver who was rude to me?",
   "residual_tox": null
  },
@@ -2214,7 +2214,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 27.001832999303588,
+  "latency": 0.11920900033146609,
   "delivered": "I need to renew my parking permit for disabled drivers, where do I do that?",
   "residual_tox": null
  },
@@ -2239,7 +2239,7 @@
   "tier": 1,
   "intent_score": 0.7065229415893555,
   "asserted": true,
-  "latency": 41.63387399967178,
+  "latency": 6.965041999137611,
   "delivered": "Hello, I'm calling to report rats or rodents in the area at Knickerbocker Avenue.",
   "residual_tox": null
  },
@@ -2261,7 +2261,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.206000000347558,
+  "latency": 0.18079199981002603,
   "delivered": "yeah hi theres a car been sitting on bushwick avenue for like three months no plates flat tires somebody needs to tow it",
   "residual_tox": null
  },
@@ -2285,7 +2285,7 @@
   "tier": 1,
   "intent_score": 0.8133415579795837,
   "asserted": true,
-  "latency": 36.71787500024948,
+  "latency": 6.795792000048095,
   "delivered": "Hello, I'm calling to report a problem with the water supply or a fire hydrant at 1250 jerome avenue. Timing: since this morning.",
   "residual_tox": 0.0009016970871016383
  },
@@ -2307,7 +2307,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.735957999633683,
+  "latency": 0.12887500088254455,
   "delivered": "hi um the street light on 3rd avenue and 149th street is out its really dark",
   "residual_tox": null
  },
@@ -2329,7 +2329,7 @@
   "tier": 1,
   "intent_score": 0.7921384572982788,
   "asserted": true,
-  "latency": 65.73824900078762,
+  "latency": 6.2602910002169665,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 2B. Details: I told you already the noise is from apartment 2B.",
   "residual_tox": 0.00042499357368797064
  },
@@ -2353,7 +2353,7 @@
   "tier": 1,
   "intent_score": 0.7882112264633179,
   "asserted": true,
-  "latency": 37.41087500111462,
+  "latency": 5.9912489996349905,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report noise from a nearby business. Timing: 4 in the morning.",
   "residual_tox": 0.00044935866026207805
  },
@@ -2375,7 +2375,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.5324169998421,
+  "latency": 0.1323749984294409,
   "delivered": "so the sewer smell on castle hill avenue is unbearable its coming up from the drain",
   "residual_tox": null
  },
@@ -2397,7 +2397,7 @@
   "tier": 1,
   "intent_score": 0.6692690253257751,
   "asserted": true,
-  "latency": 61.5394179994837,
+  "latency": 6.754041998647153,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at 1905 bathgate avenue. Details: Just send the cops to 1905 bathgate avenue theyre fighting in the hallway.",
   "residual_tox": 0.0005105897434987128
  },
@@ -2419,7 +2419,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 27.2310420004942,
+  "latency": 0.12137500016251579,
   "delivered": "theres a fallen tree blocking the whole road on forest hill road staten island",
   "residual_tox": null
  },
@@ -2441,7 +2441,7 @@
   "tier": 1,
   "intent_score": 0.7108492851257324,
   "asserted": true,
-  "latency": 110.1847079999061,
+  "latency": 7.072875001540524,
   "delivered": "Hello, I'm calling to report a repair problem inside my apartment that the landlord has not fixed at 501 West 135th Street. Details: The landlord at 501 West 135th Street won't fix the broken front door lock. Anybody can walk in.",
   "residual_tox": 0.0004656544479075819
  },
@@ -2465,7 +2465,7 @@
   "tier": 1,
   "intent_score": 0.7926346063613892,
   "asserted": true,
-  "latency": 47.98004199983552,
+  "latency": 6.983334998949431,
   "delivered": "Hello, I'm calling to report an abandoned vehicle on the street at Eldert Lane. Details: The actual abandoned car on Eldert Lane is still there.",
   "residual_tox": 0.0005564671591855586
  },
@@ -2489,7 +2489,7 @@
   "tier": 1,
   "intent_score": 0.6443638801574707,
   "asserted": true,
-  "latency": 36.33862500100804,
+  "latency": 6.47170900083438,
   "delivered": "Hello, I'm calling to report a broken elevator in my building at apartment 11G. I have contacted you before (call number seven).",
   "residual_tox": null
  },
@@ -2513,7 +2513,7 @@
   "tier": 1,
   "intent_score": 0.6477108001708984,
   "asserted": true,
-  "latency": 73.25000099899626,
+  "latency": 7.613790996401804,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at 2019 Bedford Avenue. Timing: every night. Details: These next door have a party every night with a DJ. It's insane.",
   "residual_tox": 0.2480650693178177
  },
@@ -2535,7 +2535,7 @@
   "tier": 1,
   "intent_score": 0.6551440954208374,
   "asserted": true,
-  "latency": 67.45133300046291,
+  "latency": 6.773334001991316,
   "delivered": "Hello, I'm calling to report an abandoned vehicle on the street at Halsey Street. Timing: in a month. Details: The street sweeper hasn't come down Halsey Street in a month.",
   "residual_tox": 0.00039987583295442164
  },
@@ -2557,7 +2557,7 @@
   "tier": 1,
   "intent_score": 0.6793270707130432,
   "asserted": true,
-  "latency": 48.27812500116124,
+  "latency": 7.11800000135554,
   "delivered": "Hello, I'm calling to report a traffic signal that is not working properly at Northern Boulevard and Junction. I'm asking you to please send someone to fix the traffic light.",
   "residual_tox": 0.0004206265148241073
  },
@@ -2579,7 +2579,7 @@
   "tier": 3,
   "intent_score": 0.5661895275115967,
   "asserted": false,
-  "latency": 68.81291600075201,
+  "latency": 6.525415999931283,
   "delivered": "Hello, I'm calling to ask about an issue that may not fit a standard category at Washington Avenue. Timing: at 5am.",
   "residual_tox": 0.00040910387178882957
  },
@@ -2601,7 +2601,7 @@
   "tier": 1,
   "intent_score": 0.6812224388122559,
   "asserted": true,
-  "latency": 48.54074899958505,
+  "latency": 6.930749999810359,
   "delivered": "Hello, I'm calling to report illegal fireworks being set off at Rutland Road. Timing: every night.",
   "residual_tox": 0.023874739184975624
  },
@@ -2623,7 +2623,7 @@
   "tier": 1,
   "intent_score": 0.8171722292900085,
   "asserted": true,
-  "latency": 68.95333299962658,
+  "latency": 6.664582999292179,
   "delivered": "Hello, I'm calling to report a missed trash, recycling, or compost pickup at Wilson Avenue. Timing: in a month. Details: My recycling has not been picked up in a month on Wilson Avenue.",
   "residual_tox": 0.05743354186415672
  },
@@ -2645,7 +2645,7 @@
   "tier": 3,
   "intent_score": 0.5918395519256592,
   "asserted": false,
-  "latency": 101.87804199995298,
+  "latency": 6.790249997720821,
   "delivered": "Hello, I'm calling to ask about an issue that may not fit a standard category at apartment 4F and 99 Jefferson Avenue. Details: The in 4F keeps blocking the hallway with his bike. And the super won't do anything.",
   "residual_tox": 0.0003998405591119081
  },
@@ -2667,7 +2667,7 @@
   "tier": 1,
   "intent_score": 0.6708762645721436,
   "asserted": true,
-  "latency": 84.28891700077656,
+  "latency": 6.783290000385023,
   "delivered": "Hello, I'm calling to report graffiti that needs to be removed at Fordham Road. I have contacted you before (on hold for an hour). Details: I've been on hold for an hour about the graffiti on my store on Fordham Road.",
   "residual_tox": 0.0007550230366177857
  },
@@ -2689,7 +2689,7 @@
   "tier": 1,
   "intent_score": 0.6244921684265137,
   "asserted": true,
-  "latency": 85.30574999986129,
+  "latency": 6.692249999105115,
   "delivered": "Hello, I'm calling to report a broken sidewalk or curb at Utica Avenue. The vehicle involved: the bus. Details: The bus stop shelter on Utica Avenue is smashed and there's glass everywhere.",
   "residual_tox": 0.00045712871360592544
  },
@@ -2711,7 +2711,7 @@
   "tier": 1,
   "intent_score": 0.6109783053398132,
   "asserted": true,
-  "latency": 91.8543759999011,
+  "latency": 7.59870800175122,
   "delivered": "Hello, I'm calling to report a person experiencing homelessness who may need assistance at 3rd Avenue. Details: The encampment on 3rd Avenue under the BQE has needles everywhere.",
   "residual_tox": 0.0005221233004704118
  },
@@ -2733,7 +2733,7 @@
   "tier": 1,
   "intent_score": 0.616308867931366,
   "asserted": true,
-  "latency": 65.89670999983355,
+  "latency": 6.662456999038113,
   "delivered": "Hello, I'm calling to report a repair problem inside my apartment that the landlord has not fixed at apartment 2A and 640 Riverside Drive. Details: I'll keep calling until one of you sends the exterminator.",
   "residual_tox": 0.03079533949494362
  },
@@ -2755,7 +2755,7 @@
   "tier": 1,
   "intent_score": 0.7412530183792114,
   "asserted": true,
-  "latency": 61.21587600046041,
+  "latency": 6.961874996704864,
   "delivered": "Hello, I'm calling to report a damaged road surface, such as a pothole at Cropsey Avenue. Details: The pothole on Cropsey Avenue is a foot deep.",
   "residual_tox": 0.0008969431510195136
  },
@@ -2777,7 +2777,7 @@
   "tier": 1,
   "intent_score": 0.7170901298522949,
   "asserted": true,
-  "latency": 39.51070899893239,
+  "latency": 6.191374000991345,
   "delivered": "Hello, I'm calling to report a broken elevator in my building at 1675 Grand Avenue.",
   "residual_tox": 0.0005406313575804234
  },
@@ -2799,7 +2799,7 @@
   "tier": 1,
   "intent_score": 0.7515662312507629,
   "asserted": true,
-  "latency": 64.47504199968535,
+  "latency": 6.359666998832836,
   "delivered": "Hello, I'm calling to report a problem with the water supply or a fire hydrant at Avenue U. Details: The hydrant on Avenue U is spraying into the street.",
   "residual_tox": 0.0004824352217838168
  },
@@ -2821,7 +2821,7 @@
   "tier": 1,
   "intent_score": 0.6836240887641907,
   "asserted": true,
-  "latency": 81.14812500025437,
+  "latency": 7.272291997651337,
   "delivered": "Hello, I'm calling to report a noise problem from a neighboring apartment at 15 Vermilyea Avenue. Timing: all day. Details: My neighbor smokes weed all day and it comes through the vents.",
   "residual_tox": 0.0004734845133498311
  },
@@ -2845,7 +2845,7 @@
   "tier": 1,
   "intent_score": 0.6638782024383545,
   "asserted": true,
-  "latency": 97.91254100036895,
+  "latency": 6.753875997674186,
   "delivered": "Hello, I'm calling to report a vehicle that is parked illegally at Beverley Road. The vehicle involved: the commercial truck. I have contacted you before (this is the third goddamn time). Details: The commercial truck parks overnight on Beverley Road. It's always the same white box truck.",
   "residual_tox": 0.40314775705337524
  },
@@ -2869,7 +2869,7 @@
   "tier": 1,
   "intent_score": 0.674287736415863,
   "asserted": true,
-  "latency": 75.7057500004521,
+  "latency": 6.820541000706726,
   "delivered": "Hello, I'm calling to report noise from a nearby business at 300 Smith Street. Details: I don't care what your screen says.",
   "residual_tox": 0.000501719128806144
  },
@@ -2891,7 +2891,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 45.53937499986205,
+  "latency": 0.20520799989753868,
   "delivered": "Thank you so much for your help earlier, I'm calling back because the leak got worse, water is coming through the light fixture now.",
   "residual_tox": null
  },
@@ -2913,7 +2913,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.076541999937035,
+  "latency": 0.18687499868974555,
   "delivered": "Look I know it's not your fault, but the heat has been off for 5 days at 2600 Creston Avenue and my baby is sick.",
   "residual_tox": null
  },
@@ -2935,7 +2935,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 35.61520899984316,
+  "latency": 0.14924999959475826,
   "delivered": "Excuse me, I've been holding for 45 minutes. The broken streetlight on Seguine Avenue please.",
   "residual_tox": null
  },
@@ -2957,7 +2957,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.50108299926069,
+  "latency": 0.14837500020803418,
   "delivered": "The music from the car parked outside is so loud my windows are shaking, it's on Pitkin Avenue.",
   "residual_tox": null
  },
@@ -2979,7 +2979,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 18.431833000249753,
+  "latency": 0.12966699978278484,
   "delivered": "A black SUV has been parked across the crosswalk at Delancey and Essex all afternoon.",
   "residual_tox": null
  },
@@ -3001,7 +3001,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.807708000778803,
+  "latency": 0.15870800052653067,
   "delivered": "There's water pouring out of the ceiling light in the hallway on the 5th floor of 345 Eldert Street.",
   "residual_tox": null
  }

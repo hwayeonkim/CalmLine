@@ -58,7 +58,7 @@ class CallSession:
     def stt(self):
         if self._stt is None:
             from .audio.stt import WindowSpotter
-            self._stt = WindowSpotter(self.s.spotter, window_s=3.0, bias_prompt=True)
+            self._stt = WindowSpotter(self.s.spotter, window_s=3.0, bias_prompt=False)
         return self._stt
 
     # ---------------- ingest ----------------

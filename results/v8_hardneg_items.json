@@ -17,7 +17,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 0.6250000005820766,
+  "latency": 0.27562499963096343,
   "delivered": "Hi, I\u2019m calling about a streetlight that\u2019s flickering over on Elm Street, it\u2019s a bit concerning, and I\u2019ve noticed a few cars speeding past around it late at night.",
   "residual_tox": null
  },
@@ -39,7 +39,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.00487500050076,
+  "latency": 0.27062499975727405,
   "delivered": "Just wanted to see if there\u2019s anything the department can do to address that, you know, maybe check the wiring?  It makes me a little uneasy, to be honest.",
   "residual_tox": null
  },
@@ -61,7 +61,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 35.48433299965836,
+  "latency": 0.26495800011616666,
   "delivered": "I\u2019m hoping to report a broken door lock on my apartment building. It\u2019s a pretty old one and I\u2019m worried about security, especially with the neighborhood lately.",
   "residual_tox": null
  },
@@ -83,7 +83,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.332374999896274,
+  "latency": 0.24620800104457885,
   "delivered": "Could you please check if there are any reports of recent disturbances or suspicious activity around the park? I\u2019ve been feeling a bit anxious about it.",
   "residual_tox": null
  },
@@ -105,7 +105,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 56.86566700023832,
+  "latency": 0.24662499890837353,
   "delivered": "Hello, I'm calling about a dark area near the subway entrance. It\u2019s really difficult to see, and I\u2019m concerned about safety, especially at night.",
   "residual_tox": null
  },
@@ -127,7 +127,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 61.412499999278225,
+  "latency": 0.3369170008227229,
   "delivered": "I\u2019m hoping to report a concerning encampment in the woods behind my house. It\u2019s quite a large group, and it\u2019s creating a bit of a disturbance, and I\u2019m just trying to understand what\u2019s happening there.",
   "residual_tox": null
  },
@@ -149,7 +149,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 29.461957999956212,
+  "latency": 0.14916700092726387,
   "delivered": "Excuse me, I\u2019m calling to report a flickering light on Bleecker Street near the library.",
   "residual_tox": null
  },
@@ -171,7 +171,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 26.23433400003705,
+  "latency": 0.10195800132350996,
   "delivered": "This is killing me, like a subway car choked with despair.",
   "residual_tox": null
  },
@@ -193,7 +193,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.62016700044478,
+  "latency": 0.09949999912350904,
   "delivered": "I\u2019m dying here, a sun-baked brick in this concrete maze.",
   "residual_tox": null
  },
@@ -215,7 +215,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 56.88283300059993,
+  "latency": 0.09916700037138071,
   "delivered": "It's murder, this relentless hum, a phantom orchestra of noise.",
   "residual_tox": null
  },
@@ -237,7 +237,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.276916999559035,
+  "latency": 0.09154100007435773,
   "delivered": "I could scream, a geological shift beneath my weary bones.",
   "residual_tox": null
  },
@@ -259,7 +259,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.59354099970369,
+  "latency": 0.12512499961303547,
   "delivered": "This incessant drip, a slow, viscous lament, it\u2019s a wound upon my soul.",
   "residual_tox": null
  },
@@ -281,7 +281,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.990833999770985,
+  "latency": 0.12999999853491317,
   "delivered": "It\u2019s a nightmare, a suffocating, relentless tide of heat, I\u2019m losing my grip.",
   "residual_tox": null
  },
@@ -303,7 +303,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 24.37520800049242,
+  "latency": 0.15612499919370748,
   "delivered": "My neighbor\u2019s tree is leaning precariously close to their house and I\u2019m afraid it\u2019s going to fall!",
   "residual_tox": null
  },
@@ -325,7 +325,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.348541000312252,
+  "latency": 0.19591700038290583,
   "delivered": "I smell a strong gas odor coming from the back of my property \u2013 it\u2019s overwhelming and I\u2019m worried someone is going to die!",
   "residual_tox": null
  },
@@ -347,7 +347,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.845707999906153,
+  "latency": 0.16737499936425593,
   "delivered": "There\u2019s a live wire exposed right next to the driveway, and I\u2019ve already seen a car speeding towards it!",
   "residual_tox": null
  },
@@ -369,7 +369,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 40.192708000176935,
+  "latency": 0.21154100068088155,
   "delivered": "I found a large hole in the road, and I\u2019m terrified it\u2019s going to cause an accident and someone will be seriously injured or killed!",
   "residual_tox": null
  },
@@ -391,7 +391,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.096833000447077,
+  "latency": 0.18529200133343693,
   "delivered": "I\u2019m noticing a significant leak in the roof of my garage; it looks like it\u2019s about to burst and could cause a fire!",
   "residual_tox": null
  },
@@ -413,7 +413,7 @@
   "tier": 1,
   "intent_score": 0.7671723365783691,
   "asserted": true,
-  "latency": 48.74662499878468,
+  "latency": 7.060708998324117,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a damaged, fallen, or overgrown tree.",
   "residual_tox": null
  },
@@ -435,7 +435,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 38.617791999968176,
+  "latency": 0.1843329991970677,
   "delivered": "I\u2019m concerned about a neighbor, Mr. Henderson, who\u2019s been making very loud and aggressive noises late at night.",
   "residual_tox": null
  },
@@ -457,7 +457,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 38.584291999541165,
+  "latency": 0.1854999991337536,
   "delivered": "I\u2019ve noticed a significant increase in unwanted visits and comments from my neighbor, Mrs. Davies, about my property.",
   "residual_tox": null
  },
@@ -479,7 +479,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 34.74362500037387,
+  "latency": 0.20470900017244276,
   "delivered": "I\u2019m feeling very anxious and uncomfortable with the way my neighbor, Mr. Miller, has been speaking to me about my choices of plants.",
   "residual_tox": null
  },
@@ -501,7 +501,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.66449999994802,
+  "latency": 0.1577080001879949,
   "delivered": "Could you please investigate if Mr. Jones is harassing me with unsolicited calls and messages about my mail?",
   "residual_tox": null
  },
@@ -523,7 +523,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 33.57387500000186,
+  "latency": 0.18325000019103754,
   "delivered": "I\u2019m worried about a pattern of people hanging around my property and making it feel unsafe; I've seen them repeatedly.",
   "residual_tox": null
  },
@@ -545,7 +545,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.691874999334686,
+  "latency": 0.17062499864550773,
   "delivered": "I want to report that my neighbor, Ms. Garcia, is repeatedly leaving anonymous notes on my door about my lifestyle.",
   "residual_tox": null
  },
@@ -567,7 +567,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 48.38620800001081,
+  "latency": 0.21058300080767367,
   "delivered": "Hi, I\u2019m calling about a street light flickering down Elm Street near the library. It\u2019s pretty bad, and it\u2019s making it hard to see.",
   "residual_tox": null
  },
@@ -589,7 +589,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 29.520749999392137,
+  "latency": 0.20975000006728806,
   "delivered": "I noticed a door at 1st Avenue was unlocked and seemed a little bit\u2026unsettled earlier. I just wanted to check if everything\u2019s alright.",
   "residual_tox": null
  },
@@ -611,7 +611,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.93433300050674,
+  "latency": 0.18933399951492902,
   "delivered": "I\u2019ve seen a couple of people walking around the park around dusk, and I was a little concerned about safety there tonight.",
   "residual_tox": null
  },
@@ -633,7 +633,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 37.01108299992484,
+  "latency": 0.21954200019536074,
   "delivered": "Could you please check if there\u2019s a particular area of the park that\u2019s particularly busy or has any issues?  I\u2019m just trying to be aware.",
   "residual_tox": null
  },
@@ -655,7 +655,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 27.71599999960017,
+  "latency": 0.18333300067752134,
   "delivered": "I\u2019m a little anxious about the neighborhood, and I wanted to see if there were any updates on any recent incidents.",
   "residual_tox": null
  },
@@ -677,7 +677,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.071749999980966,
+  "latency": 0.07020799966994673,
   "delivered": "Just a quick check, please.  Thank you.",
   "residual_tox": null
  },
@@ -699,7 +699,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 29.834959000254457,
+  "latency": 0.11295799959043507,
   "delivered": "The city\u2019s a relentless, throbbing bruise, and this is killing me.",
   "residual_tox": null
  },
@@ -721,7 +721,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.878957999433624,
+  "latency": 0.10624999958963599,
   "delivered": "My apartment\u2019s a mausoleum, choked with a suffocating heatwave.",
   "residual_tox": null
  },
@@ -743,7 +743,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 34.738000000288594,
+  "latency": 0.09937499999068677,
   "delivered": "It's murder, this constant, grating drone, a digital torment.",
   "residual_tox": null
  },
@@ -765,7 +765,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.992333000431245,
+  "latency": 0.10641699918778613,
   "delivered": "I could scream, a fractured, silent wave against the concrete walls.",
   "residual_tox": null
  },
@@ -787,7 +787,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.23070900054881,
+  "latency": 0.16095799946924672,
   "delivered": "This persistent leak is a slow, agonizing unraveling of my peace, it\u2019s a dreadful, persistent wound.",
   "residual_tox": null
  },
@@ -809,7 +809,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 33.31329100001312,
+  "latency": 0.11191600060556084,
   "delivered": "It\u2019s like a shadow, a creeping dread, consuming everything I own.",
   "residual_tox": null
  },
@@ -831,7 +831,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 41.48779099978128,
+  "latency": 0.19041700033994857,
   "delivered": "I need to report a huge tree, it looks like it\u2019s about to fall onto my property, please send someone over immediately!",
   "residual_tox": null
  },
@@ -853,7 +853,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 50.393791999340465,
+  "latency": 0.22204200104170013,
   "delivered": "There\u2019s a really strong gas smell coming from my house, it\u2019s making me feel unwell and I\u2019m worried someone is going to die if it continues,",
   "residual_tox": null
  },
@@ -875,7 +875,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 46.787792000031914,
+  "latency": 0.19912499919882976,
   "delivered": "I\u2019ve found an exposed live wire, it\u2019s sparking and I\u2019m terrified it could start a fire and someone will be seriously injured,",
   "residual_tox": null
  },
@@ -897,7 +897,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 40.700165999624005,
+  "latency": 0.2000839995162096,
   "delivered": "There\u2019s a significant hole in the road, it\u2019s dangerously deep and I fear it could cause an accident and someone will be killed,",
   "residual_tox": null
  },
@@ -919,7 +919,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 45.36983399975725,
+  "latency": 0.21470799947564956,
   "delivered": "I\u2019m concerned about a pile of debris in my yard, it\u2019s unstable and could collapse, please dispatch someone to assess the situation quickly,",
   "residual_tox": null
  },
@@ -941,7 +941,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 33.99062500011496,
+  "latency": 0.219457999264705,
   "delivered": "I\u2019m worried about a possible landslide, there's evidence of unstable ground and I'm afraid it will bury someone and they\u2019ll be trapped,",
   "residual_tox": null
  },
@@ -963,7 +963,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 36.07954200015229,
+  "latency": 0.15262499982782174,
   "delivered": "I\u2019m concerned about my neighbor, Mr. Jones, and his persistent comments about my property.",
   "residual_tox": null
  },
@@ -985,7 +985,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.225832999851264,
+  "latency": 0.12862500079791062,
   "delivered": "Could you please investigate if Mr. Jones is making unwelcome advances towards me?",
   "residual_tox": null
  },
@@ -1007,7 +1007,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 30.142042000079527,
+  "latency": 0.16179199883481488,
   "delivered": "I\u2019m feeling really unsafe and anxious because of his behavior, and I\u2019m worried about his actions.",
   "residual_tox": null
  },
@@ -1029,7 +1029,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.714665999970748,
+  "latency": 0.16691699966031592,
   "delivered": "I\u2019ve noticed a lot of yelling and aggressive language coming from his apartment, and it\u2019s unsettling.",
   "residual_tox": null
  },
@@ -1051,7 +1051,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.50241599965375,
+  "latency": 0.1724579997244291,
   "delivered": "I\u2019d like to know if there are any rules or policies in place to address this kind of neighborly conduct.",
   "residual_tox": null
  },
@@ -1073,7 +1073,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.277083000721177,
+  "latency": 0.14387499868462328,
   "delivered": "I\u2019m trying to maintain a peaceful living environment, and his actions are disrupting it.",
   "residual_tox": null
  },
@@ -1095,7 +1095,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.216500000264205,
+  "latency": 0.14075000035518315,
   "delivered": "Could you please document everything and let me know what steps you can take to protect me?",
   "residual_tox": null
  },
@@ -1117,7 +1117,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 44.57095900033892,
+  "latency": 0.2717499992286321,
   "delivered": "Hi, I\u2019m calling about a street light that\u2019s completely broken down near the corner of 8th and Broadway, and I\u2019m a little concerned about the safety of walking there.",
   "residual_tox": null
  },
@@ -1139,7 +1139,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.335124999714026,
+  "latency": 0.2531669997551944,
   "delivered": "Excuse me, I\u2019m hoping you could check on a broken door lock on my apartment building at 12 Elm Street \u2013 I\u2019ve heard some noises coming from the hallway.",
   "residual_tox": null
  },
@@ -1161,7 +1161,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 42.26379099964106,
+  "latency": 0.2610829997138353,
   "delivered": "Could you please look into the situation with the encampment near City Hall? I\u2019ve noticed a lot of people gathering there, and I\u2019m worried about the visibility.",
   "residual_tox": null
  },
@@ -1183,7 +1183,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 26.31625000049098,
+  "latency": 0.2174580004066229,
   "delivered": "Hi, I\u2019m calling to report a dark park near Grand Army Plaza \u2013 I saw someone acting suspiciously earlier and it made me feel uneasy.",
   "residual_tox": null
  },
@@ -1205,7 +1205,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 50.399374999869906,
+  "latency": 0.31033300001581665,
   "delivered": "Hello, I\u2019m calling to report a potential issue with the lighting on Maple Avenue; it seems like there might be some vandalism happening nearby, but I just wanted to bring it to your attention.",
   "residual_tox": null
  },
@@ -1227,7 +1227,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 47.56004200044117,
+  "latency": 0.225499999942258,
   "delivered": "Could you investigate the situation with the broken trash cans in the area around Central Park? I\u2019m worried about safety and sanitation.",
   "residual_tox": null
  },
@@ -1249,7 +1249,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 18.28820800074027,
+  "latency": 0.09816700003284495,
   "delivered": "This is killing me, a concrete tomb settling in my bones.",
   "residual_tox": null
  },
@@ -1271,7 +1271,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 24.633291000100144,
+  "latency": 0.11595799878705293,
   "delivered": "I\u2019m dying here, a slow, suffocating pressure of the summer heat.",
   "residual_tox": null
  },
@@ -1293,7 +1293,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.718792000181566,
+  "latency": 0.1287080012843944,
   "delivered": "It\u2019s murder, this incessant drone \u2013 a ravenous beast clawing at my sanity.",
   "residual_tox": null
  },
@@ -1315,7 +1315,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 22.676915999909397,
+  "latency": 0.11170800098625477,
   "delivered": "I could scream, a thousand shards of frustration echoing in the alley.",
   "residual_tox": null
  },
@@ -1337,7 +1337,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 20.755999999892083,
+  "latency": 0.10429199937789235,
   "delivered": "This persistent rumble is a physical weight, crushing the very air.",
   "residual_tox": null
  },
@@ -1359,7 +1359,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.48691700000927,
+  "latency": 0.11216699931537732,
   "delivered": "My nerves are fraying, like a map of Manhattan undone, utterly lost.",
   "residual_tox": null
  },
@@ -1381,7 +1381,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.804707999668608,
+  "latency": 0.17499999921710696,
   "delivered": "I need to report a seriously dangerous situation \u2013 a large oak tree is about to fall onto a car path!",
   "residual_tox": null
  },
@@ -1403,7 +1403,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 41.90375000052882,
+  "latency": 0.1895000004878966,
   "delivered": "There\u2019s a strong, unpleasant gas smell coming from a property, and I\u2019m afraid someone could be seriously affected.",
   "residual_tox": null
  },
@@ -1425,7 +1425,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 25.17420799995307,
+  "latency": 0.20641700029955246,
   "delivered": "I found a live electrical wire exposed in the road, and I\u2019m terrified someone could be seriously injured or killed.",
   "residual_tox": null
  },
@@ -1447,7 +1447,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 24.6675000007599,
+  "latency": 0.17574999947100878,
   "delivered": "I\u2019ve discovered a significant hole in the road, and I\u2019m worried that it could cause a serious accident.",
   "residual_tox": null
  },
@@ -1469,7 +1469,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 20.29949999996461,
+  "latency": 0.1937910001288401,
   "delivered": "Could someone please alert me to a potential hazard \u2013 there\u2019s a pile of wood that appears unstable and could collapse?",
   "residual_tox": null
  },
@@ -1491,7 +1491,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 26.1421250006606,
+  "latency": 0.22112500118964817,
   "delivered": "I\u2019m extremely concerned about a tree branch that\u2019s dangerously close to a house, and I fear it could fall and cause damage or injury.",
   "residual_tox": null
  },
@@ -1513,7 +1513,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.18662500015489,
+  "latency": 0.1723749992379453,
   "delivered": "I need to report a situation where a person is potentially at risk of serious harm due to a damaged utility line.",
   "residual_tox": null
  },
@@ -1535,7 +1535,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 30.678416000228026,
+  "latency": 0.18158300008508377,
   "delivered": "Could you please check in on the situation with Mr. Henderson, my neighbor, regarding his comments about my property?",
   "residual_tox": null
  },
@@ -1557,7 +1557,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.24320799927227,
+  "latency": 0.21079099860799033,
   "delivered": "I\u2019m concerned about the escalating behavior of Mr. Jones, and I\u2019m wondering if there are any resources available to address this?",
   "residual_tox": null
  },
@@ -1579,7 +1579,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 28.80249999998341,
+  "latency": 0.2356670011067763,
   "delivered": "I\u2019ve received several concerning emails from Mr. Smith, and I need to understand how to best protect myself and my home from potential harassment.",
   "residual_tox": null
  },
@@ -1601,7 +1601,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 23.24116599993431,
+  "latency": 0.15529099982813932,
   "delivered": "Could you investigate whether Mr. Davis is making any unwelcome advances or comments about my yard?",
   "residual_tox": null
  },
@@ -1623,7 +1623,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 56.18029200013552,
+  "latency": 0.249999999141437,
   "delivered": "I\u2019m worried about the tone of voice Mr. Brown is using when he speaks to me, and I\u2019m hoping you can help determine if it\u2019s a pattern of behavior.",
   "residual_tox": null
  },
@@ -1645,7 +1645,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.57529100008105,
+  "latency": 0.2226249998784624,
   "delivered": "I\u2019d appreciate it if you could look into whether Mr. Wilson is engaging in any aggressive or intimidating actions toward me or my property.",
   "residual_tox": null
  },
@@ -1667,7 +1667,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.00908300004812,
+  "latency": 0.2022499993472593,
   "delivered": "I\u2019ve noticed a lot of people loitering near the corner of Bleecker and Mercer, and I\u2019m a little worried about safety there.",
   "residual_tox": null
  },
@@ -1689,7 +1689,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 33.722332999786886,
+  "latency": 0.197208999452414,
   "delivered": "Could you please check on the condition of the door lock on the apartment building at 123 Maple Avenue? It seems a little loose.",
   "residual_tox": null
  },
@@ -1711,7 +1711,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.82704199955333,
+  "latency": 0.2006249997066334,
   "delivered": "I\u2019m calling to report a dark spot in Central Park near the pond, it\u2019s really unsettling to be out there alone at night.",
   "residual_tox": null
  },
@@ -1733,7 +1733,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 50.264749999769265,
+  "latency": 0.23279100059880875,
   "delivered": "I wanted to let you know that I\u2019ve seen a couple of people lurking near the subway station on 42nd Street, and I\u2019m feeling a bit uneasy.",
   "residual_tox": null
  },
@@ -1755,7 +1755,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 36.97691700017458,
+  "latency": 0.25875000028463546,
   "delivered": "Could you investigate if there\u2019s any recent activity happening at the [Name of Park] \u2013 I\u2019m concerned about the security of the area, especially after dark.",
   "residual_tox": null
  },
@@ -1777,7 +1777,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 43.31654100042215,
+  "latency": 0.14829099927737843,
   "delivered": "The city\u2019s a symphony of sirens, and this is killing me, a discordant, aching void.",
   "residual_tox": null
  },
@@ -1799,7 +1799,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 29.514749999179912,
+  "latency": 0.1383339986205101,
   "delivered": "I\u2019m dying here, a slow, suffocating heatwave pressing down like a concrete wall.",
   "residual_tox": null
  },
@@ -1821,7 +1821,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 30.980291999185283,
+  "latency": 0.16150000010384247,
   "delivered": "It\u2019s murder, this relentless, grating noise \u2013 a thousand tiny hammers pounding a frantic rhythm.",
   "residual_tox": null
  },
@@ -1843,7 +1843,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.924666999861074,
+  "latency": 0.1617500001884764,
   "delivered": "I could scream, a primal, volcanic eruption trapped within my chest, but I\u2019m holding it back.",
   "residual_tox": null
  },
@@ -1865,7 +1865,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.971000000150525,
+  "latency": 0.14916699910827447,
   "delivered": "This leak is a slow, insidious poison, seeping through the floorboards, a dark, hungry stain.",
   "residual_tox": null
  },
@@ -1887,7 +1887,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 21.813041999848792,
+  "latency": 0.1200419992528623,
   "delivered": "The air itself feels thick with despair, a heavy blanket smothering my breath.",
   "residual_tox": null
  },
@@ -1909,7 +1909,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 24.615792000076908,
+  "latency": 0.18333299885853194,
   "delivered": "My neighbor\u2019s tree is leaning precariously and looks like it\u2019s about to fall, please send someone immediately!",
   "residual_tox": null
  },
@@ -1931,7 +1931,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 31.375624999782303,
+  "latency": 0.20045800010848325,
   "delivered": "I smell gas coming from the garage \u2013 it\u2019s a strong, sickly sweet smell, and I\u2019m worried about someone being injured.",
   "residual_tox": null
  },
@@ -1953,7 +1953,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 32.19341699968936,
+  "latency": 0.24841699996613897,
   "delivered": "There\u2019s a live wire running along the road, right beside the sidewalk, and I\u2019m afraid someone is going to die if it touches the pavement.",
   "residual_tox": null
  },
@@ -1975,7 +1975,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 30.749167000067246,
+  "latency": 0.2291670007252833,
   "delivered": "I found a large hole in the road, it\u2019s deep and it\u2019s blocking traffic, and I\u2019m terrified it will collapse and cause a serious accident.",
   "residual_tox": null
  },
@@ -1997,7 +1997,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 52.66258299980109,
+  "latency": 0.2057090005109785,
   "delivered": "I just saw a large, exposed wire on the side of the street, it\u2019s sparking and looks incredibly dangerous, please send help!",
   "residual_tox": null
  },
@@ -2019,7 +2019,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 53.87966600028449,
+  "latency": 0.24516700068488717,
   "delivered": "My child was playing near the creek and there\u2019s a significant crack in the ground, and I\u2019m afraid it\u2019s about to give way and cause a serious fall.",
   "residual_tox": null
  },
@@ -2041,7 +2041,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 50.97183300040342,
+  "latency": 0.2271250014018733,
   "delivered": "Hi, I\u2019m calling about a neighbor, Mr./Ms. [Neighbor\u2019s Last Name], who seems to be making some unwelcome comments about my property.",
   "residual_tox": null
  },
@@ -2063,7 +2063,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 37.16208399964671,
+  "latency": 0.2067499990516808,
   "delivered": "I\u2019m having some difficulty with a neighbor, Mr./Ms. [Neighbor\u2019s Last Name], and I\u2019m worried about potential harassment.",
   "residual_tox": null
  },
@@ -2085,7 +2085,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 41.783333999774186,
+  "latency": 0.23516699911851902,
   "delivered": "Could you please look into the situation with Mr./Ms. [Neighbor\u2019s Last Name]? They\u2019ve been sending me very aggressive emails about my yard.",
   "residual_tox": null
  },
@@ -2107,7 +2107,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 39.56775000006019,
+  "latency": 0.22229199930734467,
   "delivered": "I\u2019m concerned about Mr./Ms. [Neighbor\u2019s Last Name] and their behavior towards me, and I\u2019d appreciate guidance on how to address it.",
   "residual_tox": null
  },
@@ -2129,7 +2129,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 48.477291999915906,
+  "latency": 0.26245799926982727,
   "delivered": "I\u2019m struggling to feel safe in my apartment because of a neighbor, Mr./Ms. [Neighbor\u2019s Last Name], and I\u2019m hoping you can help me understand what to do.",
   "residual_tox": null
  },
@@ -2151,7 +2151,7 @@
   "tier": 0,
   "intent_score": 0.0,
   "asserted": false,
-  "latency": 60.06600000000617,
+  "latency": 0.2905000001192093,
   "delivered": "I just want to make sure everything is okay with my neighbor, Mr./Ms. [Neighbor\u2019s Last Name], and I\u2019m trying to figure out how to resolve this issue calmly and respectfully.",
   "residual_tox": null
  }

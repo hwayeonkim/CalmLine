@@ -82,13 +82,27 @@ COMPILED_V3 = _compile({k: v + EXTENSIONS.get(k, []) for k, v in CATEGORIES.item
 COMPILED = _compile({k: v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) for k, v in CATEGORIES.items()})
 
 
+# v11 (post-hoc, from TEST error analysis): 'speaks real English'; 'going to get' only with a person as object;
+# 'come over to my place' as a whole phrase.
+V11_REMOVE = {"threat": [r"(?:i'?ll|i will|i'm gonna|im gonna|i am going to|gonna|going to)\s+(?:\w+\s+){0,2}(?:kill|shoot|stab|hurt|beat|strangle|smash|break|burn|end|find|hunt|get)\b"]}
+V11_ADD = {"threat": [r"(?:i'?ll|i will|i'm gonna|im gonna|i am going to|gonna|going to)\s+(?:\w+\s+){0,2}(?:kill|shoot|stab|hurt|beat|strangle|smash|break|burn|end|find|hunt)\b",
+                      r"(?:i'?ll|i will|i'm gonna|im gonna|i am going to|gonna|going to)\s+(?:\w+\s+){0,2}get (?:you|him|her|them|whoever)\b",
+                      r"come for you", r"maybe (?:it'?ll|it will) be you"],
+           "identity": [r"speaks? (?:proper |real |good )?english"],
+           "sexual": [r"come over to my place"],
+           "insult": [r"you'?re so (?:slow|stupid|dumb)", r"write it down,? genius"]}
+
 COMPILED_V7 = _compile({k: [p for p in v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) if p not in V7_REMOVE.get(k, [])] + V7_ADD.get(k, [])
                         for k, v in CATEGORIES.items()})
 
 
+COMPILED_V11 = _compile({k: [p for p in v + EXTENSIONS.get(k, []) + EXTENSIONS_V4.get(k, []) if p not in V7_REMOVE.get(k, []) and p not in V11_REMOVE.get(k, [])]
+                         + V7_ADD.get(k, []) + V11_ADD.get(k, []) for k, v in CATEGORIES.items()})
+
+
 def find_spans(text: str, include_mild: bool = True, extended=True):
     """extended: False -> v0 lexicon, True/'v3' -> v3 lexicon, 'v4' -> v4 lexicon, 'v7' -> v7 lexicon."""
-    table = {False: COMPILED_V0, True: COMPILED_V3, "v3": COMPILED_V3, "v4": COMPILED, "v7": COMPILED_V7}[extended]
+    table = {False: COMPILED_V0, True: COMPILED_V3, "v3": COMPILED_V3, "v4": COMPILED, "v7": COMPILED_V7, "v11": COMPILED_V11}[extended]
     out = []
     for cat, pats in table.items():
         if cat == "mild" and not include_mild:

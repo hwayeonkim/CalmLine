@@ -45,6 +45,7 @@ def aggregate(items):
         tier_dist={t: int(sum(i["tier"] == t for i in items)) for t in (0, 1, 2, 3)},
         latency_p50=float(np.percentile(lat, 50)), latency_p95=float(np.percentile(lat, 95)),
     )
-    if items and items[0].get("residual_tox") is not None:
-        m["residual_toxicity"] = np.mean([i["residual_tox"] >= 0.5 for i in tox])
+    rt = [i["residual_tox"] for i in tox if i.get("residual_tox") is not None]
+    if rt:
+        m["residual_toxicity"] = np.mean([x >= 0.5 for x in rt])
     return {k: (round(float(v), 4) if isinstance(v, (float, np.floating)) else v) for k, v in m.items()}

@@ -77,13 +77,19 @@ class GemmaRewriter:
         return s.split("\n\n")[0].strip().strip('"')
 
 
+ALLOWED_NOVEL = set("""hello hi calling call report reporting would like please could kindly need needs needed thank thanks
+regarding about concerned concern issue problem situation there here also currently still assist assistance help request requesting
+want wanted ask asking someone somebody send sent check look looked address located location apartment street avenue i'm i've i'd
+it's that's there's has been being am are was were is be let know you your sir madam okay sorry""".split())
+
+
 class VerifiedRewriter:
     """Callable with the renderer signature (text, intent, slots, tox) -> str."""
 
     def __init__(self, gen, detector, fallback, mask_input=True):
         self.gen, self.detector, self.fallback, self.mask_input = gen, detector, fallback, mask_input
         self.name = f"verified({gen.name})"
-        self.stats = {"calls": 0, "accepted": 0, "rej_toxic": 0, "rej_halluc": 0, "rej_facts": 0, "rej_error": 0, "ms": []}
+        self.stats = {"calls": 0, "accepted": 0, "rej_toxic": 0, "rej_halluc": 0, "rej_facts": 0, "rej_error": 0, "rej_unsupported": 0, "ms": []}
 
     def __call__(self, text, intent, slots, tox):
         from .render import mask
@@ -112,6 +118,13 @@ class VerifiedRewriter:
             return "toxic"
         if numbers(out) - numbers(text) - {"311"}:
             return "halluc"
+        # unsupported claims: content words in the output that the caller never said (Gemma 1B invented
+        # "I've called before", "123 Maple Street", "I'd like to know when..." in our first probe)
+        from .textnorm import content_tokens
+        src = set(content_tokens(text))
+        novel = [w for w in content_tokens(out) if w not in src and w not in ALLOWED_NOVEL]
+        if len(novel) > max(3, 0.25 * len(content_tokens(out))):
+            return "unsupported"
         keep = [v for k in ("address", "apartment", "reference", "plate", "cross_street", "street") for v in slots.get(k, [])]
         if any(not fact_present(re.sub(r"^(?:at|on|in|near|corner of)\s+", "", v, flags=re.I), out) for v in keep):
             return "facts"

@@ -35,6 +35,10 @@ def main():
                     rt = judge.tox_of(judge.scores([d.delivered])[0]) if d.delivered.strip() else 0.0
                 items.append(score_item(r, d, rt))
             m = aggregate(items)
+            if hasattr(pipe.llm, "stats"):
+                st = dict(pipe.llm.stats); ms = st.pop("ms")
+                m["llm"] = dict(st, ms_p50=float(__import__("numpy").percentile(ms, 50)) if ms else None,
+                                ms_p95=float(__import__("numpy").percentile(ms, 95)) if ms else None)
             summary.setdefault(v, {})[split] = m
             summary[v]["desc"] = DESCRIPTIONS.get(v, "")
             json.dump(items, open(os.path.join(ROOT, "results", f"{v}_{split}_items.json"), "w"), indent=1)

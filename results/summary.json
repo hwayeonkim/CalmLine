@@ -14,14 +14,15 @@
    "fact_recall_all": 0.8575,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.625,
+   "wrong_issue_rate": 0.3125,
    "tier_dist": {
     "0": 24,
     "1": 13,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 0.0964,
-   "latency_p95": 0.3552
+   "latency_p50": 0.0941,
+   "latency_p95": 0.3394
   },
   "desc": "Baseline: regex lexicon + keyword intent + pure template (the original 'pre-written phrases' idea)",
   "test": {
@@ -38,14 +39,15 @@
    "fact_recall_all": 0.8161,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.6667,
+   "wrong_issue_rate": 0.2949,
    "tier_dist": {
     "0": 56,
     "1": 69,
     "2": 0,
     "3": 9
    },
-   "latency_p50": 0.1974,
-   "latency_p95": 0.3164
+   "latency_p50": 0.2114,
+   "latency_p95": 0.3563
   },
   "synth": {
    "n": 600,
@@ -61,14 +63,15 @@
    "fact_recall_all": 0.8441,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.5679,
+   "wrong_issue_rate": 0.3148,
    "tier_dist": {
     "0": 276,
     "1": 276,
     "2": 0,
     "3": 48
    },
-   "latency_p50": 0.1974,
-   "latency_p95": 0.3935
+   "latency_p50": 0.2039,
+   "latency_p95": 0.3981
   },
   "hardneg": {
    "n": 98,
@@ -84,14 +87,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 1.0,
+   "wrong_issue_rate": 0.0,
    "tier_dist": {
     "0": 97,
     "1": 0,
     "2": 0,
     "3": 1
    },
-   "latency_p50": 0.1108,
-   "latency_p95": 0.1554
+   "latency_p50": 0.1112,
+   "latency_p95": 0.1544
   }
  },
  "v1": {
@@ -109,14 +113,15 @@
    "fact_recall_all": 0.8383,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.7826,
+   "wrong_issue_rate": 0.2174,
    "tier_dist": {
     "0": 17,
     "1": 21,
     "2": 0,
     "3": 2
    },
-   "latency_p50": 15.5861,
-   "latency_p95": 22.9952
+   "latency_p50": 15.6216,
+   "latency_p95": 24.4723
   },
   "desc": "Detection: lexicon \u222a toxic-bert (Jigsaw, clause-level) \u00b7 Intent: bge-small nearest-prototype (open-set \u03c4=0.6) \u00b7 pure template",
   "test": {
@@ -133,14 +138,15 @@
    "fact_recall_all": 0.7736,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8242,
+   "wrong_issue_rate": 0.1209,
    "tier_dist": {
     "0": 43,
     "1": 83,
     "2": 0,
     "3": 8
    },
-   "latency_p50": 15.4454,
-   "latency_p95": 24.8477
+   "latency_p50": 16.3331,
+   "latency_p95": 26.2865
   },
   "synth": {
    "n": 600,
@@ -156,14 +162,15 @@
    "fact_recall_all": 0.8306,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8653,
+   "wrong_issue_rate": 0.0974,
    "tier_dist": {
     "0": 251,
     "1": 331,
     "2": 0,
     "3": 18
    },
-   "latency_p50": 15.7524,
-   "latency_p95": 26.2747
+   "latency_p50": 16.849,
+   "latency_p95": 28.1634
   },
   "hardneg": {
    "n": 98,
@@ -179,14 +186,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.2,
+   "wrong_issue_rate": 0.8,
    "tier_dist": {
     "0": 88,
     "1": 8,
     "2": 0,
     "3": 2
    },
-   "latency_p50": 13.5948,
-   "latency_p95": 22.1251
+   "latency_p50": 13.62,
+   "latency_p95": 22.1283
   }
  },
  "v2": {
@@ -204,14 +212,15 @@
    "fact_recall_all": 0.9183,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.7826,
+   "wrong_issue_rate": 0.2174,
    "tier_dist": {
     "0": 17,
     "1": 21,
     "2": 0,
     "3": 2
    },
-   "latency_p50": 14.5527,
-   "latency_p95": 19.2319
+   "latency_p50": 5.7645,
+   "latency_p95": 6.754
   },
   "desc": "v1 + hybrid renderer: template header for tone + extractive detail clauses with abusive spans removed (condBERT-style)",
   "test": {
@@ -228,14 +237,15 @@
    "fact_recall_all": 0.9224,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8242,
+   "wrong_issue_rate": 0.1209,
    "tier_dist": {
     "0": 43,
     "1": 83,
     "2": 0,
     "3": 8
    },
-   "latency_p50": 15.2786,
-   "latency_p95": 24.1636
+   "latency_p50": 5.8444,
+   "latency_p95": 6.9544
   },
   "synth": {
    "n": 600,
@@ -251,14 +261,15 @@
    "fact_recall_all": 0.9763,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8653,
+   "wrong_issue_rate": 0.0974,
    "tier_dist": {
     "0": 251,
     "1": 331,
     "2": 0,
     "3": 18
    },
-   "latency_p50": 15.6961,
-   "latency_p95": 24.9251
+   "latency_p50": 5.7954,
+   "latency_p95": 6.6513
   },
   "hardneg": {
    "n": 98,
@@ -274,14 +285,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.2,
+   "wrong_issue_rate": 0.8,
    "tier_dist": {
     "0": 88,
     "1": 8,
     "2": 0,
     "3": 2
    },
-   "latency_p50": 12.2312,
-   "latency_p95": 20.3221
+   "latency_p50": 0.1326,
+   "latency_p95": 6.3115
   }
  },
  "v3": {
@@ -299,14 +311,15 @@
    "fact_recall_all": 0.9279,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8182,
+   "wrong_issue_rate": 0.1364,
    "tier_dist": {
     "0": 18,
     "1": 19,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 14.1011,
-   "latency_p95": 33.3451
+   "latency_p50": 5.4775,
+   "latency_p95": 22.2199
   },
   "desc": "v2 + directedness gate on model-only flags (Waseem et al. 2017) + render-then-verify detail clauses + threats never echo wording + generic header for unknown intents",
   "test": {
@@ -323,14 +336,15 @@
    "fact_recall_all": 0.9475,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8235,
+   "wrong_issue_rate": 0.1294,
    "tier_dist": {
     "0": 49,
     "1": 78,
     "2": 0,
     "3": 7
    },
-   "latency_p50": 22.7733,
-   "latency_p95": 41.1495
+   "latency_p50": 13.4352,
+   "latency_p95": 25.7836
   },
   "synth": {
    "n": 600,
@@ -346,14 +360,15 @@
    "fact_recall_all": 0.974,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8605,
+   "wrong_issue_rate": 0.1009,
    "tier_dist": {
     "0": 263,
     "1": 319,
     "2": 0,
     "3": 18
    },
-   "latency_p50": 22.2499,
-   "latency_p95": 38.6283
+   "latency_p50": 6.2626,
+   "latency_p95": 15.7672
   },
   "hardneg": {
    "n": 98,
@@ -369,14 +384,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
    "tier_dist": {
     "0": 97,
     "1": 1,
     "2": 0,
     "3": 0
    },
-   "latency_p50": 12.1377,
-   "latency_p95": 21.2776
+   "latency_p50": 0.1331,
+   "latency_p95": 0.1874
   }
  },
  "v4": {
@@ -394,14 +410,15 @@
    "fact_recall_all": 0.9677,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8679,
+   "wrong_issue_rate": 0.101,
    "tier_dist": {
     "0": 214,
     "1": 369,
     "2": 0,
     "3": 17
    },
-   "latency_p50": 22.9935,
-   "latency_p95": 38.5719
+   "latency_p50": 6.2625,
+   "latency_p95": 15.4758
   },
   "desc": "v3 + residue-free masking: abusive clauses with no slot content are dropped, mild profanity stripped in rewrites, generalised threat/self-harm/identity lexicon (synthetic-dev errors)",
   "dev": {
@@ -418,14 +435,15 @@
    "fact_recall_all": 0.9279,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8182,
+   "wrong_issue_rate": 0.1364,
    "tier_dist": {
     "0": 18,
     "1": 19,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 15.2514,
-   "latency_p95": 32.7464
+   "latency_p50": 5.5456,
+   "latency_p95": 6.7757
   },
   "test": {
    "n": 134,
@@ -441,14 +459,15 @@
    "fact_recall_all": 0.9394,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8353,
+   "wrong_issue_rate": 0.1176,
    "tier_dist": {
     "0": 49,
     "1": 78,
     "2": 0,
     "3": 7
    },
-   "latency_p50": 22.081,
-   "latency_p95": 43.5616
+   "latency_p50": 5.8935,
+   "latency_p95": 7.0123
   },
   "hardneg": {
    "n": 98,
@@ -464,14 +483,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
    "tier_dist": {
     "0": 94,
     "1": 4,
     "2": 0,
     "3": 0
    },
-   "latency_p50": 15.1027,
-   "latency_p95": 28.9275
+   "latency_p50": 0.1693,
+   "latency_p95": 0.2725
   }
  },
  "v5": {
@@ -489,14 +509,15 @@
    "fact_recall_all": 0.9133,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.75,
+   "wrong_issue_rate": 0.2083,
    "tier_dist": {
     "0": 16,
     "1": 21,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 134.3315,
-   "latency_p95": 1059.4833
+   "latency_p50": 16.7252,
+   "latency_p95": 31.3994
   },
   "desc": "v4 with detector backbone swapped toxic-bert -> unbiased-toxic-roberta (better threat recall on Civil Comments: 0.29 -> 0.73)",
   "synth": {
@@ -513,14 +534,15 @@
    "fact_recall_all": 0.9686,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8672,
+   "wrong_issue_rate": 0.1016,
    "tier_dist": {
     "0": 216,
     "1": 367,
     "2": 0,
     "3": 17
    },
-   "latency_p50": 52.6759,
-   "latency_p95": 99.9977
+   "latency_p50": 26.7438,
+   "latency_p95": 40.7685
   },
   "test": {
    "n": 134,
@@ -536,14 +558,15 @@
    "fact_recall_all": 0.9292,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8409,
+   "wrong_issue_rate": 0.1136,
    "tier_dist": {
     "0": 46,
     "1": 81,
     "2": 0,
     "3": 7
    },
-   "latency_p50": 47.8632,
-   "latency_p95": 104.9179
+   "latency_p50": 25.5304,
+   "latency_p95": 48.234
   },
   "hardneg": {
    "n": 98,
@@ -559,14 +582,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
    "tier_dist": {
     "0": 94,
     "1": 4,
     "2": 0,
     "3": 0
    },
-   "latency_p50": 15.8501,
-   "latency_p95": 30.4834
+   "latency_p50": 15.3524,
+   "latency_p95": 29.7756
   }
  },
  "v6": {
@@ -584,14 +608,15 @@
    "fact_recall_all": 0.9133,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.75,
+   "wrong_issue_rate": 0.2083,
    "tier_dist": {
     "0": 16,
     "1": 21,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 137.614,
-   "latency_p95": 1050.4527
+   "latency_p50": 28.9603,
+   "latency_p95": 189.1136
   },
   "desc": "v5 + zero-shot NLI safety net for threats/self-harm (DeBERTa-v3 zeroshot, entailment >= 0.9)",
   "synth": {
@@ -608,14 +633,15 @@
    "fact_recall_all": 0.9663,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8672,
+   "wrong_issue_rate": 0.1016,
    "tier_dist": {
     "0": 216,
     "1": 367,
     "2": 0,
     "3": 17
    },
-   "latency_p50": 102.1743,
-   "latency_p95": 209.3432
+   "latency_p50": 32.7919,
+   "latency_p95": 61.4222
   },
   "test": {
    "n": 134,
@@ -631,14 +657,15 @@
    "fact_recall_all": 0.9292,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8409,
+   "wrong_issue_rate": 0.1136,
    "tier_dist": {
     "0": 46,
     "1": 81,
     "2": 0,
     "3": 7
    },
-   "latency_p50": 48.2136,
-   "latency_p95": 119.013
+   "latency_p50": 28.5526,
+   "latency_p95": 75.5793
   },
   "hardneg": {
    "n": 98,
@@ -654,14 +681,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
    "tier_dist": {
     "0": 94,
     "1": 4,
     "2": 0,
     "3": 0
    },
-   "latency_p50": 37.2291,
-   "latency_p95": 134.1317
+   "latency_p50": 20.9461,
+   "latency_p95": 27.6461
   }
  },
  "v7": {
@@ -679,14 +707,15 @@
    "fact_recall_all": 0.9133,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.75,
+   "wrong_issue_rate": 0.2083,
    "tier_dist": {
     "0": 16,
     "1": 21,
     "2": 0,
     "3": 3
    },
-   "latency_p50": 20.3901,
-   "latency_p95": 33.4607
+   "latency_p50": 7.0577,
+   "latency_p95": 7.9744
   },
   "desc": "Detector: lexicon(v7) \u222a unbiased-toxic-roberta with directedness gate, but threats bypass the gate (third-party threats escalate); self-harm needs a first-person subject",
   "synth": {
@@ -703,14 +732,15 @@
    "fact_recall_all": 0.9686,
    "halluc_rate": 0.0017,
    "intent_acc_routed": 0.8672,
+   "wrong_issue_rate": 0.1016,
    "tier_dist": {
     "0": 216,
     "1": 367,
     "2": 0,
     "3": 17
    },
-   "latency_p50": 25.9171,
-   "latency_p95": 43.2538
+   "latency_p50": 6.607,
+   "latency_p95": 7.4997
   },
   "hardneg": {
    "n": 98,
@@ -726,14 +756,15 @@
    "fact_recall_all": 1.0,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
    "tier_dist": {
     "0": 95,
     "1": 3,
     "2": 0,
     "3": 0
    },
-   "latency_p50": 14.2999,
-   "latency_p95": 26.7903
+   "latency_p50": 0.1991,
+   "latency_p95": 0.2926
   },
   "test": {
    "n": 134,
@@ -749,14 +780,15 @@
    "fact_recall_all": 0.9292,
    "halluc_rate": 0.0,
    "intent_acc_routed": 0.8409,
+   "wrong_issue_rate": 0.1136,
    "tier_dist": {
     "0": 46,
     "1": 81,
     "2": 0,
     "3": 7
    },
-   "latency_p50": 22.1794,
-   "latency_p95": 40.2545
+   "latency_p50": 6.6172,
+   "latency_p95": 7.753
   }
  },
  "v8": {
@@ -781,8 +813,8 @@
     "2": 0,
     "3": 3
    },
-   "latency_p50": 46.4528,
-   "latency_p95": 89.1504
+   "latency_p50": 6.7276,
+   "latency_p95": 7.5048
   },
   "desc": "v7 + context filter: model-only flags dropped in figurative ('killing me') or concern ('worried someone could die') clauses without first-person intent",
   "synth": {
@@ -806,8 +838,8 @@
     "2": 0,
     "3": 17
    },
-   "latency_p50": 58.2657,
-   "latency_p95": 96.2686
+   "latency_p50": 6.7539,
+   "latency_p95": 7.6087
   },
   "hardneg": {
    "n": 98,
@@ -830,8 +862,8 @@
     "2": 0,
     "3": 0
    },
-   "latency_p50": 32.1012,
-   "latency_p95": 54.2248
+   "latency_p50": 0.1894,
+   "latency_p95": 0.2723
   },
   "test": {
    "n": 134,
@@ -854,8 +886,8 @@
     "2": 0,
     "3": 7
    },
-   "latency_p50": 52.5427,
-   "latency_p95": 127.665
+   "latency_p50": 6.5239,
+   "latency_p95": 7.715
   }
  },
  "v9": {
@@ -880,8 +912,8 @@
     "2": 0,
     "3": 3
    },
-   "latency_p50": 14.366,
-   "latency_p95": 31.0501
+   "latency_p50": 6.8599,
+   "latency_p95": 16.1336
   },
   "desc": "v8 + confidence-gated header: the issue type is only asserted in the agent's text when intent similarity >= 0.70 (92.5% precision on dev), otherwise a neutral header + the caller's cleaned words",
   "synth": {
@@ -905,8 +937,8 @@
     "2": 0,
     "3": 17
    },
-   "latency_p50": 15.8837,
-   "latency_p95": 34.7483
+   "latency_p50": 8.3508,
+   "latency_p95": 17.9241
   },
   "hardneg": {
    "n": 98,
@@ -929,8 +961,8 @@
     "2": 0,
     "3": 0
    },
-   "latency_p50": 0.4436,
-   "latency_p95": 0.6759
+   "latency_p50": 0.2483,
+   "latency_p95": 0.3585
   },
   "test": {
    "n": 134,
@@ -953,8 +985,8 @@
     "2": 0,
     "3": 7
    },
-   "latency_p50": 15.1594,
-   "latency_p95": 33.777
+   "latency_p50": 7.7219,
+   "latency_p95": 18.1988
   }
  },
  "v10": {
@@ -979,8 +1011,8 @@
     "2": 0,
     "3": 3
    },
-   "latency_p50": 13.2525,
-   "latency_p95": 15.3874
+   "latency_p50": 7.9315,
+   "latency_p95": 9.3743
   },
   "desc": "v9 + slots extracted from masked text (a verbatim slot can never carry abuse \u2014 bug found in live demo)",
   "synth": {
@@ -1004,8 +1036,8 @@
     "2": 0,
     "3": 17
    },
-   "latency_p50": 15.1094,
-   "latency_p95": 21.1886
+   "latency_p50": 6.9859,
+   "latency_p95": 8.2808
   },
   "hardneg": {
    "n": 98,
@@ -1028,8 +1060,8 @@
     "2": 0,
     "3": 0
    },
-   "latency_p50": 0.4451,
-   "latency_p95": 0.6186
+   "latency_p50": 0.1948,
+   "latency_p95": 0.2753
   },
   "test": {
    "n": 134,
@@ -1052,8 +1084,304 @@
     "2": 0,
     "3": 7
    },
-   "latency_p50": 15.2696,
-   "latency_p95": 20.6166
+   "latency_p50": 6.7275,
+   "latency_p95": 7.9797
+  }
+ },
+ "v11": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0556,
+   "fact_recall_toxic": 0.8576,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.9154,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8261,
+   "wrong_issue_rate": 0.087,
+   "tier_dist": {
+    "0": 17,
+    "1": 20,
+    "2": 0,
+    "3": 3
+   },
+   "latency_p50": 7.2646,
+   "latency_p95": 31.0302
+  },
+  "desc": "POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.",
+  "synth": {
+   "n": 600,
+   "route_acc": 0.995,
+   "abuse_recall": 0.9922,
+   "leak_rate": 0.0233,
+   "protected": 0.9767,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.9306,
+   "sufficiency_toxic": 0.8161,
+   "fact_recall_all": 0.9554,
+   "halluc_rate": 0.0017,
+   "intent_acc_routed": 0.8668,
+   "wrong_issue_rate": 0.0366,
+   "tier_dist": {
+    "0": 217,
+    "1": 366,
+    "2": 0,
+    "3": 17
+   },
+   "latency_p50": 8.5667,
+   "latency_p95": 30.8377
+  },
+  "hardneg": {
+   "n": 98,
+   "route_acc": 0.9898,
+   "abuse_recall": NaN,
+   "leak_rate": NaN,
+   "protected": NaN,
+   "threat_recall": NaN,
+   "threat_precision": 0.0,
+   "false_positive_rate": 0.0102,
+   "fact_recall_toxic": NaN,
+   "sufficiency_toxic": NaN,
+   "fact_recall_all": 1.0,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.0,
+   "wrong_issue_rate": 1.0,
+   "tier_dist": {
+    "0": 97,
+    "1": 1,
+    "2": 0,
+    "3": 0
+   },
+   "latency_p50": 0.2564,
+   "latency_p95": 0.3929
+  },
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.012,
+   "protected": 0.988,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.858,
+   "sufficiency_toxic": 0.7831,
+   "fact_recall_all": 0.8947,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8161,
+   "wrong_issue_rate": 0.0345,
+   "tier_dist": {
+    "0": 47,
+    "1": 80,
+    "2": 0,
+    "3": 7
+   },
+   "latency_p50": 8.3319,
+   "latency_p95": 27.2075
+  }
+ },
+ "v12": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0556,
+   "fact_recall_toxic": 0.8576,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.9154,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8261,
+   "wrong_issue_rate": 0.087,
+   "tier_dist": {
+    "0": 17,
+    "1": 20,
+    "2": 3,
+    "3": 0
+   },
+   "latency_p50": 24.7284,
+   "latency_p95": 2145.3446,
+   "llm": {
+    "calls": 3,
+    "accepted": 0,
+    "rej_toxic": 0,
+    "rej_halluc": 2,
+    "rej_facts": 0,
+    "rej_error": 0,
+    "rej_unsupported": 1,
+    "ms_p50": 2045.6224579993432,
+    "ms_p95": 3939.6329713998057
+   }
+  },
+  "desc": "v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.012,
+   "protected": 0.988,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.858,
+   "sufficiency_toxic": 0.7831,
+   "fact_recall_all": 0.8947,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8161,
+   "wrong_issue_rate": 0.0345,
+   "tier_dist": {
+    "0": 47,
+    "1": 80,
+    "2": 7,
+    "3": 0
+   },
+   "latency_p50": 28.3517,
+   "latency_p95": 224.1091,
+   "llm": {
+    "calls": 10,
+    "accepted": 2,
+    "rej_toxic": 0,
+    "rej_halluc": 5,
+    "rej_facts": 0,
+    "rej_error": 0,
+    "rej_unsupported": 3,
+    "ms_p50": 1958.7377080006263,
+    "ms_p95": 3214.7708149493133
+   }
+  }
+ },
+ "llm_all": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0556,
+   "fact_recall_toxic": 0.8803,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.9279,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8261,
+   "wrong_issue_rate": 0.1304,
+   "tier_dist": {
+    "0": 17,
+    "1": 20,
+    "2": 3,
+    "3": 0
+   },
+   "latency_p50": 476.27,
+   "latency_p95": 2265.981,
+   "llm": {
+    "calls": 23,
+    "accepted": 8,
+    "rej_toxic": 1,
+    "rej_halluc": 6,
+    "rej_facts": 0,
+    "rej_error": 0,
+    "rej_unsupported": 8,
+    "ms_p50": 1478.1186249983875,
+    "ms_p95": 2417.9901377996425
+   }
+  },
+  "desc": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) \u2014 is the template ladder still needed?",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0241,
+   "protected": 0.9759,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.8643,
+   "sufficiency_toxic": 0.747,
+   "fact_recall_all": 0.901,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8161,
+   "wrong_issue_rate": 0.1379,
+   "tier_dist": {
+    "0": 47,
+    "1": 80,
+    "2": 7,
+    "3": 0
+   },
+   "latency_p50": 802.1408,
+   "latency_p95": 2603.6532,
+   "llm": {
+    "calls": 110,
+    "accepted": 43,
+    "rej_toxic": 2,
+    "rej_halluc": 23,
+    "rej_facts": 2,
+    "rej_error": 0,
+    "rej_unsupported": 40,
+    "ms_p50": 1192.5977709997824,
+    "ms_p95": 2695.0068579996696
+   }
+  }
+ },
+ "llm_raw": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0455,
+   "protected": 0.9545,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0556,
+   "fact_recall_toxic": 0.8932,
+   "sufficiency_toxic": 0.7727,
+   "fact_recall_all": 0.935,
+   "halluc_rate": 0.15,
+   "intent_acc_routed": 0.8261,
+   "wrong_issue_rate": 0.1304,
+   "tier_dist": {
+    "0": 17,
+    "1": 20,
+    "2": 3,
+    "3": 0
+   },
+   "latency_p50": 510.4191,
+   "latency_p95": 2479.8254
+  },
+  "desc": "Ablation: every abusive utterance rewritten by the LLM, *unverified* \u2014 what verification buys",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0843,
+   "protected": 0.9157,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.9003,
+   "sufficiency_toxic": 0.747,
+   "fact_recall_all": 0.9233,
+   "halluc_rate": 0.1343,
+   "intent_acc_routed": 0.8161,
+   "wrong_issue_rate": 0.1379,
+   "tier_dist": {
+    "0": 47,
+    "1": 80,
+    "2": 7,
+    "3": 0
+   },
+   "latency_p50": 771.8666,
+   "latency_p95": 2549.3583
   }
  }
 }

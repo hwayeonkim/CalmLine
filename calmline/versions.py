@@ -18,7 +18,19 @@ DESCRIPTIONS = {
     "v8": "v7 + context filter: model-only flags dropped in figurative ('killing me') or concern ('worried someone could die') clauses without first-person intent",
     "v9": "v8 + confidence-gated header: the issue type is only asserted in the agent's text when intent similarity >= 0.70 (92.5% precision on dev), otherwise a neutral header + the caller's cleaned words",
     "v10": "v9 + slots extracted from masked text (a verbatim slot can never carry abuse — bug found in live demo)",
+    "v11": "POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.",
+    "v12": "v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown",
+    "llm_all": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) — is the template ladder still needed?",
+    "llm_raw": "Ablation: every abusive utterance rewritten by the LLM, *unverified* — what verification buys",
 }
+
+
+def _llm():
+    import os
+    from .llm import GeminiRewriter, GemmaRewriter
+    if os.getenv("GEMINI_API_KEY") or os.getenv("USE_VERTEX") == "1":
+        return GeminiRewriter()
+    return GemmaRewriter()
 
 
 def build(version: str) -> Pipeline:
@@ -61,4 +73,33 @@ def build(version: str) -> Pipeline:
                              threat_bypass=True, context_filter=True)
         return Pipeline(det, EmbeddingIntent(threshold=0.6), ConfidenceGatedRenderer(assert_th=0.7, verify=det, drop_residue=True),
                         name=version, unknown_mode="generic", mask_mild=True, mask_slots=True)
+    if version == "v11":
+        det = HybridDetector(ModelDetector("unitary/unbiased-toxic-roberta", neutralize_topics=True), LexiconDetector(extended="v11"),
+                             directed_gate=True, threat_bypass=True, context_filter=True)
+        return Pipeline(det, EmbeddingIntent(threshold=0.6),
+                        ConfidenceGatedRenderer(assert_th=0.7, verify=det, drop_residue=True, escalate_no_details=True),
+                        name=version, unknown_mode="generic", mask_mild=True, mask_slots=True)
+    if version in ("v12", "llm_all", "llm_raw"):
+        from .llm import VerifiedRewriter
+        p = build("v11")
+        fb = p.renderer
+        gen = _llm()
+        if version == "v12":
+            p.llm = VerifiedRewriter(gen, p.detector, lambda t, i, s, x: fb(t, "UNKNOWN", s, x))
+            p.unknown_mode = "llm"
+        elif version == "llm_all":
+            vr = VerifiedRewriter(gen, p.detector, fb)
+            p.renderer = vr; p.llm = vr
+        else:
+            class Raw:
+                name = "raw"
+                def __call__(self, t, i, s, x):
+                    from .render import mask
+                    try:
+                        return gen.generate(mask(t, [sp for sp in x.spans if sp.label not in ("threat", "self_harm")]))
+                    except Exception:
+                        return fb(t, i, s, x)
+            p.renderer = Raw(); p.llm = p.renderer
+        p.name = version
+        return p
     raise KeyError(version)

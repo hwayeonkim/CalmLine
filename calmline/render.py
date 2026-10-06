@@ -116,13 +116,16 @@ class HybridRenderer:
     abuse are dropped entirely rather than masked."""
     name = "hybrid"
 
-    def __init__(self, min_new_tokens=2, verify=None, drop_residue=False):
+    def __init__(self, min_new_tokens=2, verify=None, drop_residue=False, escalate_no_details=False):
+        self.escalate_no_details = escalate_no_details  # v11: a threat call gets header + slots only
         self.min_new = min_new_tokens
         self.verify = verify
         self.drop_residue = drop_residue  # v4: drop abusive clauses that carry no slot/fact content
 
     def __call__(self, text, intent, slots, tox):
         head = compose(intent, slots)
+        if self.escalate_no_details and tox.is_threat:
+            return head
         have = set(content_tokens(head)) if intent != "__NEUTRAL__" else set(content_tokens(head)) - {"problem"}
         if intent == "__NEUTRAL__":
             have = set()   # neutral header: keep every informative clause, even if slots repeat it

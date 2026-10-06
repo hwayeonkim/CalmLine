@@ -39,6 +39,17 @@ def clauses(text: str):
     return out
 
 
+# v11 (post-hoc): 311 *topic* vocabulary that Jigsaw-trained models read as insults ("coming out of the garbage" -> 0.99).
+# Replaced by neutral words before model scoring only; insults that use these words ("you're garbage") are caught by
+# the lexicon. Same idea as identity-term masking for unintended bias (Dixon et al., 2018).
+TOPIC = re.compile(r"\b(?:garbage|trash|rubbish|litter|sewage|sewer|filth|filthy|disgusting|dump(?:ed|ing)?|rats?|mice|roach(?:es)?|cockroach(?:es)?|"
+                   r"rodents?|pests?|vermin|mold|mould|feces|poop|urine|piss(?:ing)?)\b", re.I)
+
+
+def neutralize(text: str) -> str:
+    return TOPIC.sub("things", text)
+
+
 class LexiconDetector:
     name = "lexicon"
 
@@ -72,8 +83,9 @@ def _device():
 class ModelDetector:
     """Sentence/clause-level Jigsaw classifier. Labels are mapped onto CalmLine categories."""
 
-    def __init__(self, model_id="unitary/toxic-bert", tox_th=0.5, threat_th=0.5, device=None, per_clause=True):
+    def __init__(self, model_id="unitary/toxic-bert", tox_th=0.5, threat_th=0.5, device=None, per_clause=True, neutralize_topics=False):
         self.model_id, self.tox_th, self.threat_th = model_id, tox_th, threat_th
+        self.neutralize_topics = neutralize_topics
         self.device = device or _device()
         self.per_clause = per_clause
         self.name = model_id.split("/")[-1]
@@ -81,6 +93,9 @@ class ModelDetector:
     _memo: dict = {}
 
     def scores(self, texts):
+        import os
+        if os.getenv("CALMLINE_NO_MEMO") == "1":
+            return self._scores(texts)
         key = (self.model_id, tuple(texts))
         if key in ModelDetector._memo:
             return ModelDetector._memo[key]
@@ -105,6 +120,8 @@ class ModelDetector:
     def __call__(self, text: str) -> ToxicityResult:
         cl = clauses(text) if self.per_clause else [(0, len(text), text)]
         units = [text] + [c[2] for c in cl]
+        if self.neutralize_topics:
+            units = [neutralize(u) for u in units]
         sc = self.scores(units)
         whole, parts = sc[0], sc[1:]
         spans = []

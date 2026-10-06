@@ -1,0 +1,169 @@
+test-000 PASS dur=7.4 rtf=1.28 final_lat=3.18 leak@2: 0 / 0
+test-001 PASS dur=6.7 rtf=1.43 final_lat=3.37 leak@2: 0 / 0
+test-002 PASS dur=8.0 rtf=1.46 final_lat=4.13 leak@2: 0 / 0
+test-003 PASS dur=7.8 rtf=1.50 final_lat=4.52 leak@2: 0 / 0
+test-004 PASS dur=5.8 rtf=1.07 final_lat=0.89 leak@2: 0 / 0
+test-005 PASS dur=7.0 rtf=1.04 final_lat=1.12 leak@2: 0 / 0
+test-006 PASS dur=11.0 rtf=1.00 final_lat=0.53 leak@2: 0 / 0
+test-007 PASS dur=9.0 rtf=1.99 final_lat=9.38 leak@2: 0 / 0
+test-008 PASS dur=7.4 rtf=2.23 final_lat=9.59 leak@2: 0 / 0
+test-009 PASS dur=7.0 rtf=2.18 final_lat=8.96 leak@2: 0 / 0
+test-010 PASS dur=9.2 rtf=1.16 final_lat=2.13 leak@2: 0 / 0
+test-011 PASS dur=8.7 rtf=1.80 final_lat=7.47 leak@2: 0 / 0
+test-012 PASS dur=7.9 rtf=1.30 final_lat=3.14 leak@2: 0 / 0
+test-013 PASS dur=4.6 rtf=1.01 final_lat=0.66 leak@2: 0 / 0
+test-014 PASS dur=8.1 rtf=2.16 final_lat=10.09 leak@2: 0 / 0
+test-015 PASS dur=6.7 rtf=1.66 final_lat=4.87 leak@2: 0 / 0
+test-016 PASS dur=5.9 rtf=1.24 final_lat=1.91 leak@2: 0 / 0
+test-017 PASS dur=6.3 rtf=1.13 final_lat=1.31 leak@2: 0 / 0
+test-018 PASS dur=6.7 rtf=1.37 final_lat=3.01 leak@2: 0 / 0
+test-019 PASS dur=5.9 rtf=1.45 final_lat=3.19 leak@2: 0 / 0
+test-020 PASS dur=4.7 rtf=0.99 final_lat=0.47 leak@2: 0 / 0
+test-021 PASS dur=4.6 rtf=1.77 final_lat=4.03 leak@2: 0 / 0
+test-022 PASS dur=6.1 rtf=0.99 final_lat=0.66 leak@2: 0 / 0
+test-023 PASS dur=5.0 rtf=2.65 final_lat=8.75 leak@2: 0 / 0
+test-024 PASS dur=5.4 rtf=1.52 final_lat=3.30 leak@2: 0 / 0
+test-025 PASS dur=5.5 rtf=2.11 final_lat=6.60 leak@2: 0 / 0
+test-026 PASS dur=8.6 rtf=1.54 final_lat=5.33 leak@2: 0 / 0
+test-027 PASS dur=5.8 rtf=1.49 final_lat=3.33 leak@2: 0 / 0
+test-028 PASS dur=8.4 rtf=2.18 final_lat=10.48 leak@2: 0 / 0
+test-029 PASS dur=9.0 rtf=1.29 final_lat=3.14 leak@2: 0 / 0
+test-030 CALM dur=6.3 rtf=1.55 final_lat=3.96 leak@2: 0 / 1
+test-031 CALM dur=6.7 rtf=1.87 final_lat=6.35 leak@2: 1 / 2
+test-032 CALM dur=3.8 rtf=1.59 final_lat=2.97 leak@2: 0 / 1
+test-033 CALM dur=9.3 rtf=2.27 final_lat=12.29 leak@2: 3 / 3
+test-034 CALM dur=5.4 rtf=1.93 final_lat=5.54 leak@2: 2 / 3
+test-035 CALM dur=11.8 rtf=1.86 final_lat=10.62 leak@2: 2 / 3
+test-036 CALM dur=4.4 rtf=3.59 final_lat=11.89 leak@2: 0 / 1
+test-037 CALM dur=4.9 rtf=1.89 final_lat=5.13 leak@2: 0 / 0
+test-038 CALM dur=7.2 rtf=2.53 final_lat=11.57 leak@2: 0 / 1
+test-039 CALM dur=5.2 rtf=1.48 final_lat=2.98 leak@2: 1 / 1
+test-040 CALM dur=7.0 rtf=1.99 final_lat=7.50 leak@2: 2 / 2
+test-041 CALM dur=6.0 rtf=1.01 final_lat=0.54 leak@2: 1 / 1
+test-042 CALM dur=6.2 rtf=1.57 final_lat=4.17 leak@2: 2 / 3
+test-043 CALM dur=4.8 rtf=1.60 final_lat=3.37 leak@2: 1 / 1
+test-044 CALM dur=4.4 rtf=2.10 final_lat=5.42 leak@2: 1 / 1
+test-045 CALM dur=5.9 rtf=1.22 final_lat=1.95 leak@2: 1 / 3
+test-046 CALM dur=6.9 rtf=1.34 final_lat=2.88 leak@2: 2 / 2
+test-047 CALM dur=7.3 rtf=2.06 final_lat=8.24 leak@2: 6 / 8
+test-048 CALM dur=5.1 rtf=1.29 final_lat=2.20 leak@2: 6 / 6
+test-049 CALM dur=4.6 rtf=0.98 final_lat=0.54 leak@2: 2 / 3
+test-050 CALM dur=5.6 rtf=1.28 final_lat=2.06 leak@2: 0 / 2
+test-051 CALM dur=6.6 rtf=1.56 final_lat=4.19 leak@2: 0 / 1
+test-052 CALM dur=6.2 rtf=1.02 final_lat=0.64 leak@2: 0 / 4
+test-053 CALM dur=8.3 rtf=0.98 final_lat=0.80 leak@2: 2 / 4
+test-054 CALM dur=5.5 rtf=1.59 final_lat=3.75 leak@2: 2 / 2
+test-055 CALM dur=6.3 rtf=1.64 final_lat=4.53 leak@2: 2 / 2
+test-056 CALM dur=5.2 rtf=1.96 final_lat=5.45 leak@2: 3 / 3
+test-057 CALM dur=6.1 rtf=1.04 final_lat=0.74 leak@2: 1 / 2
+test-058 CALM dur=5.6 rtf=1.32 final_lat=2.29 leak@2: 4 / 4
+test-059 CALM dur=6.1 rtf=1.01 final_lat=0.55 leak@2: 4 / 4
+test-060 CALM dur=5.4 rtf=1.37 final_lat=2.50 leak@2: 4 / 4
+test-061 CALM dur=4.9 rtf=1.26 final_lat=1.91 leak@2: 1 / 4
+test-062 CALM dur=5.1 rtf=1.31 final_lat=2.07 leak@2: 4 / 4
+test-063 CALM dur=5.8 rtf=1.68 final_lat=4.40 leak@2: 3 / 5
+test-064 CALM dur=4.2 rtf=1.32 final_lat=1.95 leak@2: 6 / 6
+test-065 CALM dur=4.4 rtf=1.09 final_lat=0.91 leak@2: 4 / 4
+test-066 CALM dur=5.3 rtf=1.70 final_lat=4.18 leak@2: 3 / 3
+test-067 CALM dur=6.7 rtf=1.16 final_lat=1.66 leak@2: 0 / 6
+test-068 CALM dur=5.1 rtf=2.10 final_lat=6.08 leak@2: 2 / 2
+test-069 CALM dur=5.1 rtf=1.17 final_lat=1.37 leak@2: 2 / 2
+test-070 CALM dur=21.2 rtf=1.35 final_lat=8.13 leak@2: 1 / 3
+test-071 CALM dur=16.4 rtf=1.61 final_lat=10.50 leak@2: 1 / 3
+test-072 CALM dur=14.4 rtf=1.33 final_lat=5.33 leak@2: 0 / 3
+test-073 CALM dur=15.0 rtf=1.93 final_lat=14.88 leak@2: 2 / 3
+test-074 CALM dur=10.4 rtf=1.04 final_lat=1.01 leak@2: 5 / 5
+test-075 CALM dur=9.3 rtf=1.85 final_lat=8.43 leak@2: 0 / 1
+test-076 CALM dur=7.0 rtf=2.45 final_lat=10.63 leak@2: 4 / 4
+test-077 CALM dur=12.2 rtf=1.07 final_lat=1.63 leak@2: 1 / 3
+test-078 ESCALATE dur=5.2 rtf=1.10 final_lat=1.03 leak@2: 5 / 5
+test-079 ESCALATE dur=4.6 rtf=1.56 final_lat=3.05 leak@2: 7 / 9
+test-080 ESCALATE dur=4.8 rtf=3.48 final_lat=12.52 leak@2: 4 / 4
+test-081 ESCALATE dur=4.2 rtf=1.28 final_lat=1.69 leak@2: 3 / 5
+test-082 ESCALATE dur=4.1 rtf=1.11 final_lat=0.94 leak@2: 4 / 6
+test-083 ESCALATE dur=4.5 rtf=1.99 final_lat=4.97 leak@2: 7 / 7
+test-084 ESCALATE dur=4.9 rtf=1.35 final_lat=2.53 leak@2: 0 / 5
+test-085 ESCALATE dur=5.7 rtf=1.22 final_lat=1.75 leak@2: 4 / 6
+test-086 ESCALATE dur=3.3 rtf=2.44 final_lat=5.29 leak@2: 2 / 2
+test-087 ESCALATE dur=4.1 rtf=1.21 final_lat=1.34 leak@2: 4 / 8
+test-088 ESCALATE dur=6.1 rtf=1.26 final_lat=2.06 leak@2: 0 / 0
+test-089 ESCALATE dur=4.8 rtf=2.04 final_lat=5.63 leak@2: 0 / 0
+test-090 PASS dur=4.3 rtf=1.41 final_lat=2.27 leak@2: 0 / 0
+test-091 PASS dur=3.2 rtf=3.04 final_lat=7.05 leak@2: 0 / 0
+test-092 PASS dur=6.5 rtf=2.40 final_lat=9.58 leak@2: 0 / 0
+test-093 PASS dur=4.6 rtf=1.68 final_lat=3.64 leak@2: 0 / 0
+test-094 PASS dur=4.2 rtf=1.39 final_lat=2.16 leak@2: 0 / 0
+test-095 PASS dur=5.3 rtf=1.53 final_lat=3.28 leak@2: 0 / 0
+test-096 PASS dur=5.3 rtf=2.40 final_lat=8.05 leak@2: 0 / 0
+test-097 PASS dur=3.8 rtf=1.04 final_lat=0.66 leak@2: 0 / 0
+test-098 PASS dur=4.2 rtf=2.97 final_lat=8.72 leak@2: 0 / 0
+test-099 PASS dur=4.9 rtf=2.45 final_lat=7.90 leak@2: 0 / 0
+test-100 PASS dur=6.7 rtf=1.04 final_lat=0.78 leak@2: 0 / 0
+test-101 CALM dur=7.1 rtf=1.44 final_lat=3.62 leak@2: 2 / 2
+test-102 PASS dur=4.5 rtf=1.51 final_lat=2.81 leak@2: 0 / 0
+test-103 CALM dur=3.5 rtf=1.64 final_lat=2.72 leak@2: 3 / 3
+test-104 ESCALATE dur=3.6 rtf=1.74 final_lat=3.14 leak@2: 3 / 3
+test-105 PASS dur=4.2 rtf=1.87 final_lat=4.33 leak@2: 0 / 0
+test-106 CALM dur=5.2 rtf=2.03 final_lat=5.88 leak@2: 0 / 3
+test-107 PASS dur=4.3 rtf=1.19 final_lat=1.32 leak@2: 0 / 0
+test-108 CALM dur=6.9 rtf=1.14 final_lat=1.44 leak@2: 1 / 1
+test-109 CALM dur=4.4 rtf=1.24 final_lat=1.56 leak@2: 0 / 3
+test-110 PASS dur=6.9 rtf=2.22 final_lat=8.91 leak@2: 0 / 0
+test-111 CALM dur=6.4 rtf=0.95 final_lat=0.37 leak@2: 2 / 2
+test-112 CALM dur=4.3 rtf=3.02 final_lat=9.14 leak@2: 0 / 1
+test-113 CALM dur=5.2 rtf=1.32 final_lat=2.16 leak@2: 2 / 2
+test-114 CALM dur=4.6 rtf=1.14 final_lat=1.39 leak@2: 0 / 2
+test-115 CALM dur=4.5 rtf=1.68 final_lat=3.55 leak@2: 0 / 3
+test-116 CALM dur=4.8 rtf=1.34 final_lat=2.12 leak@2: 0 / 5
+test-117 CALM dur=6.5 rtf=1.07 final_lat=1.19 leak@2: 0 / 1
+test-118 CALM dur=6.3 rtf=1.51 final_lat=3.71 leak@2: 4 / 4
+test-119 CALM dur=5.7 rtf=1.61 final_lat=3.99 leak@2: 0 / 3
+test-120 CALM dur=5.7 rtf=1.67 final_lat=4.52 leak@2: 5 / 8
+test-121 CALM dur=6.5 rtf=1.28 final_lat=2.33 leak@2: 1 / 2
+test-122 CALM dur=4.7 rtf=1.68 final_lat=3.70 leak@2: 5 / 5
+test-123 CALM dur=5.5 rtf=1.43 final_lat=3.01 leak@2: 0 / 1
+test-124 CALM dur=5.1 rtf=2.59 final_lat=8.64 leak@2: 0 / 1
+test-125 CALM dur=6.7 rtf=1.17 final_lat=1.75 leak@2: 1 / 1
+test-126 CALM dur=6.4 rtf=1.66 final_lat=4.85 leak@2: 0 / 1
+test-127 CALM dur=5.6 rtf=1.70 final_lat=4.39 leak@2: 1 / 1
+test-128 PASS dur=6.6 rtf=2.86 final_lat=12.87 leak@2: 0 / 0
+test-129 PASS dur=7.2 rtf=1.45 final_lat=3.70 leak@2: 0 / 0
+test-130 PASS dur=6.0 rtf=1.74 final_lat=4.92 leak@2: 0 / 0
+test-131 PASS dur=5.8 rtf=1.77 final_lat=4.97 leak@2: 0 / 0
+test-132 PASS dur=4.5 rtf=1.23 final_lat=1.54 leak@2: 0 / 0
+test-133 PASS dur=5.7 rtf=1.38 final_lat=2.68 leak@2: 0 / 0
+{
+ "split": "test",
+ "whisper": "base.en",
+ "chunk_s": 0.5,
+ "policy": "window+bias",
+ "n": 134,
+ "n_toxic_utts": 80,
+ "rtf_mean": 1.616263420473772,
+ "final_latency_p50": 3.349364291499558,
+ "final_latency_p95": 10.622145400450982,
+ "word_leak@0.0": 1.0,
+ "utt_leak@0.0": 1.0,
+ "collateral_s_per_clean_utt@0.0": 0.0,
+ "word_leak@0.5": 1.0,
+ "utt_leak@0.5": 1.0,
+ "collateral_s_per_clean_utt@0.5": 0.0,
+ "word_leak@1.0": 0.8188976377952756,
+ "utt_leak@1.0": 0.9375,
+ "collateral_s_per_clean_utt@1.0": 0.018431372549019616,
+ "word_leak@1.5": 0.7125984251968503,
+ "utt_leak@1.5": 0.775,
+ "collateral_s_per_clean_utt@1.5": 0.02980392156862745,
+ "word_leak@2.0": 0.6456692913385826,
+ "utt_leak@2.0": 0.725,
+ "collateral_s_per_clean_utt@2.0": 0.03490196078431372,
+ "word_leak@2.5": 0.5275590551181102,
+ "utt_leak@2.5": 0.6125,
+ "collateral_s_per_clean_utt@2.5": 0.03490196078431372,
+ "word_leak@3.0": 0.4409448818897638,
+ "utt_leak@3.0": 0.5125,
+ "collateral_s_per_clean_utt@3.0": 0.03490196078431372,
+ "word_leak@4.0": 0.3700787401574803,
+ "utt_leak@4.0": 0.4625,
+ "collateral_s_per_clean_utt@4.0": 0.05607843137254902
+}
