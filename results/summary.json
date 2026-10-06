@@ -20,8 +20,8 @@
     "2": 0,
     "3": 3
    },
-   "latency_p50": 0.0894,
-   "latency_p95": 0.3461
+   "latency_p50": 0.0964,
+   "latency_p95": 0.3552
   },
   "desc": "Baseline: regex lexicon + keyword intent + pure template (the original 'pre-written phrases' idea)",
   "test": {
@@ -44,8 +44,8 @@
     "2": 0,
     "3": 9
    },
-   "latency_p50": 0.1909,
-   "latency_p95": 0.3073
+   "latency_p50": 0.1974,
+   "latency_p95": 0.3164
   }
  },
  "v1": {
@@ -69,8 +69,8 @@
     "2": 0,
     "3": 2
    },
-   "latency_p50": 17.5365,
-   "latency_p95": 141.5633
+   "latency_p50": 15.5861,
+   "latency_p95": 22.9952
   },
   "desc": "Detection: lexicon \u222a toxic-bert (Jigsaw, clause-level) \u00b7 Intent: bge-small nearest-prototype (open-set \u03c4=0.6) \u00b7 pure template",
   "test": {
@@ -93,8 +93,8 @@
     "2": 0,
     "3": 8
    },
-   "latency_p50": 15.9472,
-   "latency_p95": 45.1317
+   "latency_p50": 15.4454,
+   "latency_p95": 24.8477
   }
  },
  "v2": {
@@ -118,8 +118,8 @@
     "2": 0,
     "3": 2
    },
-   "latency_p50": 14.0914,
-   "latency_p95": 18.6208
+   "latency_p50": 14.5527,
+   "latency_p95": 19.2319
   },
   "desc": "v1 + hybrid renderer: template header for tone + extractive detail clauses with abusive spans removed (condBERT-style)",
   "test": {
@@ -142,8 +142,8 @@
     "2": 0,
     "3": 8
    },
-   "latency_p50": 15.5027,
-   "latency_p95": 24.4127
+   "latency_p50": 15.2786,
+   "latency_p95": 24.1636
   }
  },
  "v3": {
@@ -167,8 +167,8 @@
     "2": 0,
     "3": 3
    },
-   "latency_p50": 18.3036,
-   "latency_p95": 102.3308
+   "latency_p50": 14.1011,
+   "latency_p95": 33.3451
   },
   "desc": "v2 + directedness gate on model-only flags (Waseem et al. 2017) + render-then-verify detail clauses + threats never echo wording + generic header for unknown intents",
   "test": {
@@ -191,8 +191,8 @@
     "2": 0,
     "3": 7
    },
-   "latency_p50": 22.2636,
-   "latency_p95": 43.3442
+   "latency_p50": 22.7733,
+   "latency_p95": 41.1495
   }
  }
 }

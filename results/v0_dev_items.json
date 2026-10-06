@@ -15,7 +15,7 @@
   "intent_gold": "noise_vehicle",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08729099999982282,
+  "latency": 0.08854099996824516,
   "delivered": "Hello, the car alarm on the gray Nissan outside 41 Bleecker Street has been going for an hour.",
   "residual_tox": null
  },
@@ -35,7 +35,7 @@
   "intent_gold": "heat_hot_water",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08920799996303685,
+  "latency": 0.09716599993225827,
   "delivered": "I want to report that there's no hot water in apartment 8H at 3333 Broadway since yesterday morning.",
   "residual_tox": null
  },
@@ -55,7 +55,7 @@
   "intent_gold": "abandoned_vehicle",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.0747499998396961,
+  "latency": 0.07270900005096337,
   "delivered": "Somebody left a burned out car on Pennsylvania Avenue, it's been there two weeks.",
   "residual_tox": null
  },
@@ -75,7 +75,7 @@
   "intent_gold": "noise_residential",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.10283299980073934,
+  "latency": 0.10579200011306966,
   "delivered": "The people upstairs at 1A, 75 Hart Street, are moving furniture at 1am every night. I'm a nurse, I need sleep.",
   "residual_tox": null
  },
@@ -95,7 +95,7 @@
   "intent_gold": "street_condition",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07716699997217802,
+  "latency": 0.08695899987287703,
   "delivered": "Big pothole on the Grand Central Parkway exit ramp to 188th Street, cars swerving around it.",
   "residual_tox": null
  },
@@ -115,7 +115,7 @@
   "intent_gold": "elevator",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07216700009848864,
+  "latency": 0.08266600002571067,
   "delivered": "My building's elevator is out again, 2 Fifth Avenue, and I just had knee surgery.",
   "residual_tox": null
  },
@@ -135,7 +135,7 @@
   "intent_gold": "tree",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08320899996761,
+  "latency": 0.08558299987271312,
   "delivered": "Reference number 311-20667712, I'm following up on the dead tree in front of 19 Maple Street.",
   "residual_tox": null
  },
@@ -155,7 +155,7 @@
   "intent_gold": "noise_commercial",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08937500001593435,
+  "latency": 0.09566699986862659,
   "delivered": "The bar on Rivington plays music so loud my walls shake till 3, can you send an inspector Friday night?",
   "residual_tox": null
  },
@@ -175,7 +175,7 @@
   "intent_gold": "missed_collection",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07024999990790093,
+  "latency": 0.07533300004070043,
   "delivered": "The heck is wrong with sanitation? Compost bin wasn't picked up on Garfield Place.",
   "residual_tox": null
  },
@@ -195,7 +195,7 @@
   "intent_gold": "UNKNOWN",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.04049999984090391,
+  "latency": 0.041416999920329545,
   "delivered": "I'm calling to complain about my water bill.",
   "residual_tox": null
  },
@@ -218,7 +218,7 @@
   "intent_gold": "sewer",
   "intent_pred": "noise_street",
   "tier": 1,
-  "latency": 0.3166249998685089,
+  "latency": 0.3229999997529376,
   "delivered": "Hello, I'm calling to report loud noise on the street outside at 60 Oak Street.",
   "residual_tox": 0.0009265401167795062
  },
@@ -240,7 +240,7 @@
   "intent_gold": "traffic_signal",
   "intent_pred": "UNKNOWN",
   "tier": 3,
-  "latency": 0.3529580001213617,
+  "latency": 0.41541600035088777,
   "delivered": "twits, the light at Myrtle and Wyckoff has been out a week.",
   "residual_tox": 0.0005495095392689109
  },
@@ -262,7 +262,7 @@
   "intent_gold": "graffiti",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.06050000001778244,
+  "latency": 0.0647919998755242,
   "delivered": "hey cutie, there's graffiti on the mailbox on 5th Avenue",
   "residual_tox": 0.01207906287163496
  },
@@ -282,7 +282,7 @@
   "intent_gold": "blocked_driveway",
   "intent_pred": "blocked_driveway",
   "tier": 1,
-  "latency": 0.34574999995129474,
+  "latency": 0.3548320003119443,
   "delivered": "Hello, I'm calling to report a vehicle blocking my driveway at 12 Clove Road. The vehicle involved: a red pickup truck.",
   "residual_tox": 0.0005207706126384437
  },
@@ -304,7 +304,7 @@
   "intent_gold": "unsanitary_condition",
   "intent_pred": "unsanitary_condition",
   "tier": 1,
-  "latency": 0.35970799967799394,
+  "latency": 0.36258399973121413,
   "delivered": "Hello, I'm calling to report unsanitary conditions in my apartment, such as pests or mold at apartment 3C and 455 Ocean Avenue. Please note: my son's and has asthma.",
   "residual_tox": 0.0006290246383287013
  },
@@ -327,7 +327,7 @@
   "intent_gold": "water_system",
   "intent_pred": "illegal_parking",
   "tier": 1,
-  "latency": 0.1649580003686424,
+  "latency": 0.14854099981675972,
   "delivered": "Hello, I'm calling to report a vehicle that is parked illegally.",
   "residual_tox": 0.0006437751580961049
  },
@@ -347,7 +347,7 @@
   "intent_gold": "blocked_driveway",
   "intent_pred": "blocked_driveway",
   "tier": 1,
-  "latency": 0.24550000011913653,
+  "latency": 0.24204100009228569,
   "delivered": "Hello, I'm calling to report a vehicle blocking my driveway at Arthur Kill Road. I'm asking you to please someone to tow the van blocking.",
   "residual_tox": 0.00046042638132348657
  },
@@ -369,7 +369,7 @@
   "intent_gold": "sidewalk_condition",
   "intent_pred": "noise_street",
   "tier": 1,
-  "latency": 0.20024900004500523,
+  "latency": 0.17887400008476106,
   "delivered": "Hello, I'm calling to report loud noise on the street outside at 900 Coney Island Avenue.",
   "residual_tox": 0.0008823481621220708
  },
@@ -391,7 +391,7 @@
   "intent_gold": "noise_residential",
   "intent_pred": "noise_residential",
   "tier": 1,
-  "latency": 0.21862499988856143,
+  "latency": 0.21174899984544027,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a noise problem from a neighboring apartment at apartment 6R. Timing: since 7am.",
   "residual_tox": 0.000446543243015185
  },
@@ -413,7 +413,7 @@
   "intent_gold": "UNKNOWN",
   "intent_pred": "UNKNOWN",
   "tier": 3,
-  "latency": 0.20733300016217981,
+  "latency": 0.19433199986451655,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] You better fix it or I'll come down to your office and.",
   "residual_tox": 0.0007455545710399747
  },
@@ -433,7 +433,7 @@
   "intent_gold": "heat_hot_water",
   "intent_pred": "heat_hot_water",
   "tier": 1,
-  "latency": 0.22662300011688785,
+  "latency": 0.22516499984703842,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report no heat or hot water in my building. Please note: my kids.",
   "residual_tox": 0.0005257850280031562
  },
@@ -453,7 +453,7 @@
   "intent_gold": "rodent",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07387499999822467,
+  "latency": 0.07779199995638919,
   "delivered": "These rats are killing me, they're in my car engine now, parked on Linden Street.",
   "residual_tox": null
  },
@@ -476,7 +476,7 @@
   "intent_gold": "dirty_condition",
   "intent_pred": "noise_street",
   "tier": 1,
-  "latency": 0.2138329998615518,
+  "latency": 0.2191250000578293,
   "delivered": "Hello, I'm calling to report loud noise on the street outside at Tremont Avenue.",
   "residual_tox": 0.000937753648031503
  },
@@ -498,7 +498,7 @@
   "intent_gold": "noise_street",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.09858299995357811,
+  "latency": 0.10287500003869354,
   "delivered": "i swear you guys are the dumbest people alive, the noise is coming from the street not my building, on Dyckman Street",
   "residual_tox": 0.9959771037101746
  },
@@ -518,7 +518,7 @@
   "intent_gold": "building_repair",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.0894580000476708,
+  "latency": 0.08604100003140047,
   "delivered": "ok so the stove doesnt work since last month and the landlord ignores us 2244 Morris Avenue apt 4D",
   "residual_tox": null
  },
@@ -540,7 +540,7 @@
   "intent_gold": "illegal_fireworks",
   "intent_pred": "illegal_fireworks",
   "tier": 1,
-  "latency": 0.17491699986749154,
+  "latency": 0.16024999990804645,
   "delivered": "Hello, I'm calling to report illegal fireworks being set off at Liberty Avenue. Timing: since July.",
   "residual_tox": 0.015038588084280491
  },
@@ -562,7 +562,7 @@
   "intent_gold": "unsanitary_condition",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08466700001008576,
+  "latency": 0.08899999988898344,
   "delivered": "Mold, leaks, mice. 3 years in this dump at 1515 Popham Avenue and you jerks never send anyone.",
   "residual_tox": 0.7548062801361084
  },
@@ -584,7 +584,7 @@
   "intent_gold": "homeless_assistance",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08258299999397423,
+  "latency": 0.08849999994708924,
   "delivered": "homeless guy passed out on the sidewalk on Westchester Avenue, he isn't moving, please send someone",
   "residual_tox": null
  },
@@ -604,7 +604,7 @@
   "intent_gold": "traffic_signal",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.06691700014016533,
+  "latency": 0.0698750000083237,
   "delivered": "the walk signal at 86th and Lexington never turns on, my grandma almost got hit",
   "residual_tox": null
  },
@@ -627,7 +627,7 @@
   "intent_gold": "rodent",
   "intent_pred": "rodent",
   "tier": 1,
-  "latency": 0.22945799992157845,
+  "latency": 0.2309169999534788,
   "delivered": "Hello, I'm calling to report rats or rodents in the area at Boston Road. Timing: every morning.",
   "residual_tox": 0.1348569244146347
  },
@@ -649,7 +649,7 @@
   "intent_gold": "UNKNOWN",
   "intent_pred": "UNKNOWN",
   "tier": 3,
-  "latency": 0.18779099991661496,
+  "latency": 0.1881669998056168,
   "delivered": "you sound when you say reference number, anyway it's 311-20111234",
   "residual_tox": 0.00037079304456710815
  },
@@ -671,7 +671,7 @@
   "intent_gold": "construction_noise",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07433300015691202,
+  "latency": 0.07420799988722138,
   "delivered": "Who the hell trained you? The construction crew on 10th Avenue starts at 5:30am.",
   "residual_tox": 0.45015808939933777
  },
@@ -691,7 +691,7 @@
   "intent_gold": "plumbing_leak",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.09812500002226443,
+  "latency": 0.09983299992200045,
   "delivered": "Water has been dripping from my ceiling for three days, 4th floor, 222 East 21st Street, the super's useless.",
   "residual_tox": null
  },
@@ -714,7 +714,7 @@
   "intent_gold": "illegal_parking",
   "intent_pred": "illegal_parking",
   "tier": 1,
-  "latency": 0.19758299981731398,
+  "latency": 0.19337499998073326,
   "delivered": "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] Hello, I'm calling to report a vehicle that is parked illegally.",
   "residual_tox": 0.00047794586862437427
  },
@@ -734,7 +734,7 @@
   "intent_gold": "missed_collection",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.07616700008838961,
+  "latency": 0.08220900008382159,
   "delivered": "sanitation hasn't picked up on Tompkins Avenue in two weeks, it smells like death out here",
   "residual_tox": null
  },
@@ -756,7 +756,7 @@
   "intent_gold": "street_light",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08195899999918765,
+  "latency": 0.08829099988361122,
   "delivered": "Goddammit, the streetlight in front of my house on Clarke Avenue is out again, third time this year",
   "residual_tox": 0.002259116154164076
  },
@@ -778,7 +778,7 @@
   "intent_gold": "tree",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08624999986750481,
+  "latency": 0.08579199993619113,
   "delivered": "your mother must be proud of such a useless kid. Branch hanging over the road on Richmond Road.",
   "residual_tox": 0.9873270392417908
  },
@@ -800,7 +800,7 @@
   "intent_gold": "noise_residential",
   "intent_pred": "noise_street",
   "tier": 1,
-  "latency": 0.23862500029281364,
+  "latency": 0.230750000127955,
   "delivered": "Hello, I'm calling to report loud noise on the street outside at apartment 2D and 404 Quincy Street. Timing: 3 am and Every night.",
   "residual_tox": 0.0005023870035074651
  },
@@ -820,7 +820,7 @@
   "intent_gold": "UNKNOWN",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08150000007844937,
+  "latency": 0.07979199995133968,
   "delivered": "Thank you, and also there's a broken water fountain in the playground at Cooper Park.",
   "residual_tox": null
  },
@@ -840,7 +840,7 @@
   "intent_gold": "illegal_parking",
   "intent_pred": "UNKNOWN",
   "tier": 0,
-  "latency": 0.08895800010577659,
+  "latency": 0.08849999994708924,
   "delivered": "there's a truck with Jersey plates parked in the bus stop on Fulton Street every day from 6 to 10am",
   "residual_tox": null
  }

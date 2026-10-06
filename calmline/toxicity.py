@@ -42,11 +42,11 @@ def clauses(text: str):
 class LexiconDetector:
     name = "lexicon"
 
-    def __init__(self, include_mild=False):
-        self.include_mild = include_mild
+    def __init__(self, include_mild=False, extended=True):
+        self.include_mild, self.extended = include_mild, extended
 
     def __call__(self, text: str) -> ToxicityResult:
-        found = lexicon.find_spans(text, include_mild=self.include_mild)
+        found = lexicon.find_spans(text, include_mild=self.include_mild, extended=self.extended)
         spans = [Span(s, e, cat, t) for s, e, cat, t in found if cat != "mild" or self.include_mild]
         threat = any(s.label in ("threat", "self_harm") for s in spans)
         toxic = any(s.label not in ("threat", "self_harm") for s in spans)

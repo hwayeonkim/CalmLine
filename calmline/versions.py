@@ -14,11 +14,11 @@ DESCRIPTIONS = {
 
 def build(version: str) -> Pipeline:
     if version == "v0":
-        return Pipeline(LexiconDetector(), KeywordIntent(), TemplateRenderer(), name="v0")
+        return Pipeline(LexiconDetector(extended=False), KeywordIntent(), TemplateRenderer(), name="v0")
     if version == "v1":
-        return Pipeline(HybridDetector(ModelDetector("unitary/toxic-bert")), EmbeddingIntent(threshold=0.6), TemplateRenderer(), name="v1")
+        return Pipeline(HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended=False)), EmbeddingIntent(threshold=0.6), TemplateRenderer(), name="v1")
     if version == "v2":
-        return Pipeline(HybridDetector(ModelDetector("unitary/toxic-bert")), EmbeddingIntent(threshold=0.6), HybridRenderer(), name="v2")
+        return Pipeline(HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended=False)), EmbeddingIntent(threshold=0.6), HybridRenderer(), name="v2")
     if version == "v3":
         det = HybridDetector(ModelDetector("unitary/toxic-bert"), directed_gate=True)
         return Pipeline(det, EmbeddingIntent(threshold=0.6), HybridRenderer(verify=det), name="v3", unknown_mode="generic")
