@@ -24,6 +24,7 @@ DET = {
     "hybrid_v4": lambda: HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended="v4"), directed_gate=True),
     "nli": lambda: NLIDetector(),
     "hybrid_v4_tb": lambda: HybridDetector(ModelDetector("unitary/toxic-bert"), LexiconDetector(extended="v4"), directed_gate=True, threat_bypass=True),
+    "hybrid_v11": lambda: HybridDetector(ModelDetector("unitary/unbiased-toxic-roberta", neutralize_topics=True), LexiconDetector(extended="v11"), directed_gate=True, threat_bypass=True, context_filter=True),
     "hybrid_unb_tb": lambda: HybridDetector(ModelDetector("unitary/unbiased-toxic-roberta"), LexiconDetector(extended="v4"), directed_gate=True, threat_bypass=True),
 }
 

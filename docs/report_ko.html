@@ -1,0 +1,265 @@
+<title>CalmLine 연구 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#F4F6F8; --panel:#FFFFFF; --ink:#17212B; --muted:#5B6875; --line:#DCE2E8;
+  --accent:#1D6E68; --accent-soft:#E2F0EE; --warn:#B5622E; --warn-soft:#F8EBE2; --alert:#A3302B; --alert-soft:#F8E4E2;
+  --chart-a:#1D6E68; --chart-b:#B5622E; --grid:#E6EAEE;
+  --serif:"Noto Serif KR","Apple SD Gothic Neo",serif; --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  color-scheme:dark; --bg:#12181E; --panel:#19212A; --ink:#E6EBEF; --muted:#95A2AE; --line:#2A343E;
+  --accent:#5CB8AE; --accent-soft:#1C3533; --warn:#E0975F; --warn-soft:#3A2A1F; --alert:#E36B63; --alert-soft:#3D2423;
+  --chart-a:#5CB8AE; --chart-b:#E0975F; --grid:#26303A;}}
+:root[data-theme="dark"]{
+  color-scheme:dark; --bg:#12181E; --panel:#19212A; --ink:#E6EBEF; --muted:#95A2AE; --line:#2A343E;
+  --accent:#5CB8AE; --accent-soft:#1C3533; --warn:#E0975F; --warn-soft:#3A2A1F; --alert:#E36B63; --alert-soft:#3D2423;
+  --chart-a:#5CB8AE; --chart-b:#E0975F; --grid:#26303A;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15.5px/1.75 var(--sans);margin:0;padding-inline:18px;padding-block:40px 80px}
+main{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2{font-family:var(--serif);text-wrap:balance;letter-spacing:-.01em;margin:0}
+h1{font-size:34px;line-height:1.25}
+h2{font-size:23px;line-height:1.35;padding-top:8px;border-top:1px solid var(--line);padding-top:22px}
+h3{font-size:16px;margin:0;font-weight:600}
+p{margin:0;max-width:68ch}
+section{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.meta{color:var(--muted);font-size:14px}
+.lede{font-size:17.5px;line-height:1.7}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stat{background:var(--panel);padding:16px 16px 14px;display:flex;flex-direction:column;gap:4px}
+.stat b{font:500 26px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted);line-height:1.45}
+.stat small{font:12px var(--mono);color:var(--muted)}
+@media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:620px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.02em;background:var(--bg)}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.l{font-family:var(--sans);text-align:left;white-space:normal;color:var(--muted);min-width:220px}
+tr.key td{background:var(--accent-soft)}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font:500 11.5px/1 var(--mono);padding:4px 7px;border-radius:99px;vertical-align:1px}
+.pill.ok{background:var(--accent-soft);color:var(--accent)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--alert-soft);color:var(--alert)}
+.steps{list-style:none;padding:0;gap:0;counter-reset:s}
+.steps li{display:grid;grid-template-columns:52px 1fr;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps .v{font:500 13px/1.6 var(--mono);color:var(--accent)}
+.steps p{font-size:14.5px}
+.steps .r{grid-column:2;font-size:13.5px;color:var(--muted)}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.note.alert{border-color:var(--alert);background:var(--alert-soft)}
+code{font:13px var(--mono);background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+pre.cmd{font:13px/1.6 var(--mono);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;margin:0}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 10px 6px}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:18px;font-size:13px;color:var(--muted);padding:0 8px 6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:4px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.pair{grid-template-columns:1fr}}
+.quote{font-family:var(--serif);font-size:19px;line-height:1.55;border-left:3px solid var(--accent);padding-left:16px;max-width:60ch}
+a{color:var(--accent)}
+</style>
+
+<main>
+<header style="display:flex;flex-direction:column;gap:12px">
+  <div class="eyebrow">AI Builder Cup 2026 · Sustainability &amp; Social Impact</div>
+  <h1>CalmLine 연구 노트</h1>
+  <p class="meta">밤사이 프로토타입 구축 기록 · 2026-10-07 · 등록 마감 <b>10/11 (D-4)</b> · 제출 마감 <b>10/18 (D-11)</b></p>
+  <p class="lede">공공 민원 상담사에게 전달되는 민원인의 목소리를 2초 늦추고, 그 사이에 폭언을 음소거하고 고함을 낮춥니다. 상담사에게는 사실을 빠짐없이 담은 차분한 카드를 건넵니다. 기획 단계의 설계를 실제로 동작하는 웹 데모와 버전별 실험으로 만들었습니다.</p>
+</header>
+
+<section>
+  <h2>결론부터</h2>
+  <div class="stats">
+    <div class="stat"><b>92.8%</b><span>폭언이 상담사에게 닿지 않은 비율</span><small>v10 · 테스트 134건</small></div>
+    <div class="stat"><b>83.1%</b><span>해결에 필요한 사실이 모두 보존된 비율</span><small>v0 순수 템플릿 44.6%</small></div>
+    <div class="stat"><b>100%</b><span>위협·자해 발언 감지 (테스트)</span><small>외부셋 위협 재현율 19→72%</small></div>
+    <div class="stat"><b>48 ms</b><span>발화당 텍스트 처리 p95</span><small>Apple M5 · LLM 없이</small></div>
+  </div>
+  <ul>
+    <li><b>처음 아이디어(미리 만든 문장 조합)는 사실을 절반 넘게 잃었습니다.</b> 순수 템플릿 방식(v0)에서는 폭언 민원 중 해결에 필요한 정보가 모두 남은 경우가 44.6%뿐이었습니다. "어조는 템플릿이, 사실은 원문 발췌가" 맡는 하이브리드 구조로 바꾸자 83%로 올랐습니다.</li>
+    <li><b>템플릿이 틀린 민원 유형을 단정하는 문제</b>(하수 역류를 "소음 신고"로 전달)를 측정해 보니 29.5%였습니다. 분류 확신도가 높을 때만 유형을 말하게 바꿔 2.3%로 줄였습니다.</li>
+    <li><b>실시간 음성은 "받아쓰기 속도"가 병목입니다.</b> 논문의 LocalAgreement 스트리밍을 그대로 쓰면 2초 버퍼에서 폭언 단어의 49%가 들렸습니다. 최근 3초만 보는 2단계 구조로 바꿔 18%까지 줄였습니다. 실서비스는 Google Speech-to-Text 스트리밍으로 가야 합니다.</li>
+    <li><b>작은 LLM(Gemma 1B)은 검증 없이 쓰면 위험합니다.</b> 재작성 문장의 13.4%에 민원인이 말하지 않은 숫자(가짜 주소 등)가 들어갔습니다. 결정론적 검증을 통과한 것은 39%였습니다. Gemini로 같은 실험을 돌리려면 API 키가 필요합니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>데모 실행</h2>
+  <pre class="cmd">cd ~/workspace/calmline
+.venv/bin/python -m uvicorn app.server:app --port 8765
+# 브라우저: http://localhost:8765/demo  →  오른쪽 "Join call" → 왼쪽 샘플 통화 "Play call"</pre>
+  <p>왼쪽은 민원인, 오른쪽은 상담사 화면입니다. 샘플 6개(난방·욕설, 포트홀·모욕, 성희롱, 위협, 정중한 민원, 정체성 공격)가 실시간 속도로 재생됩니다. 마이크로 직접 말해볼 수도 있습니다. 직접 확인한 결과는 다음과 같습니다.</p>
+  <div class="pair">
+    <div class="note"><h3>난방 민원 + 욕설 <span class="pill ok">CALM</span></h3><p style="font-size:14px">욕설 3단어 음소거. 카드에는 "1820 Walton Avenue, apartment 2C, since Wednesday, three kids, 네 번째 연락"이 모두 남았고 욕설은 없었습니다.</p></div>
+    <div class="note"><h3>위협 통화 <span class="pill bad">ESCALATE</span></h3><p style="font-size:14px">위협 구간 전체 음소거 + 감독자 경보. 위협 통화는 원문을 한 문장도 전달하지 않고 주소·연락 이력 슬롯만 넘깁니다.</p></div>
+    <div class="note"><h3>정중하지만 화난 민원 <span class="pill ok">PASS</span></h3><p style="font-size:14px">원문 그대로 통과합니다. 다만 통화 첫 0.5초에서 1단어가 잘못 음소거되었습니다. 아래 한계 항목에 원인과 대안을 적었습니다.</p></div>
+    <div class="note"><h3>상담사 통제권</h3><p style="font-size:14px">보호 강도 3단(Shield / Calm voice / Raw), 상담 종료 요청 버튼, 원문 열람 감사 로그. 원문 음성과 전사는 <code>evidence/</code>에 봉인 보관됩니다.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>구조</h2>
+  <pre class="mermaid">
+flowchart LR
+  A["민원인 음성"] --> B["2초 지연 버퍼"]
+  A --> C["1차: tiny Whisper\n최근 3초 창, 0.5초마다"]
+  A --> D["운율: 음량·음높이\n화자 기준 정규화"]
+  C --> E["폭언 감지\n어휘 ∪ 독성모델"]
+  E -->|음소거 구간| F["마스크 + 선행 압축기"]
+  D --> F
+  B --> F --> G["상담사 귀"]
+  A --> H["2차: small Whisper\n발화 전체"]
+  H --> I["3단 사다리\n템플릿 · LLM · 원문정리"] --> J["차분한 카드"]
+  E -->|위협| K["감독자 경보"]
+  </pre>
+  <p>텍스트 파이프라인은 분류에 실패해도 보호는 실패하지 않도록 3단으로 내려갑니다. NYC 311 실제 민원 분류에서 뽑은 26개 유형이 2026년 6–8월 전체 민원 100만 건의 <span class="num">85.6%</span>를 덮습니다. 이 유형에 해당하면 미리 쓴 문장과 원문에서 발췌한 슬롯으로 카드를 만들고, 해당하지 않으면 검증된 LLM 재작성으로, 그마저 안 되면 폭언만 지운 원문으로 넘어갑니다.</p>
+</section>
+
+<section>
+  <h2>버전별 성능</h2>
+  <p>테스트셋 134건은 어떤 튜닝도 하기 전에 손으로 써서 git에 동결했습니다. 튜닝은 dev 40건, 합성 dev 600건, Gemma가 쓴 하드 네거티브 98건으로만 했습니다. v11은 v10의 테스트 오류를 본 뒤 만들었으므로 따로 표시했습니다.</p>
+  <div class="chart">
+    <div class="legend"><span><i style="background:var(--chart-a)"></i>보호율 (폭언 차단 & 누출 없음)</span><span><i style="background:var(--chart-b)"></i>사실 보존 충분성</span><span>점선 = 사후 버전(v11)</span></div>
+    <svg id="vchart" viewBox="0 0 760 270" role="img" aria-label="버전별 보호율과 사실 보존 충분성"></svg>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>버전</th><th>보호율</th><th>누출</th><th>위협 재현</th><th>오탐(테스트)</th><th>오탐(하드네거티브)</th><th>사실 보존</th><th>유형 오단정</th><th>p95 ms</th></tr></thead>
+    <tbody>
+      <tr><td>v0 템플릿</td><td>87.9</td><td>12.0</td><td>100</td><td>2.1</td><td>1.0</td><td>44.6</td><td>29.5</td><td>0.4</td></tr>
+      <tr><td>v1 +독성모델</td><td>92.8</td><td>7.2</td><td>100</td><td>12.8</td><td>10.2</td><td>38.6</td><td>12.1</td><td>31</td></tr>
+      <tr><td>v2 +발췌 세부</td><td>78.3</td><td>21.7</td><td>100</td><td>12.8</td><td>10.2</td><td>81.9</td><td>12.1</td><td>—</td></tr>
+      <tr><td>v4 잔여물 제거</td><td>91.6</td><td>8.4</td><td>100</td><td>4.3</td><td>4.1</td><td>81.9</td><td>11.8</td><td>57</td></tr>
+      <tr><td>v8 맥락 필터</td><td>91.6</td><td>8.4</td><td>100</td><td>8.5</td><td>1.0</td><td>81.9</td><td>11.4</td><td>51</td></tr>
+      <tr class="key"><td>v10 최종(사전)</td><td>92.8</td><td>7.2</td><td>100</td><td>8.5</td><td>1.0</td><td>83.1</td><td>2.3</td><td>48</td></tr>
+      <tr><td>v11 사후 †</td><td>98.8</td><td>1.2</td><td>100</td><td>2.1</td><td>1.0</td><td>78.3</td><td>3.5</td><td>50</td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta">모든 수치 단위는 %입니다(p95 제외). 전체 표와 정의는 <code>results/RESULTS.md</code>에 있고, 각 버전은 git 태그 <code>v0</code>…<code>v12</code>로 재현됩니다. 데모 서버는 v11로 동작합니다.</p>
+</section>
+
+<section>
+  <h2>어떻게 만들었나</h2>
+  <p>기준선을 측정하고, dev 오류를 직접 읽어 원인을 찾고, 관련 논문의 방법을 적용한 뒤, 다시 측정하는 순서를 반복했습니다. 효과가 없었던 시도도 그대로 남겼습니다.</p>
+  <ol class="steps">
+    <li><span class="v">v0</span><p>제안하신 그대로의 기준선: 욕설 사전, 키워드 분류, 미리 쓴 문장 템플릿.</p><span class="r">"디테일이 빠질까?"에 대한 답이 숫자로 나왔습니다. 사실 보존은 44.6%였습니다.</span></li>
+    <li><span class="v">v1</span><p>Jigsaw로 학습된 독성 모델(Detoxify toxic-bert)을 추가하고, 의도 분류는 bge-small 임베딩 최근접 원형(SetFit 방식)으로 바꿨습니다.</p><span class="r">감지는 98.8%로 올랐지만 "쥐들이 날 죽이네" 같은 표현까지 잡아 오탐이 12.8%가 되었습니다.</span></li>
+    <li><span class="v">v2</span><p>condBERT(Dale 외 2021)식 토큰 마스킹을 응용했습니다. 머리말 템플릿으로 어조를 잡고, 폭언을 지운 원문 절을 "세부"로 덧붙입니다.</p><span class="r">사실 보존이 38.6%에서 81.9%로 뛰었습니다. 대신 지운 자리의 잔여물("You sound… Come lap")로 누출이 21.7%가 되었습니다.</span></li>
+    <li><span class="v">v3–v4</span><p>Waseem 외(2017)의 지향성(directed) 구분을 적용했습니다. 모델만 잡은 플래그는 상담사를 향한 2인칭일 때만 인정합니다. 렌더링한 뒤 다시 검사하고, 슬롯이 없는 폭언 절은 통째로 버립니다.</p><span class="r">오탐 4.3%, 누출 8.4%.</span></li>
+    <li><span class="v">v5–v6</span><p>모델을 unbiased-toxic-roberta로 교체하고, 위협에 대해 NLI 제로샷 안전망(Yin 외 2019)을 추가했습니다.</p><span class="r">우리 테스트셋에서는 오탐만 늘었습니다(실패). 다만 외부 Civil Comments의 위협 재현율은 29%에서 73%로 올라 백본은 유지했습니다.</span></li>
+    <li><span class="v">v7–v8</span><p>Gemma에게 "위험을 걱정하지만 폭언은 없는" 민원 98건을 쓰게 했습니다(다른 저자 효과). 그 결과 "누가 죽을까 봐 걱정돼요"를 자해로 잡는 패턴 버그를 찾았습니다. 과장 표현(Troiano 외 2018)·걱정 맥락 필터를 추가했습니다.</p><span class="r">하드 네거티브 오탐 10.2%에서 1.0%로.</span></li>
+    <li><span class="v">v9–v10</span><p>확신도 0.70 이상일 때만 민원 유형을 단정합니다. 라이브 데모에서 슬롯이 욕설을 그대로 실어 나르는 버그("the fourth fucking time")를 발견해, 슬롯을 마스킹된 텍스트에서 추출하도록 고쳤습니다.</p><span class="r">유형 오단정 11.4%에서 2.3%로, 누출 7.2%.</span></li>
+    <li><span class="v">v11 †</span><p>테스트 오류를 사후 분석했습니다. 독성 모델이 "garbage", "rats" 같은 민원 주제어를 모욕으로 읽고 있었습니다. Dixon 외(2018)의 정체성어 마스킹을 응용해 주제어를 중립어로 바꾼 뒤 채점합니다. 위협 통화는 슬롯만 전달합니다.</p><span class="r">보호 98.8%, 오탐 2.1%. 테스트를 본 뒤 만든 버전이라 낙관적인 수치입니다.</span></li>
+  </ol>
+</section>
+
+<section>
+  <h2>음성 실험</h2>
+  <div class="pair">
+    <div class="note">
+      <h3>고함 감지와 어조 정규화 (CREMA-D, 학습에 없던 화자 30명)</h3>
+      <p style="font-size:14px">eGeMAPS(Eyben 외 2016) 계열 운율 특징을 화자 기준으로 정규화하자 분노 감지 AUC가 <b class="num">0.921</b>, 중·고강도 분노 재현율이 <b class="num">100%</b>였습니다. 계산은 클립당 8.5 ms입니다. 지연 버퍼 덕분에 미리 볼 수 있는 압축기가 고함 구간을 <b class="num">11.8 dB</b> 낮추고, 평상시 말은 <b class="num">0.3 dB</b>만 건드립니다.</p>
+    </div>
+    <div class="note">
+      <h3>Whisper의 욕설 회피</h3>
+      <p style="font-size:14px">Whisper는 욕설을 덜 받아씁니다. 욕설 어휘를 담은 초기 프롬프트를 주면 욕설 토큰 인식률이 <b class="num">92.0% → 95.6%</b>(base.en)로 올랐고, 정상 통화 30건에서 욕설 환각은 0건이었습니다. 다만 디코딩이 느려져 실시간 1차 처리에서는 끄고, 2차 카드 생성에만 씁니다.</p>
+    </div>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>1차 받아쓰기 방식</th><th>RTF</th><th>누출 @1.5초</th><th>누출 @2초</th><th>누출 @3초</th><th>정확도 한계 @4초</th><th>오음소거 초/정상 발화</th></tr></thead>
+    <tbody>
+      <tr><td>LocalAgreement, base.en (Macháček 외 2023)</td><td>1.12</td><td>66.9</td><td>49.2</td><td>40.6</td><td>—</td><td>0.08</td></tr>
+      <tr><td>3초 창, base.en</td><td>1.18</td><td>41.7</td><td>31.9</td><td>26.0</td><td>—</td><td>0.03</td></tr>
+      <tr class="key"><td>3초 창, tiny.en (채택)</td><td>0.39</td><td>21.7</td><td>18.1</td><td>17.7</td><td>16.9</td><td>0.18</td></tr>
+      <tr><td>3초 창, tiny.en + 창 끝 확인</td><td>0.38</td><td>25.6</td><td>20.5</td><td>—</td><td>18.1</td><td>0.13</td></tr>
+    </tbody>
+  </table></div>
+  <p>RTF가 1을 넘으면 노트북 CPU에서 받아쓰기가 실시간보다 늦어지고, 누출의 대부분은 그 지연에서 나옵니다. tiny.en은 실시간보다 2.5배 빠르지만 정확도 한계(@4초 16.9%)가 남습니다. 이 한계는 오인식과 감지 누락에서 옵니다. Google Speech-to-Text 스트리밍으로 바꾸는 것이 다음 단계입니다. 어댑터 코드는 <code>calmline/audio/google_stt.py</code>에 작성해 두었지만, 인증 정보가 없어 실행해 보지는 못했습니다.</p>
+</section>
+
+<section>
+  <h2>LLM 재작성 실험 (Gemma 3 1B, 로컬)</h2>
+  <div class="wrap"><table>
+    <thead><tr><th>구성 (테스트)</th><th>보호율</th><th>사실 보존</th><th>숫자 환각</th><th>검증 통과</th><th>지연 p50</th></tr></thead>
+    <tbody>
+      <tr><td>LLM 검증 없이 전부 재작성</td><td>91.6</td><td>74.7</td><td><span class="pill bad">13.4</span></td><td>—</td><td>~1.2 s</td></tr>
+      <tr><td>LLM 전부 + 결정론적 검증</td><td>97.6</td><td>74.7</td><td>0.0</td><td>43 / 110</td><td>1.2 s</td></tr>
+      <tr><td>v12: 미분류만 LLM + 검증</td><td>98.8</td><td>78.3</td><td>0.0</td><td>2 / 10</td><td>2.0 s</td></tr>
+      <tr class="key"><td>v11: LLM 없음</td><td>98.8</td><td>78.3</td><td>0.0</td><td>—</td><td>21 ms</td></tr>
+    </tbody>
+  </table></div>
+  <p>검증은 세 가지를 확인합니다. 재작성 문장이 폭언이 아닐 것, 원문에 없는 숫자가 없을 것, 원문에 없는 주장("전에도 전화했다")이 없을 것. Gemma 1B는 탈락이 많아 사다리 구조를 이기지 못했습니다. Gemini 경로는 코드로 연결만 해 두었습니다. 대회 요건(Gemini/Gemma 사용)은 현재 Gemma로 충족되지만, Gemini Flash 계열로 같은 표를 다시 뽑아야 심사용 근거가 됩니다.</p>
+</section>
+
+<section>
+  <h2>정직한 한계</h2>
+  <ul>
+    <li><b>같은 저자 편향.</b> 테스트셋과 욕설 사전을 모두 제가 썼습니다. 그래서 사전 기반 수치는 낙관적입니다. 이를 보정하려고 외부 Civil Comments(위협 재현율 v4 19% → v11 72%), Gemma가 쓴 하드 네거티브, CREMA-D를 따로 보고합니다.</li>
+    <li><b>음성 데이터가 TTS입니다.</b> macOS <code>say</code>로 만든 음성이라 실제 분노 운율이 없고, 실제 고함 속 욕설 인식률은 더 낮을 것입니다. 팀원 녹음 60건이 필요합니다. 데모의 마이크 녹음이 <code>evidence/</code>에 저장되므로 녹음 도구로 바로 쓸 수 있습니다.</li>
+    <li><b>위협 통화의 정보 손실.</b> 안전을 우선해 위협 통화는 슬롯만 넘기므로 합성 dev 사실 보존이 88%에서 82%로 떨어졌습니다.</li>
+    <li><b>통화 시작 오음소거.</b> 정상 통화 첫 단어가 잘못 음소거되는 경우가 있습니다. 창 끝 확인 정책을 켜면 오음소거가 30% 줄고 누출이 2.4%p 늘어납니다. 지금은 보호를 우선해 꺼 두었습니다.</li>
+    <li><b>지연 수치는 Apple M5 노트북 기준입니다.</b> Cloud Run CPU 환경은 다를 수 있습니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>돌아오시면 할 일</h2>
+  <div class="note alert"><h3>10/11 (토) 대회 등록 마감</h3><p style="font-size:14px">팀원 2–4명, 전원 만 21세 이상 직장인, 학생이 한 명이라도 있으면 팀 전체 실격입니다.</p></div>
+  <ol>
+    <li><b>Gemini API 키로 S1 스파이크 실행.</b> Gemini가 폭언 입력을 처리하는지, 검증 통과율과 지연이 어떤지 확인합니다.
+      <pre class="cmd">GEMINI_API_KEY=... .venv/bin/python scripts/gemini_s1_spike.py
+GEMINI_API_KEY=... .venv/bin/python -m eval.run_text v12 llm_all llm_raw --splits dev,test</pre></li>
+    <li><b>GCP 프로젝트 + Cloud Run 배포.</b> <code>gcloud</code> 설치가 필요합니다(이 Mac에는 없습니다). 절차는 <code>docs/DEPLOY.md</code>, 이미지는 <code>Dockerfile</code>에 있습니다.</li>
+    <li><b>팀원 실제 음성 녹음 60건.</b> 데모 마이크로 녹음한 뒤 <code>eval/stream_bench.py</code>로 재측정합니다.</li>
+    <li><b>GitHub 공개 저장소.</b> 로컬 git에 커밋과 버전 태그가 있습니다. 원격 저장소를 만들어 푸시하면 됩니다(아직 푸시하지 않았습니다).</li>
+    <li><b>영문 덱과 3분 영상.</b> 분할 화면 데모(<code>/demo</code>)를 그대로 녹화하면 첫 15초 장면이 됩니다.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>파일 안내</h2>
+  <div class="wrap"><table>
+    <thead><tr><th>경로</th><th style="text-align:left">내용</th></tr></thead>
+    <tbody>
+      <tr><td>calmline/versions.py</td><td class="l">v0–v12 버전 정의(재현 가능한 고정 구성)</td></tr>
+      <tr><td>calmline/pipeline.py · render.py</td><td class="l">3단 사다리, 하이브리드·확신도 게이트 렌더러</td></tr>
+      <tr><td>calmline/toxicity.py · lexicon.py</td><td class="l">어휘·모델·NLI 감지기, 지향성·맥락 필터, 주제어 중립화</td></tr>
+      <tr><td>calmline/audio/</td><td class="l">스트리밍 STT, 3초 창 스포터, 운율·압축기, Google STT 어댑터</td></tr>
+      <tr><td>calmline/session.py · app/</td><td class="l">실시간 통화 세션과 FastAPI 데모(민원인·상담사·분할 화면)</td></tr>
+      <tr><td>data/gold/</td><td class="l">테스트 134 · dev 40 · 합성 600 · 하드네거티브 98</td></tr>
+      <tr><td>results/RESULTS.md</td><td class="l">모든 실험 결과 표</td></tr>
+    </tbody>
+  </table></div>
+</section>
+</main>
+
+<script>
+(function(){
+  const vs=["v0","v1","v2","v3","v4","v5","v6","v7","v8","v9","v10","v11"];
+  const prot=[87.9,92.8,78.3,84.3,91.6,91.6,91.6,91.6,91.6,91.6,92.8,98.8];
+  const suff=[44.6,38.6,81.9,85.5,81.9,81.9,81.9,81.9,81.9,84.3,83.1,78.3];
+  const svg=document.getElementById("vchart"), W=760,H=270,L=44,R=16,T=14,B=34;
+  const x=i=>L+i*(W-L-R)/(vs.length-1), y=v=>T+(100-v)/(100-30)*(H-T-B);
+  let s="";
+  [30,40,50,60,70,80,90,100].forEach(g=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(g)}" y2="${y(g)}" stroke="var(--grid)" stroke-width="1"/>`;
+    s+=`<text x="${L-8}" y="${y(g)+4}" text-anchor="end" font-size="11" font-family="IBM Plex Mono,monospace" fill="var(--muted)">${g}</text>`});
+  vs.forEach((v,i)=>{s+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" font-family="IBM Plex Mono,monospace" fill="var(--muted)">${v}</text>`});
+  function line(d,col){const pre=d.slice(0,11).map((v,i)=>`${x(i)},${y(v)}`).join(" ");
+    let o=`<polyline points="${pre}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>`;
+    o+=`<line x1="${x(10)}" y1="${y(d[10])}" x2="${x(11)}" y2="${y(d[11])}" stroke="${col}" stroke-width="2.2" stroke-dasharray="4 4"/>`;
+    d.forEach((v,i)=>{o+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===10?4.5:3}" fill="${i===11?'var(--panel)':col}" stroke="${col}" stroke-width="1.6"/>`});
+    return o}
+  s+=line(prot,"var(--chart-a)")+line(suff,"var(--chart-b)");
+  s+=`<text x="${x(10)+6}" y="${y(92.8)-9}" font-size="11.5" font-family="IBM Plex Mono,monospace" fill="var(--chart-a)" text-anchor="end">92.8</text>`;
+  s+=`<text x="${x(10)+6}" y="${y(83.1)+18}" font-size="11.5" font-family="IBM Plex Mono,monospace" fill="var(--chart-b)" text-anchor="end">83.1</text>`;
+  s+=`<text x="${x(0)+6}" y="${y(44.6)+16}" font-size="11.5" font-family="IBM Plex Mono,monospace" fill="var(--chart-b)">44.6</text>`;
+  svg.innerHTML=s;
+})();
+</script>

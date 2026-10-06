@@ -22,3 +22,7 @@ synth hybrid_v4_tb {"n": 600, "abuse_P": 1.0, "abuse_R": 1.0, "abuse_F1": 1.0, "
 synth hybrid_unb_tb {"n": 600, "abuse_P": 1.0, "abuse_R": 0.9948, "abuse_F1": 0.9974, "abuse_AUC": 0.9997, "threat_P": 1.0, "threat_R": 1.0, "threat_F1": 1.0, "threat_AUC": 1.0, "ms": 13.603}
 civil hybrid_v4_tb {"n": 3182, "abuse_P": 0.9502, "abuse_R": 0.4893, "abuse_F1": 0.6459, "abuse_AUC": 0.9372, "threat_P": 0.6111, "threat_R": 0.3484, "threat_F1": 0.4438, "threat_AUC": 0.9159, "ms": 56.0142}
 civil hybrid_unb_tb {"n": 3182, "abuse_P": 0.962, "abuse_R": 0.7399, "abuse_F1": 0.8364, "abuse_AUC": 0.9666, "threat_P": 0.6375, "threat_R": 0.724, "threat_F1": 0.678, "threat_AUC": 0.9574, "ms": 58.233}
+dev hybrid_v11 {"n": 40, "abuse_P": 0.9565, "abuse_R": 1.0, "abuse_F1": 0.9778, "abuse_AUC": 1.0, "threat_P": 1.0, "threat_R": 1.0, "threat_F1": 1.0, "threat_AUC": 1.0, "ms": 11.6702}
+synth hybrid_v11 {"n": 600, "abuse_P": 1.0, "abuse_R": 0.9922, "abuse_F1": 0.9961, "abuse_AUC": 1.0, "threat_P": 1.0, "threat_R": 1.0, "threat_F1": 1.0, "threat_AUC": 1.0, "ms": 14.0364}
+hardneg hybrid_v11 {"n": 98, "abuse_P": 0.0, "abuse_R": 0.0, "abuse_F1": 0.0, "abuse_AUC": NaN, "threat_P": 0.0, "threat_R": 0.0, "threat_F1": 0.0, "threat_AUC": NaN, "ms": 13.8524}
+civil hybrid_v11 {"n": 3182, "abuse_P": 0.9631, "abuse_R": 0.7154, "abuse_F1": 0.821, "abuse_AUC": 0.9613, "threat_P": 0.6556, "threat_R": 0.7149, "threat_F1": 0.684, "threat_AUC": 0.959, "ms": 58.8705}

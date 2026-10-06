@@ -94,5 +94,17 @@
   "threat_F1": 1.0,
   "threat_AUC": 1.0,
   "ms": 10.6243
+ },
+ "hybrid_v11": {
+  "n": 40,
+  "abuse_P": 0.9565,
+  "abuse_R": 1.0,
+  "abuse_F1": 0.9778,
+  "abuse_AUC": 1.0,
+  "threat_P": 1.0,
+  "threat_R": 1.0,
+  "threat_F1": 1.0,
+  "threat_AUC": 1.0,
+  "ms": 11.6702
  }
 }
