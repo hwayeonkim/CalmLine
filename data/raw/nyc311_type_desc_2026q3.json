@@ -1,0 +1,400 @@
+[{"complaint_type":"Noise - Street/Sidewalk","descriptor":"Loud Music/Party","n":"62300"}
+,{"complaint_type":"Noise - Residential","descriptor":"Loud Music/Party","n":"51484"}
+,{"complaint_type":"Illegal Parking","descriptor":"Blocked Hydrant","n":"41718"}
+,{"complaint_type":"Illegal Parking","descriptor":"Posted Parking Sign Violation","n":"38945"}
+,{"complaint_type":"Noise - Residential","descriptor":"Banging/Pounding","n":"34882"}
+,{"complaint_type":"Blocked Driveway","descriptor":"No Access","n":"33251"}
+,{"complaint_type":"Illegal Parking","descriptor":"Blocked Sidewalk","n":"24170"}
+,{"complaint_type":"UNSANITARY CONDITION","descriptor":"PESTS","n":"21184"}
+,{"complaint_type":"Abandoned Vehicle","descriptor":"With License Plate","n":"20611"}
+,{"complaint_type":"Dirty Condition","descriptor":"Trash","n":"18773"}
+,{"complaint_type":"Street Condition","descriptor":"Pothole","n":"15030"}
+,{"complaint_type":"Encampment","descriptor":"N/A","n":"14941"}
+,{"complaint_type":"Blocked Driveway","descriptor":"Partial Access","n":"12759"}
+,{"complaint_type":"Noise - Commercial","descriptor":"Loud Music/Party","n":"11679"}
+,{"complaint_type":"Illegal Parking","descriptor":"Commercial Overnight Parking","n":"11638"}
+,{"complaint_type":"Water System","descriptor":"Fire Hydrant Emergency (FHE)","n":"10610"}
+,{"complaint_type":"UNSANITARY CONDITION","descriptor":"MOLD","n":"10572"}
+,{"complaint_type":"Noise - Street/Sidewalk","descriptor":"Loud Talking","n":"10539"}
+,{"complaint_type":"Illegal Dumping","descriptor":"Removal Request","n":"10499"}
+,{"complaint_type":"Derelict Vehicles","descriptor":"Derelict Vehicles","n":"9611"}
+,{"complaint_type":"Illegal Parking","descriptor":"Blocked Crosswalk","n":"9403"}
+,{"complaint_type":"Illegal Fireworks","descriptor":"N/A","n":"9292"}
+,{"complaint_type":"Damaged Tree","descriptor":"Branch or Limb Has Fallen Down","n":"9212"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"WALL","n":"8566"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Controller","n":"8398"}
+,{"complaint_type":"Street Condition","descriptor":"Cave-in","n":"8232"}
+,{"complaint_type":"Noise - Vehicle","descriptor":"Car/Truck Music","n":"8168"}
+,{"complaint_type":"HEAT/HOT WATER","descriptor":"ENTIRE BUILDING","n":"8083"}
+,{"complaint_type":"Street Light Condition","descriptor":"Street Light Out","n":"8016"}
+,{"complaint_type":"Illegal Parking","descriptor":"Double Parked Blocking Traffic","n":"7979"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"CEILING","n":"7766"}
+,{"complaint_type":"PLUMBING","descriptor":"WATER SUPPLY","n":"7641"}
+,{"complaint_type":"Homeless Person Assistance","descriptor":"Non-Chronic","n":"7549"}
+,{"complaint_type":"FLOORING/STAIRS","descriptor":"FLOOR","n":"7451"}
+,{"complaint_type":"DOOR/WINDOW","descriptor":"DOOR","n":"7209"}
+,{"complaint_type":"Noise - Residential","descriptor":"Loud Talking","n":"6877"}
+,{"complaint_type":"UNSANITARY CONDITION","descriptor":"GARBAGE/RECYCLING STORAGE","n":"6406"}
+,{"complaint_type":"Illegal Parking","descriptor":"Parking Permit Improper Use","n":"6198"}
+,{"complaint_type":"WATER LEAK","descriptor":"HEAVY FLOW","n":"6102"}
+,{"complaint_type":"Building/Use","descriptor":"Illegal Conversion Of Residential Building/Space","n":"5940"}
+,{"complaint_type":"Rodent","descriptor":"Rat Sighting","n":"5686"}
+,{"complaint_type":"Illegal Parking","descriptor":"Blocked Bike Lane","n":"5471"}
+,{"complaint_type":"Noise - Vehicle","descriptor":"Car/Truck Horn","n":"5299"}
+,{"complaint_type":"PLUMBING","descriptor":"BASIN/SINK","n":"5088"}
+,{"complaint_type":"WATER LEAK","descriptor":"SLOW LEAK","n":"5030"}
+,{"complaint_type":"Graffiti","descriptor":"Graffiti","n":"5023"}
+,{"complaint_type":"Elevator","descriptor":"Elevator - Single Device On Property/No Alternate Service","n":"4894"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Structure - Outdoors","n":"4728"}
+,{"complaint_type":"Non-Emergency Police Matter","descriptor":"Other (complaint details)","n":"4626"}
+,{"complaint_type":"Water System","descriptor":"Hydrant Running Full (WA4)","n":"4528"}
+,{"complaint_type":"Dead/Dying Tree","descriptor":"Planted More Than 2 Years Ago","n":"4382"}
+,{"complaint_type":"HEAT/HOT WATER","descriptor":"APARTMENT ONLY","n":"4318"}
+,{"complaint_type":"Illegal Parking","descriptor":"Double Parked Blocking Vehicle","n":"4253"}
+,{"complaint_type":"PLUMBING","descriptor":"BATHTUB/SHOWER","n":"4235"}
+,{"complaint_type":"Vendor Enforcement","descriptor":"Food Vendor","n":"4224"}
+,{"complaint_type":"For Hire Vehicle Complaint","descriptor":"Driver Complaint - Non Passenger","n":"3975"}
+,{"complaint_type":"Damaged Tree","descriptor":"Entire Tree Has Fallen Down","n":"3935"}
+,{"complaint_type":"APPLIANCE","descriptor":"ELECTRIC/GAS RANGE","n":"3903"}
+,{"complaint_type":"Water System","descriptor":"Hydrant Running (WC3)","n":"3903"}
+,{"complaint_type":"DOOR/WINDOW","descriptor":"WINDOW FRAME","n":"3837"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Hitting Building","n":"3748"}
+,{"complaint_type":"Damaged Tree","descriptor":"Branch Cracked and Will Fall","n":"3739"}
+,{"complaint_type":"Illegal Parking","descriptor":"License Plate Obscured","n":"3503"}
+,{"complaint_type":"GENERAL","descriptor":"COOKING GAS","n":"3368"}
+,{"complaint_type":"Missed Collection","descriptor":"Trash","n":"3351"}
+,{"complaint_type":"Panhandling","descriptor":"N/A","n":"3317"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Broken Sidewalk","n":"3298"}
+,{"complaint_type":"APPLIANCE","descriptor":"REFRIGERATOR","n":"3257"}
+,{"complaint_type":"Elevator","descriptor":"Elevator - Multiple Devices On Property","n":"3160"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Building Permit - None","n":"3076"}
+,{"complaint_type":"Root/Sewer/Sidewalk Condition","descriptor":"Trees and Sidewalks Program","n":"3052"}
+,{"complaint_type":"PLUMBING","descriptor":"TOILET","n":"2907"}
+,{"complaint_type":"GENERAL","descriptor":"BELL/BUZZER/INTERCOM","n":"2892"}
+,{"complaint_type":"Vendor Enforcement","descriptor":"Non-Food Vendor","n":"2849"}
+,{"complaint_type":"Noise - Park","descriptor":"Loud Music/Party","n":"2819"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Blocking Street","n":"2750"}
+,{"complaint_type":"Obstruction","descriptor":"Weeds or Grass","n":"2678"}
+,{"complaint_type":"Noise - Vehicle","descriptor":"Engine Idling","n":"2675"}
+,{"complaint_type":"Noise","descriptor":"Noise: Construction Before/After Hours (NM1)","n":"2649"}
+,{"complaint_type":"GENERAL","descriptor":"CABINET","n":"2627"}
+,{"complaint_type":"ELECTRIC","descriptor":"POWER OUTAGE","n":"2547"}
+,{"complaint_type":"Missed Collection","descriptor":"Compost","n":"2521"}
+,{"complaint_type":"Obstruction","descriptor":"Cone","n":"2464"}
+,{"complaint_type":"ELECTRIC","descriptor":"OUTLET/SWITCH","n":"2376"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Catch Basin Clogged","n":"2285"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Running","n":"2211"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Emergency","n":"2205"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Sidewalk Violation","n":"2185"}
+,{"complaint_type":"Noise","descriptor":"Construction","n":"2180"}
+,{"complaint_type":"Lead","descriptor":"Lead Kit Request (Residential) (L10)","n":"2159"}
+,{"complaint_type":"Homeless Person Assistance","descriptor":"Chronic","n":"2152"}
+,{"complaint_type":"Rodent","descriptor":"Condition Attracting Rodents","n":"2144"}
+,{"complaint_type":"WATER LEAK","descriptor":"DAMP SPOT","n":"1942"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Running Full","n":"1941"}
+,{"complaint_type":"Real Time Enforcement","descriptor":"Work Without A Permit - Occupied Multiple Dwelling","n":"1908"}
+,{"complaint_type":"Lead","descriptor":"Lead Kit","n":"1866"}
+,{"complaint_type":"Drug Activity","descriptor":"Use Outside","n":"1818"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Garbage or Litter","n":"1808"}
+,{"complaint_type":"ELECTRIC","descriptor":"NO LIGHTING","n":"1790"}
+,{"complaint_type":"Sewer","descriptor":"Catch Basin Clogged/Flooding (Use Comments) (SC)","n":"1755"}
+,{"complaint_type":"Non-Emergency Police Matter","descriptor":"Trespassing","n":"1749"}
+,{"complaint_type":"Street Condition","descriptor":"Defective Hardware","n":"1747"}
+,{"complaint_type":"Taxi Complaint","descriptor":"Driver Complaint - Passenger","n":"1736"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Backup","n":"1718"}
+,{"complaint_type":"Smoking or Vaping","descriptor":"Allowed in Smoke Free Area","n":"1713"}
+,{"complaint_type":"Street Sweeping Complaint","descriptor":"Inadequate Sweeping","n":"1705"}
+,{"complaint_type":"Damaged Tree","descriptor":"Tree Leaning/Uprooted","n":"1641"}
+,{"complaint_type":"GENERAL","descriptor":"VENTILATION SYSTEM","n":"1631"}
+,{"complaint_type":"Missed Collection","descriptor":"Bulky Trash","n":"1596"}
+,{"complaint_type":"ELECTRIC","descriptor":"LIGHTING","n":"1590"}
+,{"complaint_type":"Noise - Commercial","descriptor":"Banging/Pounding","n":"1579"}
+,{"complaint_type":"Drinking","descriptor":"In Public","n":"1540"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Rodent Sighting","n":"1536"}
+,{"complaint_type":"Damaged Tree","descriptor":"Tree Alive - in Poor Condition","n":"1512"}
+,{"complaint_type":"Curb Condition","descriptor":"Broken Curb","n":"1502"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Dead Branches in Tree","n":"1471"}
+,{"complaint_type":"Sewer","descriptor":"Sewer Backup (Use Comments) (SA)","n":"1467"}
+,{"complaint_type":"Animal-Abuse","descriptor":"Neglected","n":"1459"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Hitting Power Lines","n":"1408"}
+,{"complaint_type":"Noise - Residential","descriptor":"Loud Television","n":"1389"}
+,{"complaint_type":"Illegal Parking","descriptor":"Paper License Plates","n":"1388"}
+,{"complaint_type":"Water System","descriptor":"Leak (Use Comments) (WA2)","n":"1353"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Grass/Weeds","n":"1318"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Pedestrian Signal","n":"1309"}
+,{"complaint_type":"Street Condition","descriptor":"Failed Street Repair","n":"1306"}
+,{"complaint_type":"Street Condition","descriptor":"Rough, Pitted or Cracked Roads","n":"1274"}
+,{"complaint_type":"UNSANITARY CONDITION","descriptor":"SEWAGE","n":"1273"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Sidewalk Shed/Pipe Scafford - Inadequate Defective/None","n":"1268"}
+,{"complaint_type":"Food Establishment","descriptor":"Rodents/Insects/Garbage","n":"1263"}
+,{"complaint_type":"Dead Animal","descriptor":"Cat","n":"1261"}
+,{"complaint_type":"Illegal Dumping","descriptor":"Chronic Dumping","n":"1252"}
+,{"complaint_type":"Street Condition","descriptor":"Blocked - Construction","n":"1246"}
+,{"complaint_type":"Obstruction","descriptor":"Trash or Recycling","n":"1225"}
+,{"complaint_type":"Noise - Commercial","descriptor":"Loud Talking","n":"1201"}
+,{"complaint_type":"Illegal Posting","descriptor":"Poster or Sign","n":"1182"}
+,{"complaint_type":"SAFETY","descriptor":"FIRE ESCAPE","n":"1125"}
+,{"complaint_type":"Water Maintenance","descriptor":"Leak","n":"1121"}
+,{"complaint_type":"Noise","descriptor":"Noise: Alarms (NR3)","n":"1113"}
+,{"complaint_type":"Noise","descriptor":"Noise: Construction Equipment (NC1)","n":"1111"}
+,{"complaint_type":"SAFETY","descriptor":"SMOKE DETECTOR","n":"1110"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Trash or Recycling Not Secure","n":"1088"}
+,{"complaint_type":"Building/Use","descriptor":"No Certificate Of Occupancy/Illegal/Contrary To CO","n":"1082"}
+,{"complaint_type":"Illegal Parking","descriptor":"Unauthorized Bus Layover","n":"1079"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Veh Signal Lamp","n":"1069"}
+,{"complaint_type":"ELECTRIC","descriptor":"WIRING","n":"1051"}
+,{"complaint_type":"Water System","descriptor":"Hydrant Leaking (WC1)","n":"1012"}
+,{"complaint_type":"Noise - Helicopter","descriptor":"Other","n":"1009"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Blocked - Construction","n":"996"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Flooding on Street","n":"994"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Building Shaking/Vibrating/Structural Stability","n":"992"}
+,{"complaint_type":"Missed Collection","descriptor":"Recycling - Paper/Metal/Glass/Rigid Plastic","n":"983"}
+,{"complaint_type":"Noise","descriptor":"Noise, Barking Dog (NR5)","n":"947"}
+,{"complaint_type":"DOOR/WINDOW","descriptor":"DOOR FRAME","n":"936"}
+,{"complaint_type":"Water System","descriptor":"Dirty Water (WE)","n":"928"}
+,{"complaint_type":"Indoor Air Quality","descriptor":"Chemical Vapors/Gases/Odors","n":"899"}
+,{"complaint_type":"Curb Condition","descriptor":"Defacement","n":"894"}
+,{"complaint_type":"Wood Pile Remaining","descriptor":"Remove Debris","n":"884"}
+,{"complaint_type":"Missed Collection","descriptor":"Bulky Recycling","n":"872"}
+,{"complaint_type":"Animal-Abuse","descriptor":"Other (complaint details)","n":"867"}
+,{"complaint_type":"Sewer","descriptor":"Street Flooding (SJ)","n":"859"}
+,{"complaint_type":"Taxi Complaint","descriptor":"Driver Complaint - Non Passenger","n":"859"}
+,{"complaint_type":"Air Quality","descriptor":"Vehicle Idling Odor","n":"855"}
+,{"complaint_type":"Water Maintenance","descriptor":"Dirty Water","n":"831"}
+,{"complaint_type":"Lost Property","descriptor":"Bag/Wallet","n":"817"}
+,{"complaint_type":"Indoor Air Quality","descriptor":"Ventilation","n":"816"}
+,{"complaint_type":"DOOR/WINDOW","descriptor":"WINDOW PANE","n":"811"}
+,{"complaint_type":"Water System","descriptor":"Possible Water Main Break (Use Comments) (WA1)","n":"805"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Curb Cut/Driveway/Carport - Illegal","n":"803"}
+,{"complaint_type":"Illegal Tree Damage","descriptor":"Branches Damaged","n":"800"}
+,{"complaint_type":"Missed Collection","descriptor":"Recycling - Paper","n":"792"}
+,{"complaint_type":"SAFETY","descriptor":"CARBON MONOXIDE DETECTOR","n":"785"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Leaking","n":"785"}
+,{"complaint_type":"Illegal Parking","descriptor":"Overnight Commercial Storage","n":"780"}
+,{"complaint_type":"Noise","descriptor":"Dog","n":"772"}
+,{"complaint_type":"Drug Activity","descriptor":"Use Indoor","n":"753"}
+,{"complaint_type":"GENERAL","descriptor":"SIGNAGE MISSING","n":"751"}
+,{"complaint_type":"SAFETY","descriptor":"WINDOW GUARD BROKEN/MISSING","n":"751"}
+,{"complaint_type":"GENERAL","descriptor":"JANITOR/SUPER","n":"746"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Fence - None/Inadequate","n":"744"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Cons - Contrary/Beyond Approved Plans/Permits","n":"728"}
+,{"complaint_type":"Missed Collection","descriptor":"Recycling - Metal/Glass/Rigid Plastic","n":"724"}
+,{"complaint_type":"Building/Use","descriptor":"Zoning - Non-Conforming/Illegal Vehicle Storage","n":"724"}
+,{"complaint_type":"Air Quality","descriptor":"Air: Odor/Fumes, Vehicle Idling (AD3)","n":"721"}
+,{"complaint_type":"Violation of Park Rules","descriptor":"Unlicensed Vendors","n":"718"}
+,{"complaint_type":"Noise","descriptor":"Construction Equipment","n":"709"}
+,{"complaint_type":"Emergency Response Team (ERT)","descriptor":"After Hours Work - Illegal","n":"700"}
+,{"complaint_type":"Food Poisoning","descriptor":"1 or 2","n":"695"}
+,{"complaint_type":"Litter Basket Request","descriptor":"Replacement Basket","n":"692"}
+,{"complaint_type":"Noise","descriptor":"Alarm","n":"684"}
+,{"complaint_type":"Animal in a Park","descriptor":"Dog Off Leash","n":"682"}
+,{"complaint_type":"Bike/Roller/Skate","descriptor":"N/A","n":"681"}
+,{"complaint_type":"ELEVATOR","descriptor":"MAINTENANCE","n":"677"}
+,{"complaint_type":"Water Conservation","descriptor":"Illegal Use Of A Hydrant (CIN)","n":"657"}
+,{"complaint_type":"Street Sweeping Complaint","descriptor":"Street Not Swept","n":"656"}
+,{"complaint_type":"Noise","descriptor":"Noise: air condition/ventilation equipment (NV1)","n":"655"}
+,{"complaint_type":"Lot Condition","descriptor":"Trash","n":"653"}
+,{"complaint_type":"Litter Basket Request","descriptor":"New Basket","n":"640"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Hitting Phone/Cable Lines","n":"639"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Waste Not Separated","n":"639"}
+,{"complaint_type":"Abandoned Bike","descriptor":"Chained to Public Property","n":"632"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Working Contrary To Stop Work Order","n":"619"}
+,{"complaint_type":"Dirty Condition","descriptor":"Dog Waste","n":"595"}
+,{"complaint_type":"Noise - Park","descriptor":"Loud Talking","n":"593"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Tow Truck Company","n":"593"}
+,{"complaint_type":"Unleashed Dog","descriptor":"Unleashed Dog in Public","n":"591"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Waste Set Out Too Early or Too Late","n":"584"}
+,{"complaint_type":"Noise","descriptor":"Air Conditioner/Ventilation","n":"584"}
+,{"complaint_type":"Electrical","descriptor":"Electrical Wiring Defective/Exposed","n":"583"}
+,{"complaint_type":"Street Condition","descriptor":"Plate Condition - Noisy","n":"570"}
+,{"complaint_type":"Outdoor Dining","descriptor":"Sidewalk Zone Blocked","n":"564"}
+,{"complaint_type":"Water Maintenance","descriptor":"Water Main Break","n":"563"}
+,{"complaint_type":"For Hire Vehicle Complaint","descriptor":"Driver Complaint - Passenger","n":"560"}
+,{"complaint_type":"Urinating in Public","descriptor":"N/A","n":"557"}
+,{"complaint_type":"Obstruction","descriptor":"Merchandise","n":"556"}
+,{"complaint_type":"Plumbing","descriptor":"Failure To Retain Water/Improper Drainage- (LL103/89)","n":"553"}
+,{"complaint_type":"PLUMBING","descriptor":"RADIATOR","n":"551"}
+,{"complaint_type":"Water System","descriptor":"Hydrant Defective (WC2)","n":"534"}
+,{"complaint_type":"Highway Condition","descriptor":"Pothole - Highway","n":"522"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Egress - Doors Locked/Blocked/Improper/No Secondary Means","n":"520"}
+,{"complaint_type":"Rodent","descriptor":"Signs of Rodents","n":"517"}
+,{"complaint_type":"Traffic","descriptor":"Drag Racing","n":"515"}
+,{"complaint_type":"GENERAL","descriptor":"MAILBOX","n":"510"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Bin Not Used","n":"508"}
+,{"complaint_type":"Violation of Park Rules","descriptor":"Obstructing Public Use","n":"508"}
+,{"complaint_type":"Cannabis Retailer","descriptor":"Sales to Minors Under 21","n":"507"}
+,{"complaint_type":"Unsanitary Pigeon Condition","descriptor":"Pigeon Waste","n":"507"}
+,{"complaint_type":"Boilers","descriptor":"Boiler - Defective/Inoperative/No Permit","n":"494"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Defective","n":"494"}
+,{"complaint_type":"Lost Property","descriptor":"Electronics/Phones","n":"491"}
+,{"complaint_type":"Unsanitary Animal Pvt Property","descriptor":"Dog","n":"488"}
+,{"complaint_type":"Litter Basket Complaint","descriptor":"Overflowing","n":"487"}
+,{"complaint_type":"Dirty Condition","descriptor":"Dirt or Gravel","n":"482"}
+,{"complaint_type":"Dead Animal","descriptor":"Rat or Mouse","n":"477"}
+,{"complaint_type":"Traffic","descriptor":"Congestion/Gridlock","n":"476"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Unsecured Facility","n":"474"}
+,{"complaint_type":"Illegal Parking","descriptor":"Detached Trailer","n":"462"}
+,{"complaint_type":"Building/Use","descriptor":"Illegal. Commercial Use In Resident Zone","n":"461"}
+,{"complaint_type":"Indoor Air Quality","descriptor":"Sewage Odor","n":"456"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Waste Left in Front of Other Residence","n":"455"}
+,{"complaint_type":"Water System","descriptor":"No Water (WNW)","n":"452"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Other Store (Non-Food)","n":"451"}
+,{"complaint_type":"Dead/Dying Tree","descriptor":"Planted Less Than 2 Years Ago","n":"450"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"APS","n":"444"}
+,{"complaint_type":"Special Projects Inspection Team (SPIT)","descriptor":"Illegal Hotel Rooms In Residential Building","n":"438"}
+,{"complaint_type":"Food Establishment","descriptor":"Pet/Animal","n":"432"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Restaurant","n":"427"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Bodega, Deli, or Convenience Store","n":"427"}
+,{"complaint_type":"Day Care","descriptor":"Day Care Facility","n":"418"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Hours of Operation","n":"408"}
+,{"complaint_type":"Food Establishment","descriptor":"Food Spoiled","n":"407"}
+,{"complaint_type":"Mosquitoes","descriptor":"Large Number of Mosquitoes","n":"405"}
+,{"complaint_type":"Water System","descriptor":"LOW WATER PRESSURE - WLWP","n":"404"}
+,{"complaint_type":"Illegal Tree Damage","descriptor":"Trunk Damaged","n":"400"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Vehicle Signal","n":"398"}
+,{"complaint_type":"Cannabis Retailer","descriptor":"Unlicensed","n":"394"}
+,{"complaint_type":"Street Sign - Damaged","descriptor":"Other/Unknown","n":"393"}
+,{"complaint_type":"Animal-Abuse","descriptor":"Tortured","n":"387"}
+,{"complaint_type":"Indoor Air Quality","descriptor":"Other (Explain Below)","n":"387"}
+,{"complaint_type":"Dumpster Complaint","descriptor":"Overflowing dumpster","n":"384"}
+,{"complaint_type":"PLUMBING","descriptor":"STEAM PIPE/RISER","n":"383"}
+,{"complaint_type":"Dead Animal","descriptor":"Raccoon","n":"377"}
+,{"complaint_type":"Dirty Condition","descriptor":"Broken Glass","n":"377"}
+,{"complaint_type":"Violation of Park Rules","descriptor":"BBQ Outside Authorized Area","n":"373"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Clear Street Light","n":"372"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Veh Signal Head","n":"368"}
+,{"complaint_type":"Water Maintenance","descriptor":"No Water","n":"366"}
+,{"complaint_type":"Traffic","descriptor":"Truck Route Violation","n":"365"}
+,{"complaint_type":"Illegal Tree Damage","descriptor":"Roots Damaged","n":"361"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Building - Vacant, Open And Unguarded","n":"360"}
+,{"complaint_type":"Commercial Disposal Complaint","descriptor":"Waste Disposal","n":"359"}
+,{"complaint_type":"Damaged Tree","descriptor":"Tree Trunk Split","n":"357"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Vent/Exhaust - Illegal/Improper","n":"357"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Supermarket or Grocery Store","n":"355"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Catch Basin Sunken","n":"353"}
+,{"complaint_type":"FLOORING/STAIRS","descriptor":"STAIRS","n":"352"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Manhole Overflow","n":"352"}
+,{"complaint_type":"Animal in a Park","descriptor":"Injured Wildlife","n":"345"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Graffiti or Vandalism","n":"345"}
+,{"complaint_type":"Sanitation Worker or Vehicle Complaint","descriptor":"Spilled Garbage","n":"344"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"WINDOW/FRAME","n":"331"}
+,{"complaint_type":"Sanitation Worker or Vehicle Complaint","descriptor":"Inappropriate Behavior","n":"326"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Debris - Falling Or In Danger Of Falling","n":"321"}
+,{"complaint_type":"Dead Animal","descriptor":"Other","n":"319"}
+,{"complaint_type":"Overgrown Tree/Branches","descriptor":"Traffic Sign or Signal Blocked","n":"315"}
+,{"complaint_type":"Rodent","descriptor":"Mouse Sighting","n":"314"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Debris - Excessive","n":"313"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Stoop Line Stand","n":"305"}
+,{"complaint_type":"Street Light Condition","descriptor":"Multiple Street Lights Out","n":"300"}
+,{"complaint_type":"Noise","descriptor":"Noise: Manufacturing Noise (NK1)","n":"295"}
+,{"complaint_type":"Sewer","descriptor":"Manhole Overflow (Use Comments) (SA1)","n":"292"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"CABINET","n":"289"}
+,{"complaint_type":"Noise","descriptor":"Noise: Jack Hammering (NC2)","n":"289"}
+,{"complaint_type":"Unsanitary Animal Pvt Property","descriptor":"Cat","n":"288"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Structure - Indoors","n":"285"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Storage Area Not Provided","n":"283"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Catch Basin Search","n":"282"}
+,{"complaint_type":"Noise - House of Worship","descriptor":"Loud Talking","n":"281"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Garage or Parking Lot","n":"281"}
+,{"complaint_type":"Dead Animal","descriptor":"Bird","n":"281"}
+,{"complaint_type":"Broken Parking Meter","descriptor":"Out of Order","n":"280"}
+,{"complaint_type":"Water System","descriptor":"Hydrant Knocked Over/Missing (WC)","n":"278"}
+,{"complaint_type":"Dumpster Complaint","descriptor":"Blocking Sidewalk or Street","n":"277"}
+,{"complaint_type":"Food Establishment","descriptor":"Letter Grading","n":"277"}
+,{"complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","n":"276"}
+,{"complaint_type":"Air Quality","descriptor":"Air: Dust, Construction/Demolition (AE4)","n":"275"}
+,{"complaint_type":"Noise","descriptor":"Noise: Boat(Engine,Music,Etc) (NR10)","n":"274"}
+,{"complaint_type":"Water Maintenance","descriptor":"Fire Hydrant Leaning/Missing","n":"274"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Adjacent Buildings Not Protected","n":"271"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"DOOR/FRAME","n":"270"}
+,{"complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","n":"269"}
+,{"complaint_type":"Maintenance or Facility","descriptor":"Recreation Center","n":"268"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Street Fair Vendor","n":"265"}
+,{"complaint_type":"Sewer","descriptor":"Sewer Odor (SA2)","n":"264"}
+,{"complaint_type":"Violation of Park Rules","descriptor":"Unsafe Use of Playground","n":"263"}
+,{"complaint_type":"Noise - Commercial","descriptor":"Car/Truck Music","n":"262"}
+,{"complaint_type":"Standing Water","descriptor":"Other - Explain Below","n":"258"}
+,{"complaint_type":"Water Conservation","descriptor":"Water Meter Broken/Leaking - Private Residence (CMR)","n":"257"}
+,{"complaint_type":"Dead Animal","descriptor":"Squirrel","n":"257"}
+,{"complaint_type":"Noise","descriptor":"Noise, Ice Cream Truck (NR4)","n":"256"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Failure To Maintain","n":"253"}
+,{"complaint_type":"Sewer","descriptor":"Catch Basin Sunken/Damaged/Raised (SC1)","n":"252"}
+,{"complaint_type":"Violation of Park Rules","descriptor":"Smoking","n":"252"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Veh Sgnl Mult Lamps","n":"251"}
+,{"complaint_type":"Dead Animal","descriptor":"Opossum","n":"251"}
+,{"complaint_type":"Plumbing","descriptor":"Plumbing Work - Illegal/No Permit/Standpipe/Sprinkler","n":"251"}
+,{"complaint_type":"Sewer","descriptor":"Catch Basin Search (SC2)","n":"249"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Underground","n":"247"}
+,{"complaint_type":"Street Sign - Missing","descriptor":"No Parking, Standing, Stopping","n":"247"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Post","n":"246"}
+,{"complaint_type":"Street Sign - Damaged","descriptor":"No Parking, Standing, Stopping","n":"246"}
+,{"complaint_type":"Noise","descriptor":"Jackhammer","n":"244"}
+,{"complaint_type":"Broken Parking Meter","descriptor":"Coin or Card Did Not Register","n":"242"}
+,{"complaint_type":"Dirty Condition","descriptor":"Syringes","n":"241"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Tobacco Sales","n":"241"}
+,{"complaint_type":"Broken Parking Meter","descriptor":"No Receipt","n":"239"}
+,{"complaint_type":"Indoor Air Quality","descriptor":"Dust from Construction","n":"236"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"LED Pedestrian Unit","n":"236"}
+,{"complaint_type":"Traffic Signal Condition","descriptor":"Ped Lamp","n":"230"}
+,{"complaint_type":"Sewer","descriptor":"Manhole Cover Missing (Emergency) (SA3)","n":"230"}
+,{"complaint_type":"Street Condition","descriptor":"Dumpster - Construction Waste","n":"229"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Site Conditions Endangering Workers","n":"224"}
+,{"complaint_type":"Indoor Sewage","descriptor":"Sewage Leak","n":"223"}
+,{"complaint_type":"Traffic","descriptor":"Chronic Speeding","n":"222"}
+,{"complaint_type":"Lost Property","descriptor":"Other","n":"222"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Pedestrian Ramp Defective","n":"220"}
+,{"complaint_type":"PAINT/PLASTER","descriptor":"RADIATOR","n":"220"}
+,{"complaint_type":"Water Conservation","descriptor":"Fire Hydrant","n":"220"}
+,{"complaint_type":"Obstruction","descriptor":"Sign","n":"219"}
+,{"complaint_type":"Street Sign - Damaged","descriptor":"Stop","n":"217"}
+,{"complaint_type":"Animal in a Park","descriptor":"Dead Animal","n":"216"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Sidewalk Collapsed","n":"216"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Odor","n":"215"}
+,{"complaint_type":"Illegal Tree Damage","descriptor":"Unauthorized Tree Removal","n":"214"}
+,{"complaint_type":"Building/Use","descriptor":"SRO - Illegal Work/No Permit/Change In Occupancy/Use","n":"207"}
+,{"complaint_type":"For Hire Vehicle Complaint","descriptor":"Car Service Company Complaint","n":"207"}
+,{"complaint_type":"Plumbing","descriptor":"Plumbing-Defective/Leaking/Not Maintained","n":"207"}
+,{"complaint_type":"Food Establishment","descriptor":"Food Contaminated","n":"207"}
+,{"complaint_type":"Special Projects Inspection Team (SPIT)","descriptor":"Sign/Awning/Marquee - Illegal/No Permit","n":"206"}
+,{"complaint_type":"Highway Condition","descriptor":"Litter","n":"203"}
+,{"complaint_type":"Street Light Condition","descriptor":"Traffic Signal Light","n":"201"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Manhole Cover Missing","n":"200"}
+,{"complaint_type":"For Hire Vehicle Report","descriptor":"Driver Report - Non Passenger","n":"199"}
+,{"complaint_type":"Noise - House of Worship","descriptor":"Loud Music/Party","n":"196"}
+,{"complaint_type":"Sidewalk Condition","descriptor":"Defective Hardware","n":"196"}
+,{"complaint_type":"Air Quality","descriptor":"Asbestos Disturbance","n":"196"}
+,{"complaint_type":"Food Establishment","descriptor":"Kitchen/Food Prep Area","n":"196"}
+,{"complaint_type":"Noise","descriptor":"Noise:  lawn care equipment (NCL)","n":"195"}
+,{"complaint_type":"Noise","descriptor":"Manufacturing Business/Plant","n":"195"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Hotel or Motel","n":"194"}
+,{"complaint_type":"Food Establishment","descriptor":"Bare Hands in Contact w/ Food","n":"194"}
+,{"complaint_type":"Standing Water","descriptor":"Swimming Pool - Unmaintained","n":"193"}
+,{"complaint_type":"Street Sign - Missing","descriptor":"Other/Unknown","n":"193"}
+,{"complaint_type":"New Tree Request","descriptor":"For One Address","n":"192"}
+,{"complaint_type":"Water Conservation","descriptor":"Water Meter Broken/Leaking","n":"192"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Clothing, Shoe, or Accessories Store","n":"191"}
+,{"complaint_type":"Construction Lead Dust","descriptor":"In Common Areas","n":"190"}
+,{"complaint_type":"Curb Condition","descriptor":"Curb Defect-Metal Protruding","n":"187"}
+,{"complaint_type":"Hazardous Material","descriptor":"Chemical Odor","n":"181"}
+,{"complaint_type":"Noise","descriptor":"Ice Cream Truck","n":"180"}
+,{"complaint_type":"Hazardous Materials","descriptor":"Chemical Odor (HD1)","n":"180"}
+,{"complaint_type":"Mobile Food Vendor","descriptor":"Food Source/Protection","n":"180"}
+,{"complaint_type":"Asbestos","descriptor":"N/A","n":"179"}
+,{"complaint_type":"Street Sign - Dangling","descriptor":"No Parking, Standing, Stopping","n":"179"}
+,{"complaint_type":"Green Infrastructure","descriptor":"Rain Garden","n":"178"}
+,{"complaint_type":"Noise","descriptor":"Boat","n":"178"}
+,{"complaint_type":"Dead Animal","descriptor":"Dog","n":"176"}
+,{"complaint_type":"Residential Disposal Complaint","descriptor":"Mattress or Box Spring Uncovered","n":"175"}
+,{"complaint_type":"Taxi Report","descriptor":"Driver Report - Passenger","n":"174"}
+,{"complaint_type":"Food Establishment","descriptor":"Food Contains Foreign Object","n":"172"}
+,{"complaint_type":"Street Sign - Dangling","descriptor":"Other/Unknown","n":"172"}
+,{"complaint_type":"Outdoor Dining","descriptor":"Restaurant Status","n":"171"}
+,{"complaint_type":"Uprooted Stump","descriptor":"Remove Stump","n":"170"}
+,{"complaint_type":"Water Maintenance","descriptor":"Water in Basement","n":"170"}
+,{"complaint_type":"Food Establishment","descriptor":"Food Temperature","n":"170"}
+,{"complaint_type":"General Construction/Plumbing","descriptor":"Posted Notice Or Order Removed/Tampered With","n":"169"}
+,{"complaint_type":"Consumer Complaint","descriptor":"Home Improvement Contractor","n":"169"}
+,{"complaint_type":"Asbestos","descriptor":"Asbestos Complaint (B1)","n":"168"}
+,{"complaint_type":"Illegal Tree Damage","descriptor":"Bicycle Chained to Tree","n":"167"}
+,{"complaint_type":"Standing Water","descriptor":"Puddle in Ground","n":"166"}
+,{"complaint_type":"Sewer Maintenance","descriptor":"Culvert","n":"165"}]
