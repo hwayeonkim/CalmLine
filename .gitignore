@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+data/audio/
+data/external/
+results/tmp/
+*.wav
