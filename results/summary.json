@@ -1,0 +1,51 @@
+{
+ "v0": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.85,
+   "abuse_recall": 0.7273,
+   "leak_rate": 0.4091,
+   "protected": 0.5909,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.7523,
+   "sufficiency_toxic": 0.5455,
+   "fact_recall_all": 0.8575,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.625,
+   "tier_dist": {
+    "0": 24,
+    "1": 13,
+    "2": 0,
+    "3": 3
+   },
+   "latency_p50": 0.0894,
+   "latency_p95": 0.3461
+  },
+  "desc": "Baseline: regex lexicon + keyword intent + pure template (the original 'pre-written phrases' idea)",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9478,
+   "abuse_recall": 0.9277,
+   "leak_rate": 0.1205,
+   "protected": 0.8795,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.7152,
+   "sufficiency_toxic": 0.4458,
+   "fact_recall_all": 0.8161,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.6667,
+   "tier_dist": {
+    "0": 56,
+    "1": 69,
+    "2": 0,
+    "3": 9
+   },
+   "latency_p50": 0.1909,
+   "latency_p95": 0.3073
+  }
+ }
+}
