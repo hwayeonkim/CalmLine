@@ -1,0 +1,8 @@
+.venv
+.git
+results
+data/audio
+data/external
+data/synth
+evidence
+**/__pycache__

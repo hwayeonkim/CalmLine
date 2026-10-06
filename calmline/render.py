@@ -43,7 +43,10 @@ def compose(intent: str, slots: dict) -> str:
     if slots.get("borough"):
         loc.append(slots["borough"][0].title())
     verb = "report" if intent in INTENTS else "ask about"
-    s = [f"Hello, I'm calling to {verb} {issue}" + (f" at {_join(loc)}" if loc else "") + "."]
+    if intent == "__NEUTRAL__":
+        s = ["Hello, I'm calling about a problem" + (f" at {_join(loc)}" if loc else "") + "."]
+    else:
+        s = [f"Hello, I'm calling to {verb} {issue}" + (f" at {_join(loc)}" if loc else "") + "."]
     veh = slots.get("vehicle", [])[-1:] + [("plate " + p if not p.lower().startswith(("plate", "license")) else p) for p in slots.get("plate", [])]
     if veh:
         s.append(f"The vehicle involved: {_join(veh)}.")
@@ -120,7 +123,9 @@ class HybridRenderer:
 
     def __call__(self, text, intent, slots, tox):
         head = compose(intent, slots)
-        have = set(content_tokens(head))
+        have = set(content_tokens(head)) if intent != "__NEUTRAL__" else set(content_tokens(head)) - {"problem"}
+        if intent == "__NEUTRAL__":
+            have = set()   # neutral header: keep every informative clause, even if slots repeat it
         details = []
         for s, e, c in clauses(text):
             if any(not (sp.end <= s or sp.start >= e) for sp in tox.spans):
@@ -148,3 +153,23 @@ class HybridRenderer:
         if details:
             head += " Details: " + ". ".join(details) + "."
         return head
+
+
+class ConfidenceGatedRenderer(HybridRenderer):
+    """v9: only *assert* the issue type in the agent's text when the intent classifier is confident.
+
+    A wrong template header is a silent hallucination ("noise complaint" for a sewer backup). Below
+    `assert_th` the header is neutral and the caller's own (cleaned) words carry the issue; the intent is
+    still shown to the agent as a separate, clearly-labelled suggestion chip."""
+    name = "gated"
+
+    def __init__(self, assert_th=0.75, **kw):
+        super().__init__(**kw)
+        self.assert_th = assert_th
+        self.last_score = 1.0
+
+    def __call__(self, text, intent, slots, tox, score=None):
+        sc = self.last_score if score is None else score
+        if sc < self.assert_th:
+            intent = "__NEUTRAL__"
+        return super().__call__(text, intent, slots, tox)

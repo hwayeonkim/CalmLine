@@ -1,0 +1,18 @@
+{
+ "tiny.en/no_prompt": {
+  "toxic_token_recog": 0.9155555555555556,
+  "clean_utts_with_hallucinated_profanity": 0.0
+ },
+ "tiny.en/profanity_prompt": {
+  "toxic_token_recog": 0.9377777777777778,
+  "clean_utts_with_hallucinated_profanity": 0.0
+ },
+ "base.en/no_prompt": {
+  "toxic_token_recog": 0.92,
+  "clean_utts_with_hallucinated_profanity": 0.0
+ },
+ "base.en/profanity_prompt": {
+  "toxic_token_recog": 0.9555555555555556,
+  "clean_utts_with_hallucinated_profanity": 0.0
+ }
+}

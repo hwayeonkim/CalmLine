@@ -33,7 +33,7 @@ async def warm():
     def _w():
         p = pipeline()
         from calmline.audio.stt import load_whisper
-        load_whisper(Settings().whisper)
+        load_whisper(Settings().whisper); load_whisper(Settings().spotter)
     await loop.run_in_executor(None, _w)
 
 

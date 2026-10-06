@@ -11,13 +11,14 @@ ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A 
 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
-                 mask_for_intent=True, unknown_mode="mask", mask_mild=False):
+                 mask_for_intent=True, unknown_mode="mask", mask_mild=False, mask_slots=False):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
         self.name, self.intent_min, self.mask_for_intent = name, intent_min, mask_for_intent
         self.unknown_mode = unknown_mode
-        self.mask_mild = mask_mild        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
+        self.mask_mild = mask_mild
+        self.mask_slots = mask_slots        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
         t = {}
@@ -42,10 +43,14 @@ class Pipeline:
         intent, isc = self.intent_clf(clean or text)
         t["intent"] = (time.perf_counter() - t1) * 1000
         t2 = time.perf_counter()
-        sl = slotmod.extract(text)
+        # slots are extracted from the *masked* text: a verbatim slot must never carry abuse
+        # (bug found in the live demo: prior_contact = "the fourth fucking time")
+        sl = slotmod.extract(mask(text, tox.spans) if self.mask_slots else text)
         t["slots"] = (time.perf_counter() - t2) * 1000
         d.intent, d.intent_score, d.slots = intent, isc, sl
         t3 = time.perf_counter()
+        if hasattr(self.renderer, "last_score"):
+            self.renderer.last_score = isc
         if intent != UNKNOWN and isc >= self.intent_min:
             d.tier, out = 1, self.renderer(text, intent, sl, tox)
         elif self.unknown_mode == "generic" and self.llm is None:

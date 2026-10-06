@@ -1,0 +1,13 @@
+# runtime (Cloud Run image)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+numpy
+soundfile
+librosa
+torch
+transformers>=4.45
+sentence-transformers
+faster-whisper
+rapidfuzz
+google-genai          # Gemini tier-2 rewriter (optional at runtime: only used when GEMINI_API_KEY / Vertex is configured)
+# google-cloud-speech # enable for the Google STT path (calmline/audio/google_stt.py)

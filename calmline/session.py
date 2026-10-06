@@ -27,7 +27,8 @@ class Settings:
     chunk_s: float = 0.5
     protection: str = "shield"      # shield | calm_voice | raw
     compress: bool = True
-    whisper: str = "base.en"
+    whisper: str = "small.en"       # pass 2 (utterance card)
+    spotter: str = "tiny.en"        # pass 1 (mute decisions)
 
 
 class CallSession:
@@ -39,8 +40,10 @@ class CallSession:
         self.mutes: list[tuple[float, float, str]] = []
         self.cards: list[dict] = []
         self.events: asyncio.Queue = asyncio.Queue()
-        self.utt_start_word = 0
-        self.flagged_word_ids: set[int] = set()
+        self.utt_start = None
+        self.last_voice = 0.0
+        self.alerted = False
+        self.flagged_word_ids: set = set()
         self.anger = 0.0
         self.baseline_db = None
         self.comp = LookaheadCompressor()
@@ -54,58 +57,73 @@ class CallSession:
     @property
     def stt(self):
         if self._stt is None:
-            from .audio.stt import StreamingWhisper
-            self._stt = StreamingWhisper(self.s.whisper)
+            from .audio.stt import WindowSpotter
+            self._stt = WindowSpotter(self.s.spotter, window_s=3.0, bias_prompt=True)
         return self._stt
 
     # ---------------- ingest ----------------
     def ingest(self, pcm: np.ndarray, final=False):
-        """Called (in a worker thread) for every caller chunk. Returns list of events."""
+        """Called (in a worker thread) for every caller chunk. Returns list of events.
+
+        Two-pass design: pass 1 (small model, last 3 s window) decides mutes immediately;
+        pass 2 (larger model, whole utterance) produces the calm card when a pause ends the utterance."""
         start = len(self.audio) / SR
         self.audio = np.concatenate([self.audio, pcm.astype(np.float32)])
         ev = []
-        # acoustic arousal gauge (speaker-relative loudness)
         db = 20 * np.log10(frame_rms(pcm).mean() + 1e-9)
-        if db > -50:
+        voiced = db > -45
+        if voiced:
             self.baseline_db = db if self.baseline_db is None else 0.97 * self.baseline_db + 0.03 * min(db, self.baseline_db + 3)
             rel = db - self.baseline_db
             self.anger = float(np.clip(0.8 * self.anger + 0.2 * np.clip(rel / 12, 0, 1), 0, 1))
-        new = self.stt.feed(pcm, final=final)
-        words = self.stt.committed
-        if new or final:
-            # detect on the current utterance's committed words
-            seg = words[self.utt_start_word:]
-            text, offs = "", []
-            for w in seg:
-                if text: text += " "
-                offs.append((len(text), len(text) + len(w.text))); text += w.text
-            r = self.det(text) if text else None
-            if r is not None:
-                for sp in r.spans:
-                    for i, (a, b) in enumerate(offs):
-                        gi = self.utt_start_word + i
-                        if not (b <= sp.start or a >= sp.end) and gi not in self.flagged_word_ids:
-                            self.flagged_word_ids.add(gi)
-                            w = seg[i]
-                            self.mutes.append((w.start - 0.15, w.end + 0.15, sp.label))
-                            ev.append({"type": "mute", "start": w.start, "end": w.end, "label": sp.label})
-                            if sp.label in ("threat", "self_harm"):
-                                ev.append({"type": "alert", "label": sp.label})
-            ev.append({"type": "partial", "n_words": len(words), "anger": round(self.anger, 2)})
-            # utterance boundary: sentence-final punctuation or a pause >= 0.9 s in the committed stream
-            last = words[-1] if words else None
-            pause = (start + len(pcm) / SR) - (last.end if last else 0)
-            if seg and (final or last.text.endswith((".", "?", "!")) or pause >= 0.9):
-                ev.append(self._close_utterance(seg))
-                self.utt_start_word = len(words)
+            self.last_voice = start + len(pcm) / SR
+            if self.utt_start is None:
+                self.utt_start = start
+        # pass 1: mute decisions on the sliding window
+        words = self.stt.feed(pcm)
+        text, offs = "", []
+        for w in words:
+            if text: text += " "
+            offs.append((len(text), len(text) + len(w.text))); text += w.text
+        r = self.det(text) if text else None
+        if r is not None:
+            for sp in r.spans:
+                for i, (a, b) in enumerate(offs):
+                    if b <= sp.start or a >= sp.end:
+                        continue
+                    w = words[i]
+                    key = (round(w.start, 1), w.text.lower())
+                    if any(abs(k[0] - key[0]) < 0.3 and k[1] == key[1] for k in self.flagged_word_ids):
+                        continue
+                    self.flagged_word_ids.add(key)
+                    self.mutes.append((w.start - 0.25, w.end + 0.25, sp.label))
+                    ev.append({"type": "mute", "start": w.start, "end": w.end, "label": sp.label})
+                    if sp.label in ("threat", "self_harm") and not self.alerted:
+                        self.alerted = True
+                        ev.append({"type": "alert", "label": sp.label})
+        ev.append({"type": "partial", "anger": round(self.anger, 2)})
+        # pass 2: utterance boundary = pause >= 0.8 s after speech (or end of call)
+        now = start + len(pcm) / SR
+        if self.utt_start is not None and (final or now - self.last_voice >= 0.8):
+            card = self._close_utterance(self.utt_start, self.last_voice if not final else now)
+            if card:
+                ev.append(card)
+            self.utt_start = None
         return ev
 
-    def _close_utterance(self, seg):
-        text = " ".join(w.text for w in seg)
+    def _close_utterance(self, t0, t1):
+        from .audio.stt import load_whisper
+        x = self.audio[int(max(0, t0 - 0.2) * SR):int((t1 + 0.3) * SR)]
+        segs, _ = load_whisper(self.s.whisper).transcribe(x, language="en", beam_size=1, initial_prompt=self.stt.PROFANITY_PROMPT,
+                                                          condition_on_previous_text=False)
+        from .audio.stt import normalize_asr
+        text = normalize_asr(" ".join(s.text.strip() for s in segs).strip())
+        if not text:
+            return None
         d = self.pipe(text)
         card = dict(type="card", route=d.route, delivered=d.delivered, intent=d.intent, slots=d.slots, tier=d.tier,
                     abuse_types=d.abuse_types, anger=round(max(self.anger, d.anger if d.route != "PASS" else 0), 2),
-                    t=[seg[0].start, seg[-1].end], latency_ms=round(sum(d.timings_ms.values()), 1))
+                    t=[t0, t1], latency_ms=round(sum(d.timings_ms.values()), 1))
         card_public = dict(card)
         # sealed original: kept for evidence, never sent to the agent UI
         with open(os.path.join(self.evidence_dir, "transcript.jsonl"), "a") as f:

@@ -14,7 +14,8 @@ def score_item(row, d, residual_tox=None):
         toxic_gold=toxic_gold, strict_pass=(g == "PASS" and row["route_ok"] == ["PASS"]),
         fact_recall=(sum(fr) / len(fr)) if fr else 1.0, sufficient=all(fr), missing=[f for f, ok in zip(facts, fr) if not ok],
         leaks=leaks, leaked=bool(leaks), halluc=halluc,
-        intent_gold=row["intent"], intent_pred=d.intent, tier=d.tier,
+        intent_gold=row["intent"], intent_pred=d.intent, tier=d.tier, intent_score=d.intent_score,
+        asserted=(d.route != "PASS" and d.intent != "UNKNOWN" and not d.delivered.split("] ")[-1].startswith(("Hello, I'm calling about a problem", "Hello, I'm calling to ask about an issue"))),
         latency=sum(d.timings_ms.values()), delivered=d.delivered, residual_tox=residual_tox,
     )
 
@@ -40,6 +41,7 @@ def aggregate(items):
         fact_recall_all=np.mean([i["fact_recall"] for i in items]),
         halluc_rate=np.mean([bool(i["halluc"]) for i in items]),
         intent_acc_routed=np.mean([i["intent_pred"] == i["intent_gold"] for i in routed]) if routed else float("nan"),
+        wrong_issue_rate=np.mean([i.get("asserted", False) and i["intent_pred"] != i["intent_gold"] for i in routed]) if routed else float("nan"),
         tier_dist={t: int(sum(i["tier"] == t for i in items)) for t in (0, 1, 2, 3)},
         latency_p50=float(np.percentile(lat, 50)), latency_p95=float(np.percentile(lat, 95)),
     )

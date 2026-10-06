@@ -25,7 +25,7 @@ class Word:
 @lru_cache(maxsize=4)
 def load_whisper(size="base.en", device="cpu", compute_type="int8"):
     from faster_whisper import WhisperModel
-    return WhisperModel(size, device=device, compute_type=compute_type)
+    return WhisperModel(size, device=device, compute_type=compute_type, cpu_threads=8)
 
 
 def _norm(w):
@@ -95,3 +95,50 @@ def offline_words(path_or_audio, size="small.en"):
     x = sf.read(path_or_audio)[0].astype(np.float32) if isinstance(path_or_audio, str) else path_or_audio
     segs, _ = load_whisper(size).transcribe(x, language="en", beam_size=5, word_timestamps=True)
     return [Word(w.start, w.end, w.word.strip()) for s in segs for w in (s.words or [])]
+
+
+class WindowSpotter:
+    """Constant-cost first pass for *mute decisions* (two-pass design, cf. Sainath et al., 2019).
+
+    LocalAgreement re-decodes the whole growing utterance and waits for two agreeing hypotheses, which on CPU
+    makes it ~real-time-factor 1 and too slow for a 2 s buffer. For muting we only need local context, so every
+    hop we decode just the last `window_s` seconds with a small model and act on that hypothesis immediately.
+    The calm card still uses a full-context second pass at the end of the utterance."""
+
+    PROFANITY_PROMPT = ("Verbatim, uncensored transcript of an angry phone call to a city hotline. "
+                        "Fuck, fucking, shit, bitch, asshole, idiot, moron, dumbass, bastard, goddamn.")
+
+    def __init__(self, size="tiny.en", window_s=3.0, bias_prompt=True):
+        self.model = load_whisper(size)
+        self.window_s = window_s
+        # Whisper under-transcribes profanity; a vocabulary prompt raised toxic-token recognition
+        # 92.0% -> 95.6% (base.en) with 0/30 hallucinated profanity on clean calls (results/audio/whisper_prompt_bias.json)
+        self.prompt = self.PROFANITY_PROMPT if bias_prompt else None
+        self.reset()
+
+    def reset(self):
+        self.audio = np.zeros(0, np.float32)
+
+    def feed(self, chunk: np.ndarray, final=False) -> list[Word]:
+        self.audio = np.concatenate([self.audio, chunk.astype(np.float32)])
+        start = max(0.0, len(self.audio) / SR - self.window_s)
+        seg = self.audio[int(start * SR):]
+        # silence gate: a vocabulary prompt on near-silent audio makes Whisper echo the prompt (seen in the demo)
+        from .acoustic import frame_rms
+        db = 20 * np.log10(frame_rms(seg) + 1e-9)
+        if (db > -45).mean() * len(seg) / SR < 0.3:
+            return []
+        segs, _ = self.model.transcribe(seg, language="en", beam_size=1, word_timestamps=True, initial_prompt=self.prompt,
+                                        condition_on_previous_text=False, vad_filter=False, without_timestamps=False)
+        out = [Word(w.start + start, w.end + start, w.word.strip()) for s in segs for w in (s.words or []) if w.word.strip()]
+        if self.prompt and len(out) >= 4 and " ".join(w.text for w in out).lower().strip(" .") in self.prompt.lower():
+            return []   # prompt echo
+        return out
+
+
+def normalize_asr(text: str) -> str:
+    """Undo Whisper formatting that breaks slot extraction: '1,820' -> '1820', '311, 20871455' -> '311-20871455'."""
+    text = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
+    text = re.sub(r"\b311[,.]?\s+(\d{6,10})\b", r"311-\1", text)
+    text = re.sub(r"\b(\d{1,3})\s*-\s*(\d{2})\b", r"\1-\2", text)
+    return text
