@@ -151,6 +151,44 @@ async def broadcast(r, msg: dict | bytes):
         r["agents"].discard(ws)
 
 
+async def speak(r, s, text):
+    """Stream the calm Gemini voice for one card to the agents (prefix byte 2).
+    If Google TTS is unavailable (e.g. free-tier daily quota), the agent page speaks the card with the browser voice."""
+    if r.get("tts_down") and time.time() < r["tts_down"]:
+        await broadcast(r, {"type": "voice_fallback", "text": text}); return
+    import queue, threading
+    from calmline import tts
+    q: queue.Queue = queue.Queue()
+    def work():
+        try:
+            for ch in tts.stream(text):
+                q.put(ch)
+        except Exception as e:  # noqa: BLE001
+            q.put(e)
+        q.put(None)
+    async with r.setdefault("voice_lock", asyncio.Lock()):
+        threading.Thread(target=work, daemon=True).start()
+        while True:
+            item = await asyncio.get_running_loop().run_in_executor(None, q.get)
+            if item is None:
+                break
+            if isinstance(item, Exception):
+                r["tts_down"] = time.time() + 600
+                await broadcast(r, {"type": "voice_fallback", "text": text, "error": str(item)[:160]})
+                break
+            s.voice_log.append((time.time() - (r["started"] or time.time()), item))
+            await broadcast(r, b"\x02" + (np.clip(item, -1, 1) * 32767).astype("<i2").tobytes())
+
+
+def on_events(r, s, events):
+    for e in events:
+        if e.get("type") == "card" and s.s.protection == "calm_voice":
+            text = e["delivered"].split("] ", 1)[-1] if e["delivered"].startswith("[SAFETY") else e["delivered"]
+            if e["route"] == "ESCALATE":
+                text = "Safety alert. A supervisor is joining. " + text
+            asyncio.create_task(speak(r, s, text))
+
+
 async def playback_loop(name):
     """Sends caller audio to agents at real-time pace, `delay_s` behind the caller."""
     r = room(name); s = r["session"]; t_start = r["started"]
@@ -162,9 +200,9 @@ async def playback_loop(name):
         target = now - s.s.delay_s
         avail = len(s.audio) / SR
         while played + step <= min(target, avail):
-            x = s.render_playback(played, played + step)
-            pcm = (np.clip(x, -1, 1) * 32767).astype("<i2").tobytes()
-            await broadcast(r, pcm)
+            if s.s.protection != "calm_voice":
+                x = s.render_playback(played, played + step)
+                await broadcast(r, b"\x01" + (np.clip(x, -1, 1) * 32767).astype("<i2").tobytes())
             played += step
         if s.closed and target >= avail:
             break
@@ -193,6 +231,7 @@ async def ws_caller(ws: WebSocket, name: str):
                         events = await loop.run_in_executor(None, s.ingest, part, False)
                     for e in events:
                         await broadcast(r, e)
+                    on_events(r, s, events)
             elif msg.get("text"):
                 m = json.loads(msg["text"])
                 if m.get("type") == "end":
@@ -205,8 +244,12 @@ async def ws_caller(ws: WebSocket, name: str):
         events = await loop.run_in_executor(None, s.ingest, buf if len(buf) else np.zeros(1600, np.float32), True)
     for e in events:
         await broadcast(r, e)
+    on_events(r, s, events)
     s.closed = True
-    s.save_evidence(); r["last_done"] = s.id
+    await asyncio.sleep(0.5)
+    async with r.setdefault("voice_lock", asyncio.Lock()):
+        s.save_evidence()
+    r["last_done"] = s.id
     await broadcast(r, {"type": "compare_ready", "session": s.id})
 
 
@@ -253,11 +296,15 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
             events = await loop.run_in_executor(None, s.ingest, part, k + chunk >= len(x))
         for e in events:
             await broadcast(r, e)
+        on_events(r, s, events)
         try:
             await ws.send_text(json.dumps({"type": "progress", "t": (k + len(part)) / SR, "dur": len(x) / SR}))
         except Exception:
             pass
     s.closed = True
-    s.save_evidence(); r["last_done"] = s.id
+    await asyncio.sleep(0.5)
+    async with r.setdefault("voice_lock", asyncio.Lock()):
+        s.save_evidence()
+    r["last_done"] = s.id
     await broadcast(r, {"type": "compare_ready", "session": s.id})
     await ws.send_text(json.dumps({"type": "done", "session": s.id}))

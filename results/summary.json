@@ -1383,5 +1383,80 @@
    "latency_p50": 771.8666,
    "latency_p95": 2549.3583
   }
+ },
+ "v13": {
+  "dev": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 1.0,
+   "false_positive_rate": 0.0556,
+   "fact_recall_toxic": 0.9576,
+   "sufficiency_toxic": 0.9091,
+   "fact_recall_all": 0.9704,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8261,
+   "wrong_issue_rate": 0.1304,
+   "tier_dist": {
+    "0": 17,
+    "1": 20,
+    "2": 3,
+    "3": 0
+   },
+   "latency_p50": 844.0451,
+   "latency_p95": 1766.7383,
+   "residual_toxicity": 0.0455,
+   "llm": {
+    "calls": 23,
+    "accepted": 20,
+    "rej_toxic": 0,
+    "rej_halluc": 1,
+    "rej_facts": 0,
+    "rej_error": 0,
+    "rej_unsupported": 2,
+    "ms_p50": 927.2347079968313,
+    "ms_p95": 8940.446170600613
+   }
+  },
+  "desc": "Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback",
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.012,
+   "protected": 0.988,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.9346,
+   "sufficiency_toxic": 0.8675,
+   "fact_recall_all": 0.9446,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.8161,
+   "wrong_issue_rate": 0.1379,
+   "tier_dist": {
+    "0": 47,
+    "1": 80,
+    "2": 7,
+    "3": 0
+   },
+   "latency_p50": 895.3058,
+   "latency_p95": 12453.3607,
+   "residual_toxicity": 0.0241,
+   "llm": {
+    "calls": 110,
+    "accepted": 92,
+    "rej_toxic": 1,
+    "rej_halluc": 2,
+    "rej_facts": 0,
+    "rej_error": 5,
+    "rej_unsupported": 10,
+    "ms_p50": 928.8933120005822,
+    "ms_p95": 13284.532812497851
+   }
+  }
  }
 }

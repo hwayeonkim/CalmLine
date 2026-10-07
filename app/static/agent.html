@@ -1,51 +1,106 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — Agent</title><link rel="stylesheet" href="/static/style.css"></head>
-<body><header><h1>Agent console</h1><span class="tag" id="roomtag"></span></header>
-<main>
-<div class="card"><div class="row" style="justify-content:space-between">
-  <div class="row"><button class="primary" id="join">🎧 Join call</button>
-  <label class="muted">Protection <select id="prot"><option value="shield">Shield — mute abuse, soften shouting</option><option value="calm_voice">Calm voice — hear only the calm rendering</option><option value="raw">Raw — original audio</option></select></label></div>
-  <div class="row"><span class="muted">Caller agitation</span><div class="gauge"><i id="g"></i></div></div></div>
-  <div class="row" style="margin-top:10px"><span class="muted" id="state">not connected</span><span class="muted" id="hidden"></span>
-  <button class="danger" id="endreq" style="margin-left:auto">Request to end call</button></div></div>
-<div id="alerts"></div><div id="cards"></div>
-</main>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine — Agent</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#EEF2F4;--panel:#fff;--ink:#16202A;--muted:#617080;--line:#DCE3E8;--calm:#1D6E68;--calm-soft:#E3F1EF;--bubble:#F6F9FA;
+--alert:#B4302A;--alert-soft:#FBE7E5;--warn:#B8682E;--sans:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans);display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.who{display:flex;flex-direction:column;line-height:1.25}.who b{font-size:15px}.who span{font-size:12px;color:var(--muted)}
+.pill{font:500 12px/1 var(--mono);padding:6px 9px;border-radius:99px;background:#E7EBEE;color:var(--muted)}
+.pill.live{background:var(--calm-soft);color:var(--calm)}.pill.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--calm);margin-right:6px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-left:auto}
+.seg button{font:500 13px var(--sans);border:0;background:var(--panel);padding:7px 11px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--calm);color:#fff}
+button.btn{font:500 13px var(--sans);border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.btn.primary{background:var(--calm);border-color:var(--calm);color:#fff}button.btn.danger{color:var(--alert);border-color:#EBC0BC}
+button:focus-visible{outline:2px solid var(--calm);outline-offset:2px}
+.meter{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.meter .g{width:110px;height:6px;border-radius:9px;background:#E3E8EC;overflow:hidden}
+.meter .g i{display:block;height:100%;width:0;background:linear-gradient(90deg,#86BDB2,#E0A35F,#C8553D);transition:width .4s}
+.main{flex:1;display:grid;grid-template-columns:1fr 290px;gap:0;min-height:0}
+@media (max-width:760px){.main{grid-template-columns:1fr}.facts{border-left:0;border-top:1px solid var(--line)}}
+.conv{overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.banner{background:var(--alert-soft);color:var(--alert);border:1px solid #EFC2BE;border-radius:10px;padding:10px 14px;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.msg{max-width:640px;display:flex;flex-direction:column;gap:6px}
+.bub{background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 15px;font-size:16px;line-height:1.55}
+.msg.esc .bub{border-color:#EFC2BE}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+.tag{font:500 11.5px/1 var(--mono);padding:4px 7px;border-radius:6px;background:var(--calm-soft);color:var(--calm)}
+.tag.plain{background:#E9EDF0;color:var(--muted)}.tag.esc{background:var(--alert-soft);color:var(--alert)}
+.speaking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.bars{display:flex;gap:3px;align-items:flex-end;height:16px}.bars i{width:3px;background:var(--calm);border-radius:2px;animation:bar 0.9s infinite ease-in-out}
+.bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}
+@keyframes bar{0%,100%{height:4px}50%{height:16px}}
+.empty{color:var(--muted);font-size:14px;border:1px dashed var(--line);border-radius:12px;padding:18px;max-width:640px}
+.facts{background:var(--panel);border-left:1px solid var(--line);padding:16px 18px;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.facts h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fact{display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.fact span{font-size:11.5px;color:var(--muted);text-transform:capitalize}.fact b{font-weight:500;font-size:14px}
+.stat{font:13px var(--mono);color:var(--muted)}
+</style></head><body>
+<div class="top">
+  <div class="who"><b>Incoming 311 call</b><span id="roomtag"></span></div>
+  <span class="pill" id="state">not connected</span><span class="stat" id="timer">00:00</span>
+  <button class="btn primary" id="join">Join call</button>
+  <div class="meter">Agitation <div class="g"><i id="g"></i></div></div>
+  <div class="seg" id="prot" role="radiogroup" aria-label="Protection">
+    <button data-v="calm_voice" class="on" title="Hear only the calm relay voice">Calm voice</button>
+    <button data-v="shield" title="Hear the caller with abuse muted and shouting softened">Shield</button>
+    <button data-v="raw" title="Hear the original caller">Raw</button></div>
+  <button class="btn danger" id="endreq">Request end of call</button>
+</div>
+<div class="main">
+  <div class="conv" id="conv"><div id="alerts"></div>
+    <div class="empty" id="empty">Waiting for a caller. Messages appear here in calm wording; anything abusive is removed before it reaches you.</div>
+    <div class="speaking" id="speaking" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span>Caller is speaking — you'll get the calm version when they pause.</span></div>
+  </div>
+  <aside class="facts"><h3>Case facts</h3><div id="facts"><div class="stat">Facts the caller mentions collect here.</div></div>
+    <h3>Protection</h3><div class="stat" id="pstats">0 abusive words blocked</div></aside>
+</div>
 <script>
-const q=new URLSearchParams(location.search), room=q.get('room')||'demo';document.getElementById('roomtag').textContent='room '+room;
-const proto=location.protocol==='https:'?'wss':'ws';let ws,ctx,gain,tPlay=0,hiddenN=0,prot='shield',listenOn=true;
-window.addEventListener('message',e=>{if(e.data&&e.data.type==='listen'){listenOn=e.data.on;if(gain)gain.gain.value=listenOn?1:0}});
+const q=new URLSearchParams(location.search),room=q.get('room')||'demo';document.getElementById('roomtag').textContent='Room '+room+' · caller audio is relayed through CalmLine';
+const proto=location.protocol==='https:'?'wss':'ws';let ws,ctx,gain,tLine=0,tVoice=0,blocked=0,prot='calm_voice',listenOn=true,t0=null,timerId,speakingTimer;
+const facts={};const LABEL={address:'address',cross_street:'location',street:'street',apartment:'apartment',floor:'floor',borough:'borough',reference:'reference no.',plate:'plate',vehicle:'vehicle',time:'when',duration:'how long',prior_contact:'previous contact',vulnerable:'people affected',request:'request'};
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-function join(){
-  ctx=new AudioContext({sampleRate:16000});gain=ctx.createGain();gain.gain.value=listenOn?1:0;gain.connect(ctx.destination);tPlay=ctx.currentTime+0.1;
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='listen'){listenOn=e.data.on;if(gain)gain.gain.value=listenOn?1:0}});
+function setState(t,live){const s=document.getElementById('state');s.textContent=t;s.className='pill'+(live?' live':'')}
+function join(){ctx=new AudioContext({sampleRate:16000});gain=ctx.createGain();gain.gain.value=listenOn?1:0;gain.connect(ctx.destination);
   ws=new WebSocket(`${proto}://${location.host}/ws/agent/${room}`);ws.binaryType='arraybuffer';
-  ws.onopen=()=>{document.getElementById('state').textContent='connected · caller audio delayed for protection';ws.send(JSON.stringify({type:'protection',value:prot}))};
-  ws.onmessage=e=>{if(typeof e.data!=='string'){play(e.data);return}const m=JSON.parse(e.data);
-    if(m.type==='hello'){document.getElementById('state').textContent=`connected · ${m.delay}s protective delay`;(m.cards||[]).forEach(card)}
-    if(m.type==='partial'){document.getElementById('g').style.width=Math.round(100*m.anger)+'%'}
-    if(m.type==='mute'){hiddenN++;document.getElementById('hidden').textContent=`· ${hiddenN} abusive word${hiddenN>1?'s':''} muted`}
-    if(m.type==='alert'){const a=document.createElement('div');a.className='alert';a.textContent=m.label==='self_harm'?'⚠ Caller expressed self-harm intent — supervisor and crisis protocol notified.':'⚠ Threat detected — supervisor notified. You may end the call.';document.getElementById('alerts').prepend(a)}
-    if(m.type==='reset'){document.getElementById('cards').innerHTML='';document.getElementById('alerts').innerHTML='';hiddenN=0;document.getElementById('hidden').textContent='';tPlay=ctx.currentTime+0.1}
-    if(m.type==='card')card(m);if(m.type==='end_call_ack'){document.getElementById('state').textContent='end-of-call request sent to supervisor'}
-    if(m.type==='ended')document.getElementById('state').textContent='call ended';
+  ws.onopen=()=>{setState('ready');ws.send(JSON.stringify({type:'protection',value:prot}))};
+  ws.onmessage=e=>{if(typeof e.data!=='string'){onAudio(e.data);return}const m=JSON.parse(e.data);
+    if(m.type==='reset'){reset()}
+    if(m.type==='partial'){started();document.getElementById('g').style.width=Math.round(100*m.anger)+'%';showSpeaking()}
+    if(m.type==='mute'){blocked++;document.getElementById('pstats').textContent=`${blocked} abusive word${blocked>1?'s':''} blocked`}
+    if(m.type==='alert'){banner(m.label)}
+    if(m.type==='card'){card(m)}
+    if(m.type==='voice_fallback'&&prot==='calm_voice'&&listenOn&&'speechSynthesis' in window){const u=new SpeechSynthesisUtterance(m.text);u.rate=1.0;speechSynthesis.speak(u);
+      document.getElementById('pstats').title='Google TTS unavailable — browser voice used'}
+    if(m.type==='end_call_ack'){setState('end-of-call request sent')}
+    if(m.type==='ended'){setState('call ended');clearInterval(timerId);document.getElementById('speaking').hidden=true}
     if(m.type==='compare_ready'&&parent!==window)parent.postMessage({type:'compare_ready',session:m.session},'*')};
-  document.getElementById('join').disabled=true;
-}
-function play(buf){const pcm=new Int16Array(buf);const b=ctx.createBuffer(1,pcm.length,16000);const ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
-  const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);tPlay=Math.max(tPlay,ctx.currentTime+0.05);s.start(tPlay);tPlay+=b.duration}
-function card(m){const d=document.createElement('div');d.className='card';
-  const slots=Object.entries(m.slots||{}).flatMap(([k,v])=>v.map(x=>`<span>${esc(k)}: ${esc(x)}</span>`)).join('');
-  const lbl=m.route==='PASS'?'Caller':(m.route==='CALM'?'Calm rendering':'Calm rendering · safety alert');
+  document.getElementById('join').hidden=true}
+function started(){if(t0)return;t0=Date.now();setState('live',true);timerId=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);document.getElementById('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500)}
+function showSpeaking(){const s=document.getElementById('speaking');s.hidden=false;document.getElementById('conv').appendChild(s);clearTimeout(speakingTimer);speakingTimer=setTimeout(()=>s.hidden=true,1500)}
+function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16Array(buf.slice(1));if(!pcm.length)return;
+  const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
+  const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
+  if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
+function banner(label){const a=document.createElement('div');a.className='banner';
+  a.innerHTML=`<span>${label==='self_harm'?'Caller expressed self-harm intent. Crisis protocol and your supervisor have been notified.':'Threat detected. Your supervisor has been notified. You may end this call.'}</span>`;
+  document.getElementById('alerts').prepend(a)}
+function card(m){document.getElementById('empty').hidden=true;
   const text=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;
-  d.innerHTML=`<div><span class="badge ${m.route}">${lbl}</span>${m.intent&&m.intent!=='UNKNOWN'&&m.route!=='PASS'?`<span class="muted">${esc(m.intent.replace(/_/g,' '))}</span>`:''}
-   ${m.abuse_types&&m.abuse_types.length&&m.route!=='PASS'?`<span class="muted"> · hidden: ${m.abuse_types.filter(x=>x!=='mild').join(', ')}</span>`:''}</div>
-   <p style="margin:8px 0 4px;font-size:16px">${esc(text)}</p><div class="chips">${m.route!=='PASS'?slots:''}</div>`;
-  document.getElementById('cards').prepend(d);
-  if(prot==='calm_voice')speak(text)}
-async function speak(text){ // Google TTS (Gemini) via the server; browser voice only as a fallback
-  try{const r=await fetch('/api/tts?text='+encodeURIComponent(text));if(r.ok){const b=await r.arrayBuffer();const buf=await ctx.decodeAudioData(b);
-      const s=ctx.createBufferSource();s.buffer=buf;s.connect(gain);s.start();return}}catch(e){}
-  if('speechSynthesis' in window&&listenOn){const u=new SpeechSynthesisUtterance(text);speechSynthesis.speak(u)}}
+  const removed=(m.abuse_types||[]).filter(x=>x!=='mild');const d=document.createElement('div');d.className='msg'+(m.route==='ESCALATE'?' esc':'');
+  const tag=m.route==='PASS'?'<span class="tag plain">relayed as spoken</span>':m.route==='ESCALATE'?'<span class="tag esc">calm version · threat removed</span>':'<span class="tag">calm version</span>';
+  d.innerHTML=`<div class="bub">${esc(text)}</div><div class="meta">${tag}${removed.length&&m.route!=='PASS'?`<span>removed: ${removed.map(esc).join(', ')}</span>`:''}${m.intent&&m.intent!=='UNKNOWN'?`<span>· ${esc(m.intent.replace(/_/g,' '))}</span>`:''}</div>`;
+  const conv=document.getElementById('conv');conv.insertBefore(d,document.getElementById('speaking'));conv.scrollTop=conv.scrollHeight;
+  for(const [k,v] of Object.entries(m.slots||{}))for(const x of v){const key=LABEL[k]||k;facts[key]=facts[key]||new Set();facts[key].add(x.replace(/^(at|on|in|near|corner of)\s+/i,''))}
+  document.getElementById('facts').innerHTML=Object.keys(facts).length?Object.entries(facts).map(([k,s])=>`<div class="fact"><span>${esc(k)}</span><b>${[...s].map(esc).join(' · ')}</b></div>`).join(''):'<div class="stat">No facts yet.</div>'}
+function reset(){document.querySelectorAll('.msg,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;blocked=0;document.getElementById('pstats').textContent='0 abusive words blocked';
+  for(const k in facts)delete facts[k];document.getElementById('facts').innerHTML='<div class="stat">Facts the caller mentions collect here.</div>';t0=null;clearInterval(timerId);document.getElementById('timer').textContent='00:00';setState('ready');
+  if(ctx){tLine=tVoice=ctx.currentTime+0.1}}
 document.getElementById('join').onclick=join;
-document.getElementById('prot').onchange=e=>{prot=e.target.value;ws&&ws.send(JSON.stringify({type:'protection',value:prot}))};
+document.querySelectorAll('#prot button').forEach(b=>b.onclick=()=>{prot=b.dataset.v;document.querySelectorAll('#prot button').forEach(x=>x.classList.toggle('on',x===b));ws&&ws.send(JSON.stringify({type:'protection',value:prot}))});
 document.getElementById('endreq').onclick=()=>ws&&ws.send(JSON.stringify({type:'end_call_request'}));
-if(q.get('embed')) setTimeout(()=>{},0);
 </script></body></html>

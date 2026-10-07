@@ -15,6 +15,17 @@ from functools import lru_cache
 
 from .textnorm import fact_present, numbers
 
+PROMPT_V2 = (
+    "You relay a caller's message to a New York City 311 agent, speaking in the caller's place.\n"
+    "Turn the caller's words into what a calm, polite caller would have said: first person, natural spoken English, "
+    "short sentences, warm but plain.\n"
+    "Keep EVERY fact: addresses, apartment numbers, streets, times, durations, counts, reference numbers, vehicles, "
+    "people affected, previous calls, and exactly what the caller is asking for.\n"
+    "Drop all insults, profanity, sexual remarks, slurs, threats and rhetorical jabs. Do not mention that anything was removed.\n"
+    "Never add a fact, request or detail the caller did not say. If the words carry no request, do not invent one.\n"
+    "Output only the message.\n\nCaller's words: {text}\n\nCalm message:"
+)
+
 PROMPT = (
     "You relay a caller's message to a New York City 311 agent who must not be exposed to abuse.\n"
     "Rewrite the caller's message as a calm, polite first-person message to the agent.\n"
@@ -31,13 +42,15 @@ PROMPT = (
 class GeminiRewriter:
     name = "gemini"
 
-    def __init__(self, model=None):
-        from google import genai
-        self.model = model or os.getenv("CALMLINE_GEMINI_MODEL", "gemini-2.5-flash-lite")
-        if os.getenv("USE_VERTEX") == "1":
-            self.client = genai.Client(vertexai=True, project=os.environ["GCP_PROJECT"], location=os.getenv("GCP_LOCATION", "global"))
-        else:
-            self.client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    def __init__(self, model=None, prompt=None, cached=True):
+        from . import gemini as G
+        self.G = G
+        self.models = [model] if model else G.TEXT_MODELS
+        self.model = self.models[0]
+        self.prompt = prompt or PROMPT_V2
+        self.cached = cached
+        self.last_model = None
+        self.client = G.client()
         from google.genai import types
         # This is a content-moderation use case: the input is abusive by construction.
         self.cfg = types.GenerateContentConfig(
@@ -46,8 +59,8 @@ class GeminiRewriter:
                 "HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT")])
 
     def generate(self, text):
-        r = self.client.models.generate_content(model=self.model, contents=PROMPT.format(text=text), config=self.cfg)
-        return (r.text or "").strip()
+        out, self.last_model = self.G.generate_text(self.prompt.format(text=text), config=self.cfg, models=self.models, use_cache=self.cached)
+        return out.strip().strip('"')
 
 
 @lru_cache(maxsize=2)

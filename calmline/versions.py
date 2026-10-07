@@ -4,7 +4,12 @@ from .toxicity import LexiconDetector, ModelDetector, HybridDetector
 from .intent_clf import KeywordIntent, EmbeddingIntent
 from .render import TemplateRenderer, HybridRenderer, MaskRenderer, ConfidenceGatedRenderer
 
-BEST = "v11"   # updated as experiments conclude
+def _best():
+    from .gemini import available
+    return "v13" if available() else "v11"
+
+
+BEST = _best()   # v13 (Gemini relay) when a key is configured, else the offline v11
 
 DESCRIPTIONS = {
     "v0": "Baseline: regex lexicon + keyword intent + pure template (the original 'pre-written phrases' idea)",
@@ -20,6 +25,7 @@ DESCRIPTIONS = {
     "v10": "v9 + slots extracted from masked text (a verbatim slot can never carry abuse — bug found in live demo)",
     "v11": "POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.",
     "v12": "v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown",
+    "v13": "Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback",
     "llm_all": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) — is the template ladder still needed?",
     "llm_raw": "Ablation: every abusive utterance rewritten by the LLM, *unverified* — what verification buys",
 }
@@ -79,6 +85,12 @@ def build(version: str) -> Pipeline:
         return Pipeline(det, EmbeddingIntent(threshold=0.6),
                         ConfidenceGatedRenderer(assert_th=0.7, verify=det, drop_residue=True, escalate_no_details=True),
                         name=version, unknown_mode="generic", mask_mild=True, mask_slots=True)
+    if version == "v13":
+        from .llm import VerifiedRewriter, GeminiRewriter
+        p = build("v11")
+        vr = VerifiedRewriter(GeminiRewriter(), p.detector, p.renderer)
+        p.renderer = vr; p.llm = vr; p.name = "v13"
+        return p
     if version in ("v12", "llm_all", "llm_raw"):
         from .llm import VerifiedRewriter
         p = build("v11")

@@ -7,3 +7,5 @@ results/tmp/
 *.wav
 !app/static/samples/*.wav
 evidence/
+.env
+data/cache/

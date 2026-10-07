@@ -25,7 +25,7 @@ SR = 16000
 class Settings:
     delay_s: float = 2.0
     chunk_s: float = 0.5
-    protection: str = "shield"      # shield | calm_voice | raw
+    protection: str = "calm_voice"  # calm_voice (default: agent hears only the calm Gemini voice) | shield | raw
     compress: bool = True
     whisper: str = "small.en"       # pass 2 (utterance card)
     spotter: str = "tiny.en"        # pass 1 (mute decisions)
@@ -53,6 +53,7 @@ class CallSession:
         self.t0 = time.time()
         self.closed = False
         self.audit = []
+        self.voice_log: list[tuple[float, np.ndarray]] = []   # (seconds since call start, 16 kHz chunk) of the calm voice
 
     @property
     def stt(self):
@@ -157,10 +158,20 @@ class CallSession:
     def save_evidence(self):
         import soundfile as sf
         sf.write(os.path.join(self.evidence_dir, "caller_original.wav"), self.audio, SR)
-        # what the agent heard (Shield mode), saved for the demo's before/after comparison
-        prot = self.s.protection
-        self.s.protection = "shield"
-        heard = self.render_playback(0.0, len(self.audio) / SR)
-        self.s.protection = prot
+        # what the agent heard, saved for the demo's before/after comparison
+        if self.s.protection == "calm_voice" and self.voice_log:
+            end = 0.0
+            heard = np.zeros(int((len(self.audio) / SR + 30) * SR), np.float32)
+            for t, x in self.voice_log:
+                st = max(t, end); a = int(st * SR)
+                if a + len(x) > len(heard):
+                    heard = np.concatenate([heard, np.zeros(a + len(x) - len(heard), np.float32)])
+                heard[a:a + len(x)] += x; end = st + len(x) / SR
+            heard = heard[:int((end + 0.5) * SR)]
+        else:
+            prot = self.s.protection
+            self.s.protection = "shield" if prot == "calm_voice" else prot
+            heard = self.render_playback(0.0, len(self.audio) / SR)
+            self.s.protection = prot
         sf.write(os.path.join(self.evidence_dir, "agent_heard.wav"), heard, SR)
         json.dump(dict(mutes=self.mutes, cards=self.cards, audit=self.audit), open(os.path.join(self.evidence_dir, "session.json"), "w"), indent=1)
