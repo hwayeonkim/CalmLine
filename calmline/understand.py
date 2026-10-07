@@ -27,6 +27,8 @@ SCHEMA = {
         "self_harm": {"type": "BOOLEAN"},
     },
     "required": ["intent", "intent_confidence", "slots", "abusive_phrases", "calm_message", "nothing_to_relay", "threat", "self_harm"],
+    # safety-relevant fields first, so the calm message can be verified and spoken while intent/slots are still streaming
+    "propertyOrdering": ["threat", "self_harm", "nothing_to_relay", "abusive_phrases", "calm_message", "intent", "intent_confidence", "slots"],
 }
 
 CATALOG = "\n".join(f"- {k}: {v['issue']} (NYC 311: {', '.join(v['nyc'])})" for k, v in INTENTS.items())
@@ -93,6 +95,77 @@ class GeminiUnderstanding:
         out["slots"], out["slots_dropped"], out["model"] = slots, dropped, model
         out["abusive_phrases"] = [p for p in out.get("abusive_phrases", []) if p and p.lower() in text.lower()]
         return out
+
+
+EARLY_KEYS = ("threat", "self_harm", "nothing_to_relay", "abusive_phrases", "calm_message")
+
+
+def _early(buf: str):
+    """Parse the safety fields from a partially streamed JSON object once `calm_message` is complete."""
+    import re as _re
+    m = _re.search(r',\s*"intent"\s*:', buf)
+    if not m:
+        return None
+    try:
+        d = json.loads(buf[: m.start()] + "}")
+    except Exception:  # noqa: BLE001
+        return None
+    return d if all(k in d for k in EARLY_KEYS) else None
+
+
+def _stream_analyze(self, text, context="", on_early=None):
+    """Streaming variant: calls on_early(dict) as soon as the safety fields + calm message are complete."""
+    from .textnorm import fact_present as _fp
+    self.stats["calls"] += 1
+    prompt = PROMPT.format(catalog=CATALOG, context=context or "(start of call)", text=text)
+    hit = self.G.cache_get("text", {"prompt": prompt})
+    if hit:
+        raw, model = hit["text"], hit["model"] + " (cached)"
+    else:
+        raw, model, fired = "", None, False
+        for m in self.G.TEXT_MODELS:
+            if self.G._dead_until.get(m, 0) > __import__("time").time():
+                continue
+            try:
+                for ch in self.G.client().models.generate_content_stream(model=m, contents=prompt, config=self.cfg):
+                    raw += ch.text or ""
+                    if on_early and not fired:
+                        e = _early(raw)
+                        if e is not None:
+                            fired = True
+                            on_early(dict(e, model=m))
+                model = m
+                break
+            except Exception as ex:  # noqa: BLE001
+                self.G._trip(m, ex); raw = ""
+                if fired:
+                    return None
+        if not raw:
+            self.stats["errors"] += 1
+            return None
+        self.G.cache_put("text", {"prompt": prompt}, {"text": raw, "model": model})
+    try:
+        out = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        self.stats["errors"] += 1
+        return None
+    if on_early and hit:
+        on_early({k: out.get(k) for k in EARLY_KEYS} | {"model": model})
+    slots, dropped = {}, []
+    for k, v in (out.get("slots") or {}).items():
+        v = (v or "").strip()
+        if not v or k not in SLOT_KEYS:
+            continue
+        if v.lower() in text.lower() or _fp(v, text):
+            slots[k] = v
+        else:
+            dropped.append((k, v))
+    out["slots"], out["slots_dropped"], out["model"] = slots, dropped, model
+    out["abusive_phrases"] = [p for p in out.get("abusive_phrases", []) if p and p.lower() in text.lower()]
+    return out
+
+
+GeminiUnderstanding.analyze_stream = _stream_analyze
 
 
 # map Gemini slot names onto the regex slot names used by the template renderer / UI

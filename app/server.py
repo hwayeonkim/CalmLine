@@ -79,6 +79,7 @@ async def reset_room(name):
     prot = old.s.protection
     r["session"] = new_session(); r["session"].s.protection = prot
     r["started"] = None
+    r["utt_seq"] = 0; r["emitted"] = 0; r["voice_end"] = 0; r["lag"] = {}
     await broadcast(r, {"type": "reset", "session": r["session"].id})
     return r
 
@@ -267,20 +268,36 @@ async def speak(r, s, text, idx=None):
             await emit(item)
 
 
-async def process_utt(r, s, t0, t1, detected_at=None):
-    """Pass 2 for one sentence: ASR -> pipeline (Gemini rewrite + checks) -> card -> calm voice. Cards stay in order."""
+async def _turn(r, seq):
+    """Wait until every earlier sentence has been emitted (sentences are processed in parallel, emitted in order)."""
+    cond = r.setdefault("emit_cond", asyncio.Condition())
+    async with cond:
+        await cond.wait_for(lambda: r.get("emitted", 0) >= seq)
+
+
+async def _done(r):
+    cond = r.setdefault("emit_cond", asyncio.Condition())
+    async with cond:
+        r["emitted"] = r.get("emitted", 0) + 1
+        cond.notify_all()
+
+
+async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
+    """Pass 2 for one sentence: ASR -> pipeline (Gemini + checks) -> card -> calm voice.
+    Sentences run in parallel (a slow Gemini answer no longer holds up the next sentence); cards are emitted in order."""
     loop = asyncio.get_running_loop()
     end_wall = (r["started"] or time.time()) + t1          # when the caller finished this sentence (wall clock)
     lag = {"sentence_end_detect_ms": round(((detected_at or time.time()) - end_wall) * 1000)}
+    tq = time.time()
+    card = await loop.run_in_executor(None, s.process_utterance, t0, t1, seq)
     t_wait = time.time()
-    async with r.setdefault("card_lock", asyncio.Lock()):
-        lag["wait_previous_sentence_ms"] = round((time.time() - t_wait) * 1000)
-        tq = time.time()
-        card = await loop.run_in_executor(None, s.process_utterance, t0, t1)
-        if not card:
-            await broadcast(r, {"type": "utt_empty"})
-            return
-        card["timing"]["queued_ms"] = round((time.time() - tq) * 1000) - card["timing"]["asr_ms"] - card["timing"]["rewrite_pipeline_ms"]
+    await _turn(r, seq)
+    lag["wait_previous_sentence_ms"] = round((time.time() - t_wait) * 1000)
+    if not card:
+        await broadcast(r, {"type": "utt_empty"}); await _done(r)
+        return
+    if True:
+        card["timing"]["queued_ms"] = 0
         lag.update(asr_ms=card["timing"]["asr_ms"], gemini_and_checks_ms=card["timing"]["rewrite_pipeline_ms"])
         r.setdefault("lag", {})[card["idx"]] = (end_wall, lag)
         asyncio.create_task(late_update(r, s, card["idx"]))
@@ -291,13 +308,19 @@ async def process_utt(r, s, t0, t1, detected_at=None):
         if card.get("route") == "ESCALATE":
             await broadcast(r, {"type": "alert", "label": "threat"})
     if card.get("withheld") and card.get("route") != "ESCALATE":
+        await _done(r)
         return
     if s.s.protection == "calm_voice":
         r.setdefault("utt_end", {})[card["idx"]] = card["t"][1]
         text = card["delivered"].split("] ", 1)[-1] if card["delivered"].startswith("[SAFETY") else card["delivered"]
         if card["route"] == "ESCALATE":
             text = "Safety alert. A supervisor is joining. " + text
-        await speak(r, s, text, card.get("idx"))
+        task = asyncio.create_task(speak(r, s, text, card.get("idx")))
+        await asyncio.sleep(0)          # let speak() join the voice queue before the next sentence does
+        await _done(r)
+        await task
+    else:
+        await _done(r)
 
 
 async def late_update(r, s, idx):
@@ -323,6 +346,7 @@ async def late_update(r, s, idx):
 async def process_typed(r, s, text):
     loop = asyncio.get_running_loop()
     async with r.setdefault("card_lock", asyncio.Lock()):
+        s._typed_seq = len(s.cards)
         card = await loop.run_in_executor(None, s.process_text, text)
         await broadcast(r, {"type": "typed", "text": text})
         await broadcast(r, card)
@@ -354,7 +378,8 @@ def on_events(r, s, events):
     for e in events:
         if e.get("type") == "utt":
             e["detected_at"] = time.time()
-            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"], e["detected_at"])))
+            seq = r.get("utt_seq", 0); r["utt_seq"] = seq + 1
+            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"], e["detected_at"], seq)))
 
 
 async def playback_loop(name):

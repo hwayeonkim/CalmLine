@@ -108,7 +108,7 @@ def build(version: str) -> Pipeline:
         return p
     if version == "v17":
         import os
-        p = build("v16"); p.budget_s = float(os.getenv("CALMLINE_GEMINI_BUDGET", "1.5")); p.name = "v17"
+        p = build("v16"); p.budget_s = float(os.getenv("CALMLINE_GEMINI_BUDGET", "2.5")); p.name = "v17"
         return p
     if version in ("v12", "llm_all", "llm_raw"):
         from .llm import VerifiedRewriter

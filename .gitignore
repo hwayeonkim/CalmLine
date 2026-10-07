@@ -9,3 +9,5 @@ results/tmp/
 evidence/
 .env
 data/cache/
+.env.old
+.env.prev

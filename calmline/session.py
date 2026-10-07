@@ -138,14 +138,14 @@ class CallSession:
         e = frame_rms(x, 320, 160)
         return a + float(np.argmin(e)) * 160 / SR + 0.01
 
-    def process_utterance(self, t0, t1):
-        return self._close_utterance(t0, t1)
+    def process_utterance(self, t0, t1, idx=None):
+        return self._close_utterance(t0, t1, idx)
 
     def process_text(self, text):
         """Typed caller text (judges testing without a microphone): same pipeline, no ASR."""
-        return self._card(text, [0.0, 0.0], asr_ms=0)
+        return self._card(text, [0.0, 0.0], asr_ms=0, idx=getattr(self, "_typed_seq", 0))
 
-    def _close_utterance(self, t0, t1):
+    def _close_utterance(self, t0, t1, idx=None):
         import time as _t
         _ts = _t.perf_counter()
         from .audio.stt import load_whisper
@@ -157,9 +157,9 @@ class CallSession:
         if not text:
             return None
         _asr = (_t.perf_counter() - _ts) * 1000
-        return self._card(text, [t0, t1], _asr)
+        return self._card(text, [t0, t1], _asr, idx)
 
-    def _card(self, text, t, asr_ms):
+    def _card(self, text, t, asr_ms, idx=None):
         import time as _t
         _ts = _t.perf_counter()
         gen = getattr(getattr(self.pipe, "renderer", None), "gen", None)
@@ -183,9 +183,10 @@ class CallSession:
             checks = {"no abuse left": not self.det(out).is_toxic, "no new numbers": not (numbers(out) - numbers(text) - {"311"}),
                       "fallback used": d.tier == 3, "rejected": d.debug.get("rejected")}
         late = d.debug.get("late_future")
+        idx = len(self.cards) if idx is None else idx
         if late is not None:
-            self.late = getattr(self, "late", {}); self.late[len(self.cards)] = late
-        card = dict(type="card", idx=len(self.cards), original=text, spans=sorted(spans),
+            self.late = getattr(self, "late", {}); self.late[idx] = late
+        card = dict(type="card", idx=idx, original=text, spans=sorted(spans),
                     path=d.debug.get("path") or ("Gemini" if u else "offline"),
                     intent_label=INTENTS[d.intent]["issue"] if d.intent in INTENTS else None,
                     nyc_types=INTENTS[d.intent]["nyc"] if d.intent in INTENTS else [], intent_score=round(d.intent_score, 2),
