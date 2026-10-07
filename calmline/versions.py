@@ -6,7 +6,7 @@ from .render import TemplateRenderer, HybridRenderer, MaskRenderer, ConfidenceGa
 
 def _best():
     from .gemini import available
-    return "v13" if available() else "v11"
+    return "v15" if available() else "v11"
 
 
 BEST = _best()   # v13 (Gemini relay) when a key is configured, else the offline v11
@@ -26,6 +26,7 @@ DESCRIPTIONS = {
     "v11": "POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.",
     "v12": "v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown",
     "v13": "Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback",
+    "v15": "Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.",
     "llm_all": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) — is the template ladder still needed?",
     "llm_raw": "Ablation: every abusive utterance rewritten by the LLM, *unverified* — what verification buys",
 }
@@ -90,6 +91,15 @@ def build(version: str) -> Pipeline:
         p = build("v11")
         vr = VerifiedRewriter(GeminiRewriter(), p.detector, p.renderer)
         p.renderer = vr; p.llm = vr; p.name = "v13"
+        return p
+    if version == "v15":
+        from .understand import GeminiUnderstanding
+        from .llm import VerifiedRewriter, GeminiRewriter
+        p = build("v11")
+        class _NoGen:
+            name = "none"
+        checker = VerifiedRewriter(_NoGen(), p.detector, p.renderer)  # only .check() is used
+        p.understanding, p.understand_all, p.checker, p.name = GeminiUnderstanding(), True, checker, "v15"
         return p
     if version in ("v12", "llm_all", "llm_raw"):
         from .llm import VerifiedRewriter

@@ -2,31 +2,189 @@
  {
   "id": "heat",
   "title": "No heat \u2014 profanity, three kids",
-  "text": "Hi. I'm calling about the heat again. This is the fourth fucking time I've called! We've had no heat at 1820 Walton Avenue, apartment 2C, since Wednesday. I have three kids freezing in here, so get your lazy asses moving!"
+  "tags": [
+   "profanity",
+   "heat/hot water"
+  ],
+  "voice": "Gemini Live (Charon)",
+  "text": "Hi. I'm calling about the heat again. This is the fourth fucking time I've called! We've had no heat at 1820 Walton Avenue, apartment 2C, since Wednesday. I have three kids freezing in here, so get your lazy asses moving!",
+  "lines": [
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "Hi. I'm calling about the heat again."
+   },
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "This is the fourth fucking time I've called!"
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "We've had no heat at 1820 Walton Avenue, apartment 2C, since Wednesday."
+   },
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "I have three kids freezing in here, so get your lazy asses moving!"
+   }
+  ]
  },
  {
   "id": "pothole",
   "title": "Pothole \u2014 insults aimed at the agent",
-  "text": "Are you people stupid or something? There's a pothole on Linden Boulevard near Euclid Avenue, it blew out my tire yesterday. Write it down, genius, or is that too hard for you? I want someone to call me back."
+  "tags": [
+   "insult",
+   "street condition"
+  ],
+  "voice": "Gemini Live (Fenrir)",
+  "text": "Are you people stupid or something? There's a pothole on Linden Boulevard near Euclid Avenue. It blew out my tire yesterday. Write it down, genius, or is that too hard for you? I want someone to call me back.",
+  "lines": [
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "Are you people stupid or something?"
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "There's a pothole on Linden Boulevard near Euclid Avenue. It blew out my tire yesterday."
+   },
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "Write it down, genius, or is that too hard for you?"
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "I want someone to call me back."
+   }
+  ]
  },
  {
   "id": "harass",
   "title": "Noise complaint \u2014 sexual harassment of the agent",
-  "text": "Hey sweetheart, you sound cute. What are you wearing right now? Anyway, my upstairs neighbor in apartment 9C at 75 Hart Street plays drums every night after midnight."
+  "tags": [
+   "sexual harassment",
+   "residential noise"
+  ],
+  "voice": "Gemini Live (Puck)",
+  "text": "Hey sweetheart, you sound cute. What are you wearing right now? Anyway, my upstairs neighbor in apartment 9C at 75 Hart Street plays drums every night after midnight.",
+  "lines": [
+   {
+    "direction": "sleazy, flirtatious, leering",
+    "text": "Hey sweetheart, you sound cute. What are you wearing right now?"
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "Anyway, my upstairs neighbor in apartment 9C at 75 Hart Street plays drums every night after midnight."
+   }
+  ]
  },
  {
   "id": "threat",
-  "title": "Threat \u2014 escalates to supervisor",
-  "text": "I've called six times about the parked truck on my hydrant on Court Street! I know where your office is. If nobody tows it today I'm going to come down there and beat the crap out of somebody."
+  "title": "Threat \u2014 escalates to a supervisor",
+  "tags": [
+   "threat",
+   "illegal parking"
+  ],
+  "voice": "Gemini Live (Orus)",
+  "text": "I've called six times about the truck parked on the hydrant on Court Street! I know where your office is. If nobody tows it today, I'm going to come down there and beat the crap out of somebody.",
+  "lines": [
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "I've called six times about the truck parked on the hydrant on Court Street!"
+   },
+   {
+    "direction": "cold, menacing, low voice",
+    "text": "I know where your office is. If nobody tows it today, I'm going to come down there and beat the crap out of somebody."
+   }
+  ]
  },
  {
   "id": "civil",
   "title": "Frustrated but civil \u2014 passes through untouched",
-  "text": "I'm really frustrated, this is the third time I'm calling. Water is still leaking through my bathroom ceiling at 222 East 21st Street, apartment 4B. My reference number is 311-20871455. Could you send an inspector this week?"
+  "tags": [
+   "no abuse",
+   "water leak"
+  ],
+  "voice": "Gemini Live (Aoede)",
+  "text": "I'm really frustrated, this is the third time I'm calling. Water is still leaking through my bathroom ceiling at 222 East 21st Street, apartment 4B. My reference number is 311-20871455. Could you send an inspector this week?",
+  "lines": [
+   {
+    "direction": "frustrated but polite",
+    "text": "I'm really frustrated, this is the third time I'm calling."
+   },
+   {
+    "direction": "frustrated but polite",
+    "text": "Water is still leaking through my bathroom ceiling at 222 East 21st Street, apartment 4B. My reference number is 311-20871455."
+   },
+   {
+    "direction": "frustrated but polite",
+    "text": "Could you send an inspector this week?"
+   }
+  ]
  },
  {
   "id": "identity",
   "title": "Identity attack + open hydrant",
-  "text": "Put someone on who speaks real English. A hydrant is open on Kingston Avenue at Eastern Parkway and the street is flooding. You people are useless."
+  "tags": [
+   "identity attack",
+   "water system"
+  ],
+  "voice": "Gemini Live (Kore)",
+  "text": "Put someone on who speaks real English. A hydrant is open on Kingston Avenue at Eastern Parkway and the street is flooding. You people are useless.",
+  "lines": [
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "Put someone on who speaks real English."
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "A hydrant is open on Kingston Avenue at Eastern Parkway and the street is flooding."
+   },
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "You people are useless."
+   }
+  ]
+ },
+ {
+  "id": "rats",
+  "title": "Rats + dumping \u2014 venting, not abuse",
+  "tags": [
+   "figurative",
+   "rodents"
+  ],
+  "voice": "Gemini Live (Leda)",
+  "text": "These rats are killing me. There's garbage piled up behind the deli at 410 Tremont Avenue and the rats come out every night. My son is scared to walk to school.",
+  "lines": [
+   {
+    "direction": "exasperated, worn out",
+    "text": "These rats are killing me."
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "There's garbage piled up behind the deli at 410 Tremont Avenue and the rats come out every night. My son is scared to walk to school."
+   }
+  ]
+ },
+ {
+  "id": "driveway",
+  "title": "Blocked driveway \u2014 mixed abuse with urgent facts",
+  "tags": [
+   "profanity + insult",
+   "blocked driveway"
+  ],
+  "voice": "Gemini Live (Algenib)",
+  "text": "Listen, you idiot, some asshole parked a white van across my driveway at 23-15 31st Street in Astoria! I need to get my mother to dialysis by ten. The plate is KXR 4471. Get a tow truck here now!",
+  "lines": [
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "Listen, you idiot, some asshole parked a white van across my driveway at 23-15 31st Street in Astoria!"
+   },
+   {
+    "direction": "tired, flat, normal speaking voice",
+    "text": "I need to get my mother to dialysis by ten. The plate is KXR 4471."
+   },
+   {
+    "direction": "furious, shouting into the phone, loud and fast",
+    "text": "Get a tow truck here now!"
+   }
+  ]
  }
 ]

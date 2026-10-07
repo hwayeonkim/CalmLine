@@ -41,6 +41,7 @@ def aggregate(items):
         fact_recall_all=np.mean([i["fact_recall"] for i in items]),
         halluc_rate=np.mean([bool(i["halluc"]) for i in items]),
         intent_acc_routed=np.mean([i["intent_pred"] == i["intent_gold"] for i in routed]) if routed else float("nan"),
+        intent_acc_all=np.mean([i["intent_pred"] == i["intent_gold"] for i in items]),
         wrong_issue_rate=np.mean([i.get("asserted", False) and i["intent_pred"] != i["intent_gold"] for i in routed]) if routed else float("nan"),
         tier_dist={t: int(sum(i["tier"] == t for i in items)) for t in (0, 1, 2, 3)},
         latency_p50=float(np.percentile(lat, 50)), latency_p95=float(np.percentile(lat, 95)),

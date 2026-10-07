@@ -1,0 +1,236 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#EDF1F3;--panel:#fff;--ink:#16202A;--muted:#5E6D7B;--line:#DAE1E6;--soft:#F5F8F9;
+--calm:#1D6E68;--calm-soft:#E1F0EE;--alert:#B4302A;--alert-soft:#FBE7E5;--hide:#C24A3A;--hide-soft:#FCEBE8;--amber:#9A6A12;--amber-soft:#FBF1DC;
+--sans:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--sans)}
+button{font:inherit;cursor:pointer}button:focus-visible,textarea:focus-visible{outline:2px solid var(--calm);outline-offset:2px}
+.hero{background:var(--panel);border-bottom:1px solid var(--line);padding:18px 22px 16px}
+.hero-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hero h1{margin:0;font-size:22px;letter-spacing:-.01em}.hero .tl{font-size:16px;color:var(--ink)}.hero .tl b{color:var(--calm)}
+.flow{display:grid;grid-template-columns:1fr auto 1.35fr auto 1fr;gap:10px;align-items:stretch;margin-top:14px}
+.flow .st{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft);font-size:13px;color:var(--muted)}
+.flow .st b{display:block;color:var(--ink);font-size:13.5px;margin-bottom:2px}.flow .st.mid{background:var(--calm-soft);border-color:#C5E2DD}
+.flow .ar{align-self:center;color:var(--muted);font-size:18px}
+@media (max-width:900px){.flow{grid-template-columns:1fr}.flow .ar{transform:rotate(90deg);justify-self:center}}
+.wrap{display:grid;grid-template-columns:340px 1fr 300px;gap:14px;padding:14px;align-items:start}
+@media (max-width:1250px){.wrap{grid-template-columns:330px 1fr}.sr{grid-column:1/-1}}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ph{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600;font-size:13px;letter-spacing:.02em}
+.ph .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.tabs{display:flex;border-bottom:1px solid var(--line)}.tabs button{flex:1;border:0;background:none;padding:9px 6px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--calm);border-bottom-color:var(--calm)}
+.pane{padding:12px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 290px);overflow:auto}
+.sample{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.sample .row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.sample b{font-size:13.5px}.sample p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font:500 11px/1 var(--mono);padding:4px 6px;border-radius:5px;background:#E9EEF1;color:var(--muted);margin:0 4px 0 0}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 11px;font-weight:500;font-size:13px}
+.btn.primary{background:var(--calm);border-color:var(--calm);color:#fff}.btn.danger{color:var(--alert);border-color:#EBC0BC}
+.btn:disabled{opacity:.5;cursor:default}
+.scen{border:1px dashed var(--line);border-radius:10px;padding:9px 11px;font-size:12.5px}.scen b{font-size:13px}
+.scen q{display:block;color:var(--ink);font-style:italic;margin-top:3px;quotes:none}
+.scen button{margin-top:6px;font-size:12px;padding:4px 8px}
+textarea{width:100%;min-height:86px;border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;resize:vertical}
+.listen{display:flex;gap:6px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--panel);padding:5px 9px;font-size:12.5px;color:var(--muted)}
+.seg button.on{background:var(--calm);color:#fff}
+/* agent */
+.abar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}
+.pill{font:500 11.5px/1 var(--mono);padding:5px 8px;border-radius:99px;background:#E7EBEE;color:var(--muted)}
+.pill.live{background:var(--calm-soft);color:var(--calm)}.pill.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--calm);margin-right:6px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.meter{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.meter .g{width:90px;height:6px;border-radius:9px;background:#E3E8EC;overflow:hidden}
+.meter .g i{display:block;height:100%;width:0;background:linear-gradient(90deg,#86BDB2,#E0A35F,#C8553D);transition:width .4s}
+.judge{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-left:auto}
+.conv{padding:14px;display:flex;flex-direction:column;gap:12px;min-height:420px;max-height:calc(100vh - 300px);overflow:auto}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:18px;color:var(--muted);font-size:13.5px}
+.banner{background:var(--alert-soft);color:var(--alert);border:1px solid #EFC2BE;border-radius:10px;padding:10px 14px;font-weight:600}
+.turn{display:grid;grid-template-columns:1fr;gap:6px}
+.bub{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:11px 13px;font-size:15.5px;line-height:1.5}
+.bub .play{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--soft);font-size:11px;color:var(--calm)}
+.turn.esc .bub{border-color:#EFC2BE}.turn.withheld .bub{background:var(--soft);color:var(--muted);font-style:italic;font-size:14px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.tag{font:500 11px/1 var(--mono);padding:4px 7px;border-radius:6px}
+.t-pass{background:#E9EDF0;color:var(--muted)}.t-calm{background:var(--calm-soft);color:var(--calm)}.t-esc{background:var(--alert-soft);color:var(--alert)}.t-wh{background:var(--amber-soft);color:var(--amber)}
+.hood{border-left:3px solid var(--line);margin-left:6px;padding:4px 0 2px 12px;display:flex;flex-direction:column;gap:5px;font-size:12.5px}
+.hood .lbl{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.orig{font-family:var(--mono);font-size:12.5px;color:#3B4651;line-height:1.55}
+.orig mark{background:var(--hide-soft);color:var(--hide);text-decoration:line-through;text-decoration-thickness:1px;border-radius:3px;padding:0 2px}
+body.nojudge .hood{display:none}
+.kv{display:flex;flex-wrap:wrap;gap:4px}.kv span{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px}
+.kv span i{font-style:normal;color:var(--muted)}
+.ok{color:var(--calm)}.bad{color:var(--alert)}
+.speaking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.bars{display:flex;gap:3px;align-items:flex-end;height:16px}.bars i{width:3px;background:var(--calm);border-radius:2px;animation:bar .9s infinite ease-in-out}
+.bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}@keyframes bar{0%,100%{height:4px}50%{height:16px}}
+/* service request */
+.srb{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.srow{display:grid;grid-template-columns:118px 1fr;gap:8px;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.srow span{color:var(--muted);font-size:12px}.srow b{font-weight:500}.srow b.nil{color:#A8B3BC;font-weight:400}
+.ctype{font-size:15px;font-weight:600}.conf{height:5px;background:#E3E8EC;border-radius:9px;overflow:hidden;margin-top:4px}.conf i{display:block;height:100%;background:var(--calm)}
+.cmp{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-top:1px solid var(--line)}.cmp audio{width:100%;height:32px}
+.stat{font:12px var(--mono);color:var(--muted)}
+</style></head><body>
+<header class="hero">
+  <div class="hero-top"><h1>CalmLine</h1><span class="tl">Callers' abuse <b>never reaches the 311 agent</b>. Every fact still does.</span></div>
+  <div class="flow">
+    <div class="st"><b>1 · Caller speaks</b>Shouting, swearing, insults, harassment, threats — mixed in with a real problem.</div><div class="ar">→</div>
+    <div class="st mid"><b>2 · CalmLine, sentence by sentence (~2 s)</b>Transcribes, detects abuse, classifies the NYC 311 complaint, extracts the facts, writes a calm version with Gemini, and checks it adds nothing.</div><div class="ar">→</div>
+    <div class="st"><b>3 · Agent hears a calm voice</b>Only the calm version, with a pre-filled service request. Threats alert a supervisor. The original is sealed as evidence.</div>
+  </div>
+</header>
+<div class="wrap">
+  <!-- CALLER -->
+  <section class="panel" aria-label="Caller simulator">
+    <div class="ph"><span class="who">Caller side</span> Try it</div>
+    <div class="tabs" role="tablist"><button class="on" data-t="samples">Sample calls</button><button data-t="speak">Speak</button><button data-t="type">Type</button></div>
+    <div class="pane" id="t-samples"></div>
+    <div class="pane" id="t-speak" hidden>
+      <div class="row" style="display:flex;gap:8px;align-items:center"><button class="btn primary" id="mic">🎙 Start speaking</button><button class="btn" id="micstop" disabled>End call</button><span class="stat" id="micstate"></span></div>
+      <p class="stat" style="margin:0">English only. Use headphones. Pause briefly between sentences. Say anything about a city problem — or pick a situation below and read the angry line.</p>
+      <div id="scen"></div>
+    </div>
+    <div class="pane" id="t-type" hidden>
+      <p class="stat" style="margin:0">No microphone? Type what an angry caller says. Each send is one sentence of the same call.</p>
+      <textarea id="txt" placeholder="e.g. Are you deaf? I said there's NO HOT WATER at 455 Park Place, apartment 1R!"></textarea>
+      <div style="display:flex;gap:8px"><button class="btn primary" id="send">Send as caller</button><button class="btn" id="newcall">New call</button></div>
+      <div id="txtex"></div>
+    </div>
+    <div class="listen">You hear: <div class="seg" id="listen"><button data-v="agent" class="on">Agent</button><button data-v="caller">Caller</button><button data-v="both">Both</button></div></div>
+  </section>
+
+  <!-- AGENT -->
+  <section class="panel" aria-label="Agent console">
+    <div class="ph"><span class="who">Agent side</span> 311 agent console</div>
+    <div class="abar"><span class="pill" id="state">idle</span><span class="stat" id="timer">00:00</span>
+      <div class="meter">Agitation<div class="g"><i id="g"></i></div></div><span class="stat" id="blocked">0 words muted</span>
+      <label class="judge"><input type="checkbox" id="judge" checked> Show what CalmLine hid (demo view)</label></div>
+    <div class="conv" id="conv"><div id="alerts"></div>
+      <div class="empty" id="empty"><b>Nothing yet.</b> Play a sample call on the left, speak, or type a sentence. Each caller sentence appears here as what the agent hears; the grey strip under it shows what CalmLine actually heard and did.</div>
+      <div class="speaking" id="speaking" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span>Caller is speaking…</span></div>
+    </div>
+  </section>
+
+  <!-- SERVICE REQUEST -->
+  <section class="panel sr" aria-label="Service request">
+    <div class="ph"><span class="who">Auto-filled</span> 311 service request</div>
+    <div class="srb" id="srb"></div>
+    <div class="cmp" id="cmp" hidden><b style="font-size:13px">Before / after</b><span class="stat">Original caller</span><audio id="aOrig" controls></audio><span class="stat">What the agent heard</span><audio id="aProt" controls></audio></div>
+  </section>
+</div>
+<script>
+const room=new URLSearchParams(location.search).get('room')||('r'+Math.random().toString(36).slice(2,7));
+const proto=location.protocol==='https:'?'wss':'ws';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let ctx,gain,tVoice=0,tLine=0,agentWs,callerWs,listen='agent',t0=null,timer,muted=0,sid=null,speakT,sampleAudio=null;
+const SR_FIELDS=[['type','Complaint type'],['nyc','NYC 311 category'],['address','Location'],['apartment','Apartment'],['time','When'],['duration','How long'],['prior_contact','Previous contact'],['reference','Reference no.'],['vehicle','Vehicle'],['plate','Plate'],['vulnerable','People affected'],['request','Caller asks for']];
+let sr={};
+const SCEN=[
+ ['No heat','heat/hot water',"This is the fourth damn time I've called! No heat at 1820 Walton Avenue apartment 2C since Wednesday, my kids are freezing!"],
+ ['Noisy neighbor','residential noise',"Are you deaf? The idiot upstairs in 5B has been blasting music since midnight and I have work at six."],
+ ['Blocked driveway','blocked driveway',"Some asshole parked a black Honda across my driveway at 23-15 31st Street, plate KXR 4471, and I have to get to the hospital."],
+ ['Pothole','street condition',"Write this down, genius: the pothole on Linden Boulevard near Euclid Avenue wrecked my tire yesterday."],
+ ['Missed pickup','missed collection',"You lazy bums skipped recycling on Bergen Street again, that's three weeks now."],
+ ['Rats / dumping','rodents',"These rats are killing me, there's trash piled behind the deli on Tremont Avenue every night."],
+ ['Threat (tests escalation)','threat',"If nobody fixes my heat today I'm going to come down there and beat somebody."],
+ ['Polite caller (should pass)','no abuse',"Hi, water is leaking through my bathroom ceiling at 222 East 21st Street, could you send an inspector this week?"],
+];
+// ---------- audio ----------
+function ensureAudio(){if(!ctx){ctx=new AudioContext({sampleRate:16000});gain=ctx.createGain();gain.connect(ctx.destination)}applyListen();if(ctx.state==='suspended')ctx.resume()}
+function applyListen(){if(gain)gain.gain.value=listen==='caller'?0:1;if(sampleAudio)sampleAudio.muted=listen==='agent';document.querySelectorAll('#listen button').forEach(b=>b.classList.toggle('on',b.dataset.v===listen))}
+function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16Array(buf.slice(1));if(!pcm.length||!ctx)return;
+  const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
+  const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
+  if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
+// ---------- agent socket ----------
+function connectAgent(){return new Promise(res=>{if(agentWs&&agentWs.readyState===1)return res();
+  agentWs=new WebSocket(`${proto}://${location.host}/ws/agent/${room}`);agentWs.binaryType='arraybuffer';
+  agentWs.onopen=()=>{agentWs.send(JSON.stringify({type:'protection',value:'calm_voice'}));res()};
+  agentWs.onmessage=e=>{if(typeof e.data!=='string'){onAudio(e.data);return}const m=JSON.parse(e.data);
+    if(m.type==='hello')sid=m.session;
+    if(m.type==='reset'){sid=m.session;resetView()}
+    if(m.type==='partial'){started();document.getElementById('g').style.width=Math.round(100*m.anger)+'%';showSpeaking()}
+    if(m.type==='mute'){muted++;document.getElementById('blocked').textContent=muted+' word'+(muted>1?'s':'')+' muted'}
+    if(m.type==='alert')banner(m.label);
+    if(m.type==='typed')started();
+    if(m.type==='card')turn(m);
+    if(m.type==='voice_meta')voiceMeta(m);
+    if(m.type==='voice_fallback'&&listen!=='caller'&&'speechSynthesis' in window){speechSynthesis.speak(new SpeechSynthesisUtterance(m.text))}
+    if(m.type==='ended'){setState('call ended');clearInterval(timer);document.getElementById('speaking').hidden=true}
+    if(m.type==='compare_ready')showCompare()}})}
+function setState(t,live){const s=document.getElementById('state');s.textContent=t;s.className='pill'+(live?' live':'')}
+function started(){document.getElementById('empty').hidden=true;if(t0)return;t0=Date.now();setState('call in progress',true);timer=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);document.getElementById('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500)}
+function showSpeaking(){const s=document.getElementById('speaking');s.hidden=false;document.getElementById('conv').appendChild(s);clearTimeout(speakT);speakT=setTimeout(()=>s.hidden=true,1400)}
+function banner(label){if(document.querySelector('.banner'))return;const a=document.createElement('div');a.className='banner';
+  a.textContent=label==='self_harm'?'Caller expressed self-harm intent — crisis protocol and supervisor notified.':'Threat detected — your supervisor has been notified. You may end this call.';document.getElementById('alerts').prepend(a)}
+const LBL={address:'location',cross_street:'location',street:'location',apartment:'apt',floor:'floor',time:'when',duration:'how long',prior_contact:'previous contact',reference:'ref',vehicle:'vehicle',plate:'plate',vulnerable:'affected',request:'asks for'};
+function hl(text,spans){let o='',last=0;(spans||[]).slice().sort((a,b)=>a[0]-b[0]).forEach(([a,b,l])=>{if(a<last)return;o+=esc(text.slice(last,a))+`<mark title="${esc(l)}">${esc(text.slice(a,b))}</mark>`;last=b});return o+esc(text.slice(last))}
+function turn(m){started();document.getElementById('empty').hidden=true;
+  const msg=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;
+  const cls=m.withheld&&m.route!=='ESCALATE'?'withheld':(m.route==='ESCALATE'?'esc':'');
+  const tag=m.withheld&&m.route!=='ESCALATE'?'<span class="tag t-wh">withheld — abuse only</span>':m.route==='PASS'?'<span class="tag t-pass">relayed as spoken</span>':m.route==='ESCALATE'?'<span class="tag t-esc">threat · supervisor alerted</span>':'<span class="tag t-calm">calm version</span>';
+  const types=(m.abuse_types||[]).filter(x=>x!=='mild');
+  const slots=Object.entries(m.slots||{}).flatMap(([k,v])=>v.map(x=>`<span><i>${esc(LBL[k]||k)}:</i> ${esc(x)}</span>`)).join('');
+  const ck=m.checks&&Object.keys(m.checks).length?Object.entries(m.checks).filter(([k,v])=>k==='no abuse left'||k==='no new numbers').map(([k,v])=>`<span class="${v?'ok':'bad'}">${v?'✓':'✗'} ${k}</span>`).join(' · ')+(m.checks['fallback used']?' · <span class="bad">Gemini output rejected → template</span>':''):'';
+  const tm=m.timing||{};const lat=[tm.asr_ms?`ASR ${tm.asr_ms} ms`:null,tm.understand?`Gemini ${tm.understand} ms`:null,`<span id="v${m.idx}"></span>`].filter(Boolean).join(' · ');
+  const d=document.createElement('div');d.className='turn '+cls;d.dataset.idx=m.idx;
+  d.innerHTML=`<div class="bub">${m.withheld&&m.route!=='ESCALATE'?'':`<button class="play" title="Replay calm voice" aria-label="Replay" data-idx="${m.idx}">▶</button>`}<div>${m.withheld&&m.route!=='ESCALATE'?'Nothing relayed — the sentence was only abuse.':esc(msg)}</div></div>
+   <div class="tags">${tag}${m.intent&&m.intent!=='UNKNOWN'?`<span>${esc(m.intent_label||m.intent)} <span class="stat">${Math.round(100*(m.intent_score||0))}%</span></span>`:''}</div>
+   <div class="hood"><span class="lbl">Caller actually said (sealed, never shown to agents)</span><div class="orig">${hl(m.original,m.spans)}</div>
+   ${types.length?`<div><span class="lbl">Hidden</span> ${types.map(esc).join(', ')}</div>`:''}
+   ${slots?`<div><span class="lbl">Facts kept (verbatim)</span><div class="kv">${slots}</div></div>`:''}
+   ${(m.slots_dropped||[]).length?`<div class="bad">Dropped ${m.slots_dropped.length} fact(s) Gemini proposed that the caller never said</div>`:''}
+   <div class="stat">${ck?ck+' · ':''}${lat}</div></div>`;
+  const conv=document.getElementById('conv');conv.insertBefore(d,document.getElementById('speaking'));conv.scrollTop=conv.scrollHeight;
+  d.querySelector('.play')?.addEventListener('click',()=>{ensureAudio();const a=new Audio(`/api/voice/${sid}/${m.idx}?t=${Date.now()}`);a.play().catch(()=>{})});
+  // service request
+  if(m.intent&&m.intent!=='UNKNOWN'&&(m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score}
+  for(const [k,v] of Object.entries(m.slots||{})){const key=['cross_street','street'].includes(k)?'address':k;sr[key]=sr[key]||new Set();v.forEach(x=>sr[key].add(x.replace(/^(at|on|in|near|corner of)\s+/i,'')))}
+  renderSR()}
+function voiceMeta(m){const el=document.getElementById('v'+m.idx);if(el)el.textContent=`voice ${m.first_audio_ms} ms to first sound (${m.via==='live'?'Gemini Live':'Gemini TTS'})`}
+function renderSR(){const b=document.getElementById('srb');
+  b.innerHTML=`<div><div class="ctype">${esc(sr.type||'Listening…')}</div><div class="stat">${esc(sr.nyc||'29 NYC 311 complaint types · 88% of call volume')}</div>${sr._score?`<div class="conf"><i style="width:${Math.round(100*sr._score)}%"></i></div>`:''}</div>`+
+  SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
+async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
+  document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
+function resetView(){document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
+  document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
+  if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
+// ---------- caller: samples ----------
+async function loadSamples(){const list=await (await fetch('/api/samples')).json();const box=document.getElementById('t-samples');
+  list.forEach(s=>{const d=document.createElement('div');d.className='sample';
+    d.innerHTML=`<div class="row"><b>${esc(s.title)}</b><button class="btn primary">▶ Play</button></div><div>${(s.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div><p>${esc(s.text)}</p><span class="stat">voice: ${esc(s.voice||'synthetic')}</span>`;
+    const btn=d.querySelector('button');btn.onclick=async()=>{ensureAudio();await connectAgent();
+      if(sampleAudio){sampleAudio.pause()}sampleAudio=new Audio(`/static/samples/${s.id}.wav?v=2`);applyListen();
+      const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
+      w.onopen=()=>setTimeout(()=>sampleAudio.play().catch(()=>{}),120);w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='done')btn.disabled=false};w.onclose=()=>btn.disabled=false};
+    box.appendChild(d)})}
+// ---------- caller: mic ----------
+let mctx,msrc,mnode,mstream;
+document.getElementById('mic').onclick=async()=>{ensureAudio();await connectAgent();await fetch('/api/reset/'+room,{method:'POST'});
+  callerWs=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);callerWs.binaryType='arraybuffer';await new Promise(r=>callerWs.onopen=r);
+  try{mstream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}})}catch(e){document.getElementById('micstate').textContent='microphone blocked — use the Type tab';return}
+  mctx=new AudioContext();msrc=mctx.createMediaStreamSource(mstream);mnode=mctx.createScriptProcessor(4096,1,1);const ratio=mctx.sampleRate/16000;
+  mnode.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0),n=Math.floor(x.length/ratio),o=new Int16Array(n);for(let i=0;i<n;i++)o[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]))*32767;if(callerWs.readyState===1)callerWs.send(o.buffer)};
+  msrc.connect(mnode);mnode.connect(mctx.destination);document.getElementById('mic').disabled=true;document.getElementById('micstop').disabled=false;document.getElementById('micstate').textContent='● live'};
+document.getElementById('micstop').onclick=()=>{try{callerWs.send(JSON.stringify({type:'end'}))}catch(e){}mnode&&mnode.disconnect();mstream&&mstream.getTracks().forEach(t=>t.stop());
+  document.getElementById('mic').disabled=false;document.getElementById('micstop').disabled=true;document.getElementById('micstate').textContent=''};
+// ---------- caller: type ----------
+async function typedWs(){if(callerWs&&callerWs.readyState===1)return;await connectAgent();callerWs=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);await new Promise(r=>callerWs.onopen=r)}
+async function sendText(t){if(!t.trim())return;ensureAudio();await typedWs();callerWs.send(JSON.stringify({type:'text',text:t}))}
+document.getElementById('send').onclick=()=>{const t=document.getElementById('txt');sendText(t.value);t.value=''};
+document.getElementById('txt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('send').click()}});
+document.getElementById('newcall').onclick=async()=>{try{callerWs&&callerWs.send(JSON.stringify({type:'end'}))}catch(e){}callerWs=null;await connectAgent();await fetch('/api/reset/'+room,{method:'POST'})};
+// scenarios
+function scenEl(target,withUse){SCEN.forEach(([t,tag,line])=>{const d=document.createElement('div');d.className='scen';d.innerHTML=`<b>${esc(t)}</b> <span class="chip">${esc(tag)}</span><q>“${esc(line)}”</q>${withUse?'<button class="btn">Use this line</button>':''}`;
+  if(withUse)d.querySelector('button').onclick=()=>{document.getElementById('txt').value=line;document.getElementById('txt').focus()};target.appendChild(d)})}
+scenEl(document.getElementById('scen'),false);scenEl(document.getElementById('txtex'),true);
+// tabs + listen + judge
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));['samples','speak','type'].forEach(t=>document.getElementById('t-'+t).hidden=t!==b.dataset.t)});
+document.querySelectorAll('#listen button').forEach(b=>b.onclick=()=>{listen=b.dataset.v;applyListen()});
+document.getElementById('judge').onchange=e=>document.body.classList.toggle('nojudge',!e.target.checked);
+renderSR();loadSamples();connectAgent();
+</script></body></html>

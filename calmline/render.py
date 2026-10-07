@@ -7,7 +7,7 @@ HybridRenderer     — template header + extractive 'details' (clauses with no a
 from __future__ import annotations
 import re
 
-from .intents import INTENTS, UNKNOWN
+from .intents import INTENTS_ALL as INTENTS, UNKNOWN
 from .textnorm import content_tokens
 from .toxicity import clauses
 

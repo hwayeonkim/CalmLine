@@ -46,15 +46,23 @@ def pipeline():
     global PIPE
     if PIPE is None:
         PIPE = build(os.getenv("CALMLINE_VERSION", BEST))
-        PIPE("warm up the models")
+        PIPE.detector("warm up the models"); PIPE.intent_clf("warm up")
     return PIPE
 
 
 EVIDENCE = os.path.join(os.path.dirname(ROOT), "evidence")
 
 
+SESSIONS: dict = {}
+
+
 def new_session():
     p = pipeline()
+    if hasattr(p, "context"):
+        p.context = ""
+    sess = CallSession(p, p.detector, Settings(delay_s=float(os.getenv("CALMLINE_DELAY", "2.0"))), evidence_dir=EVIDENCE)
+    SESSIONS[sess.id] = sess
+    return sess
     return CallSession(p, p.detector, Settings(delay_s=float(os.getenv("CALMLINE_DELAY", "2.0"))), evidence_dir=EVIDENCE)
 
 
@@ -77,7 +85,7 @@ async def reset_room(name):
 
 @app.get("/")
 def index():
-    return FileResponse(os.path.join(ROOT, "static", "index.html"))
+    return FileResponse(os.path.join(ROOT, "static", "console.html"))
 
 
 @app.get("/caller")
@@ -87,6 +95,11 @@ def caller():
 
 @app.get("/demo")
 def demo():
+    return FileResponse(os.path.join(ROOT, "static", "console.html"))
+
+
+@app.get("/split")
+def split():
     return FileResponse(os.path.join(ROOT, "static", "demo.html"))
 
 
@@ -177,7 +190,7 @@ async def _live(r):
     return r["live"] or None
 
 
-async def speak(r, s, text):
+async def speak(r, s, text, idx=None):
     """Speak one verified calm sentence to the agents (binary prefix 2).
     Gemini Live verbatim reader (~0.7 s to first audio) -> streaming Gemini TTS -> browser voice on the agent page."""
     import queue, threading
@@ -191,6 +204,9 @@ async def speak(r, s, text):
                 first = False
                 info = dict(queued_ms=round((t_lock - t_req) * 1000), first_audio_ms=round((time.time() - t_lock) * 1000), via=via)
                 s.audit.append([time.time(), "voice_first_audio", info]); print("TIMING voice", info, flush=True)
+                await broadcast(r, {"type": "voice_meta", "idx": idx, **info})
+            if idx is not None:
+                s.voice_by_idx = getattr(s, "voice_by_idx", {}); s.voice_by_idx.setdefault(idx, []).append(chunk)
             s.voice_log.append((time.time() - (r["started"] or time.time()), chunk))
             await broadcast(r, b"\x02" + (np.clip(chunk, -1, 1) * 32767).astype("<i2").tobytes())
 
@@ -249,7 +265,36 @@ async def process_utt(r, s, t0, t1):
         text = card["delivered"].split("] ", 1)[-1] if card["delivered"].startswith("[SAFETY") else card["delivered"]
         if card["route"] == "ESCALATE":
             text = "Safety alert. A supervisor is joining. " + text
-        await speak(r, s, text)
+        await speak(r, s, text, card.get("idx"))
+
+
+async def process_typed(r, s, text):
+    loop = asyncio.get_running_loop()
+    async with r.setdefault("card_lock", asyncio.Lock()):
+        card = await loop.run_in_executor(None, s.process_text, text)
+        await broadcast(r, {"type": "typed", "text": text})
+        await broadcast(r, card)
+        if card.get("route") == "ESCALATE":
+            await broadcast(r, {"type": "alert", "label": "threat"})
+    if card.get("withheld") and card.get("route") != "ESCALATE":
+        return
+    if s.s.protection == "calm_voice":
+        t = card["delivered"].split("] ", 1)[-1]
+        if card["route"] == "ESCALATE":
+            t = "Safety alert. A supervisor is joining. " + t
+        await speak(r, s, t, card.get("idx"))
+
+
+@app.get("/api/voice/{sid}/{idx}")
+def voice(sid: str, idx: int):
+    """Replay the calm voice of one relayed sentence."""
+    import io, soundfile as sf
+    sess = SESSIONS.get(sid)
+    chunks = getattr(sess, "voice_by_idx", {}).get(idx) if sess else None
+    if not chunks:
+        return Response(status_code=404)
+    b = io.BytesIO(); sf.write(b, np.concatenate(chunks), SR, format="WAV", subtype="PCM_16")
+    return Response(b.getvalue(), media_type="audio/wav")
 
 
 def on_events(r, s, events):
@@ -282,7 +327,10 @@ async def playback_loop(name):
 @app.websocket("/ws/caller/{name}")
 async def ws_caller(ws: WebSocket, name: str):
     await ws.accept()
-    r = room(name); s = r["session"]
+    r = room(name)
+    if r["session"].closed:
+        r = await reset_room(name)
+    s = r["session"]
     if r["started"] is None:
         r["started"] = time.time()
         asyncio.create_task(playback_loop(name))
@@ -306,6 +354,9 @@ async def ws_caller(ws: WebSocket, name: str):
                 m = json.loads(msg["text"])
                 if m.get("type") == "end":
                     break
+                if m.get("type") == "text" and m.get("text", "").strip():
+                    asyncio.create_task(process_typed(r, s, m["text"].strip()[:600]))
+                    continue
             elif msg.get("type") == "websocket.disconnect":
                 break
     except WebSocketDisconnect:
@@ -340,8 +391,8 @@ async def ws_agent(ws: WebSocket, name: str):
 
 
 @app.post("/api/reset/{name}")
-def reset(name: str):
-    ROOMS.pop(name, None)
+async def reset(name: str):
+    await reset_room(name)
     return {"ok": True}
 
 

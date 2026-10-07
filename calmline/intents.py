@@ -178,6 +178,29 @@ INTENTS = {
     ),
 }
 
+# Added after free-text testing (2026-10-07) for v15+ only, so v0-v14 keep the 26-intent catalog they were scored with.
+EXTRA_INTENTS = {
+    "smoke_odor": dict(
+        nyc=["Smoking or Vaping", "Indoor Air Quality", "Air Quality"],
+        issue="smoke or a strong odor coming into my home",
+        keywords=["smoke", "smoking", "weed", "marijuana", "vaping", "fumes", "odor", "smell"],
+        examples=["my neighbor smokes and it comes through the vents", "weed smoke is coming into my apartment", "there's a strong chemical smell in the hallway"],
+    ),
+    "for_hire_vehicle": dict(
+        nyc=["Taxi Complaint", "For Hire Vehicle Complaint"],
+        issue="a complaint about a taxi or for-hire vehicle driver",
+        keywords=["taxi", "cab", "uber", "lyft", "driver"],
+        examples=["the taxi driver was rude and overcharged me", "an uber driver almost hit me and drove off"],
+    ),
+    "police_non_emergency": dict(
+        nyc=["Non-Emergency Police Matter", "Drug Activity", "Drinking", "Panhandling"],
+        issue="a non-emergency police matter in my area",
+        keywords=["drugs", "dealing", "drinking", "trespassing", "loitering", "fighting"],
+        examples=["people are dealing drugs on the corner", "someone is trespassing in our building", "people fighting in the hallway"],
+    ),
+}
+
+INTENTS_ALL = {**INTENTS, **EXTRA_INTENTS}
 UNKNOWN = "UNKNOWN"
 INTENT_KEYS = list(INTENTS)
 

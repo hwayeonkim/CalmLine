@@ -100,9 +100,8 @@ class CallSession:
                     self.flagged_word_ids.add(key)
                     self.mutes.append((w.start - 0.25, w.end + 0.25, sp.label))
                     ev.append({"type": "mute", "start": w.start, "end": w.end, "label": sp.label})
-                    if sp.label in ("threat", "self_harm") and not self.alerted:
-                        self.alerted = True
-                        ev.append({"type": "alert", "label": sp.label})
+                    # no alert from pass 1: a 3-second window of tiny.en is too noisy to page a supervisor on;
+                    # the alert is raised from the verified pass-2 sentence (process_utt) instead.
         ev.append({"type": "partial", "anger": round(self.anger, 2)})
         # pass 2 is scheduled, not run here, so mute decisions on the next chunks are never blocked.
         # Utterance boundary = a short pause (sentence-level relay) or end of call.
@@ -141,6 +140,10 @@ class CallSession:
     def process_utterance(self, t0, t1):
         return self._close_utterance(t0, t1)
 
+    def process_text(self, text):
+        """Typed caller text (judges testing without a microphone): same pipeline, no ASR."""
+        return self._card(text, [0.0, 0.0], asr_ms=0)
+
     def _close_utterance(self, t0, t1):
         import time as _t
         _ts = _t.perf_counter()
@@ -153,19 +156,45 @@ class CallSession:
         if not text:
             return None
         _asr = (_t.perf_counter() - _ts) * 1000
+        return self._card(text, [t0, t1], _asr)
+
+    def _card(self, text, t, asr_ms):
+        import time as _t
+        _ts = _t.perf_counter()
         gen = getattr(getattr(self.pipe, "renderer", None), "gen", None)
         if gen is not None and hasattr(gen, "context"):
             gen.context = " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-3:])
+        if hasattr(self.pipe, "context"):
+            self.pipe.context = " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-4:] if c["delivered"])
         d = self.pipe(text)
-        _pipe = (_t.perf_counter() - _ts) * 1000 - _asr
-        card = dict(type="card", route=d.route, delivered=d.delivered, withheld=(d.route != "PASS" and not d.delivered.split("] ", 1)[-1].strip()), intent=d.intent, slots=d.slots, tier=d.tier,
+        _pipe = (_t.perf_counter() - _ts) * 1000
+        from .intents import INTENTS_ALL as INTENTS
+        u = d.debug.get("understanding") or {}
+        spans = list(d.debug.get("spans", []))
+        for ph in u.get("abusive_phrases", []):
+            i = text.lower().find(ph.lower())
+            if i >= 0 and not any(a <= i < b for a, b, _ in spans):
+                spans.append((i, i + len(ph), "gemini"))
+        checks = {}
+        if d.route != "PASS" and d.delivered.split("] ", 1)[-1].strip():
+            from .textnorm import numbers
+            out = d.delivered.split("] ", 1)[-1]
+            checks = {"no abuse left": not self.det(out).is_toxic, "no new numbers": not (numbers(out) - numbers(text) - {"311"}),
+                      "fallback used": d.tier == 3, "rejected": d.debug.get("rejected")}
+        card = dict(type="card", idx=len(self.cards), original=text, spans=sorted(spans),
+                    intent_label=INTENTS[d.intent]["issue"] if d.intent in INTENTS else None,
+                    nyc_types=INTENTS[d.intent]["nyc"] if d.intent in INTENTS else [], intent_score=round(d.intent_score, 2),
+                    slots_dropped=u.get("slots_dropped", []), checks=checks, model=u.get("model"),
+                    route=d.route, delivered=d.delivered, withheld=(d.route != "PASS" and not d.delivered.split("] ", 1)[-1].strip()), intent=d.intent, slots=d.slots, tier=d.tier,
                     abuse_types=d.abuse_types, anger=round(max(self.anger, d.anger if d.route != "PASS" else 0), 2),
-                    t=[t0, t1], latency_ms=round(sum(d.timings_ms.values()), 1),
-                    timing=dict(wait_for_pause_s=self.s.pause_s, asr_ms=round(_asr), rewrite_pipeline_ms=round(_pipe)))
+                    t=t, latency_ms=round(sum(d.timings_ms.values()), 1),
+                    timing=dict(wait_for_pause_s=self.s.pause_s, asr_ms=round(asr_ms), rewrite_pipeline_ms=round(_pipe),
+                                **{k: round(v) for k, v in d.timings_ms.items()}))
         card_public = dict(card)
         # sealed original: kept for evidence, never sent to the agent UI
         with open(os.path.join(self.evidence_dir, "transcript.jsonl"), "a") as f:
             f.write(json.dumps({"t": card["t"], "original": text, "route": d.route, "abuse_types": d.abuse_types}) + "\n")
+        self.voice_by_idx = getattr(self, "voice_by_idx", {})
         self.cards.append(card_public)
         return card_public
 
