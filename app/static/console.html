@@ -143,7 +143,7 @@ canvas#tlc{width:100%;height:74px;display:block}
       <label class="judge"><input type="checkbox" id="judge"> Debug view — what CalmLine hid, per-part details &amp; timings</label></div>
     <div class="nowbar" aria-live="polite">
       <div class="cstate" id="cstate"><div class="lvl"><i id="clvl"></i></div><span id="cstateTxt">No call yet</span><small id="cstateSub">Play a sample call, speak, or type on the left.</small></div>
-      <div class="say" id="say" aria-live="polite"><span class="lbl">You can say now</span><div id="sayopts"></div></div>
+
       <div class="latest"><div class="lbl" id="latestLbl">What the caller said — calm version</div><div class="llist" id="llist"><div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div></div></div>
       <button class="skipbig" id="skipBig" disabled title="Stop the queued calm voice so you can answer now">Skip voice &<br>answer now</button>
     </div>
@@ -260,7 +260,6 @@ function turnUI(){const now=Date.now();const cs=document.getElementById('cstate'
   const pending=uttN>cardN;const voiceLeft=ctx?Math.max(0,tVoice-ctx.currentTime):0;
   const sb=document.getElementById('skipBig');sb.disabled=voiceLeft<0.3;sb.innerHTML=voiceLeft<0.3?'Nothing<br>left to play':'Skip voice &<br>answer now';
   if(!lastVoiced){cs.className='cstate';document.getElementById('cstateTxt').textContent='No call yet';document.getElementById('cstateSub').textContent='Play a sample call, speak, or type on the left.';return}
-  renderSay(!speaking);
   if(speaking){cs.className='cstate speaking';document.getElementById('cstateTxt').textContent='Caller is speaking…';document.getElementById('cstateSub').textContent='Listen — you will hear a calm version of each part as soon as it is ready.'}
   else{cs.className='cstate done';document.getElementById('cstateTxt').textContent='Caller has finished — your turn to reply';
     const since=((now-lastVoiced)/1000).toFixed(1);
@@ -360,7 +359,7 @@ function renderSR(){const b=document.getElementById('srb');
   SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
 async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
   document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
-function resetView(){flags={abuse:0,threat:false,selfharm:false};document.getElementById('say').classList.remove('on');for(const k in dispNo)delete dispNo[k];dispN=0;tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;const L=document.getElementById('llist');L.innerHTML='<div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div>';delete L.dataset.used;turnNo=0;needSep=false;document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
+function resetView(){flags={abuse:0,threat:false,selfharm:false};for(const k in dispNo)delete dispNo[k];dispN=0;tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;const L=document.getElementById('llist');L.innerHTML='<div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div>';delete L.dataset.used;turnNo=0;needSep=false;document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
   document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
   if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
 // ---------- caller: samples ----------
