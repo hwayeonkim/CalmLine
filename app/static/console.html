@@ -179,7 +179,7 @@ function turn(m){started();document.getElementById('empty').hidden=true;
   const d=document.createElement('div');d.className='turn '+cls;d.dataset.idx=m.idx;
   d.innerHTML=`<div class="bub">${m.withheld&&m.route!=='ESCALATE'?'':`<button class="play" title="Replay calm voice" aria-label="Replay" data-idx="${m.idx}">▶</button>`}<div>${m.withheld&&m.route!=='ESCALATE'?'Nothing relayed — the sentence was only abuse.':esc(msg)}</div></div>
    <div class="tags">${tag}${m.intent&&m.intent!=='UNKNOWN'?`<span>${esc(m.intent_label||m.intent)} <span class="stat">${Math.round(100*(m.intent_score||0))}%</span></span>`:''}</div>
-   <div class="hood"><span class="lbl">Caller actually said (sealed, never shown to agents)</span><div class="orig">${hl(m.original,m.spans)}</div>
+   <div class="hood">${m.route==='PASS'?'<span class="lbl">No abuse found — relayed unchanged</span>':`<span class="lbl">Caller actually said (sealed, never shown to agents)</span><div class="orig">${hl(m.original,m.spans)}</div>`}
    ${types.length?`<div><span class="lbl">Hidden</span> ${types.map(esc).join(', ')}</div>`:''}
    ${slots?`<div><span class="lbl">Facts kept (verbatim)</span><div class="kv">${slots}</div></div>`:''}
    ${(m.slots_dropped||[]).length?`<div class="bad">Dropped ${m.slots_dropped.length} fact(s) Gemini proposed that the caller never said</div>`:''}

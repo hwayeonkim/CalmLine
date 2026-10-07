@@ -19,6 +19,8 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 | v10 | 92.8 | 7.2 | 97.6 | 100.0 | 92.9 | 8.5 | 1.0 | 83.1 | 90.4 | 2.3 | 0.0 | 48 |
 | v11 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | 1.0 | 78.3 | 85.8 | 3.5 | 0.0 | 50 |
 | v12 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 78.3 | 85.8 | 3.5 | 0.0 | — |
+| v13 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 86.8 | 93.5 | 13.8 | 0.0 | — |
+| v15 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 89.2 | 92.7 | 10.3 | 0.0 | — |
 
 *protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said. *wrong issue* = the agent's text asserts the wrong complaint type. *p95 ms* = clean per-utterance latency on Apple M5 (`eval/latency.py`), measured for the milestone versions. † = post-hoc: built after reading v10's test errors, so its test numbers are optimistic.
 
@@ -62,6 +64,7 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 | v11 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 77.3 |
 | v11 | synth | 97.7 | 2.3 | 100.0 | 0.0 | 81.6 |
 | v12 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 77.3 |
+| v13 | dev | 100.0 | 0.0 | 100.0 | 5.6 | 90.9 |
 
 ## Version log
 
@@ -78,6 +81,8 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 - **v10** — v9 + slots extracted from masked text (a verbatim slot can never carry abuse — bug found in live demo)
 - **v11** — POST-HOC (after reading v10 TEST errors): topic-word neutralisation before model scoring (Dixon et al. 2018), threat calls get header+slots only, 4 lexicon fixes. Test numbers for v11+ are contaminated.
 - **v12** — v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown
+- **v13** — Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback
+- **v15** — Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.
 
 ## Detector benchmark (utterance level)
 
@@ -107,6 +112,10 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 | synth | hybrid_unb_tb | 1.000 | 0.995 | 0.997 | 1.000 | 1.000 | 13.6 |
 | civil | hybrid_v4_tb | 0.950 | 0.489 | 0.646 | 0.348 | 0.916 | 56.0 |
 | civil | hybrid_unb_tb | 0.962 | 0.740 | 0.836 | 0.724 | 0.957 | 58.2 |
+| dev | hybrid_v11 | 0.957 | 1.000 | 0.978 | 1.000 | 1.000 | 11.7 |
+| synth | hybrid_v11 | 1.000 | 0.992 | 0.996 | 1.000 | 1.000 | 14.0 |
+| hardneg | hybrid_v11 | 0.000 | 0.000 | 0.000 | 0.000 | — | 13.9 |
+| civil | hybrid_v11 | 0.963 | 0.715 | 0.821 | 0.715 | 0.959 | 58.9 |
 
 ## Acoustic aggression (CREMA-D, speaker-independent: 30 held-out speakers, n=722)
 

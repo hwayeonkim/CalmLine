@@ -1,0 +1,2 @@
+v15 test {"n": 134, "route_acc": 0.9925, "abuse_recall": 1.0, "leak_rate": 0.012, "protected": 0.988, "threat_recall": 1.0, "threat_precision": 0.9286, "false_positive_rate": 0.0213, "fact_recall_toxic": 0.9273, "sufficiency_toxic": 0.8916, "fact_recall_all": 0.9475, "halluc_rate": 0.0, "intent_acc_routed": 0.8966, "intent_acc_all": 0.9179, "wrong_issue_rate": 0.1034, "tier_dist": {"0": 47, "1": 86, "2": 0, "3": 1}, "latency_p50": 1748.2713, "latency_p95": 9413.8063, "residual_toxicity": 0.0482}
+done
