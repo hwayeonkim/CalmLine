@@ -73,8 +73,12 @@ body.nojudge .hood{display:none}
 .cstate .lvl{height:6px;border-radius:9px;background:rgba(0,0,0,.08);overflow:hidden}.cstate .lvl i{display:block;height:100%;width:0;background:currentColor;transition:width .08s}
 .cstate small{font-weight:400;font-size:11.5px;opacity:.85}
 .latest{min-width:0}.latest .lbl{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.latest .msg{font-size:18px;line-height:1.4;font-weight:500;margin-top:2px}.latest .vs{font-size:12px;color:var(--muted);margin-top:3px}
-.latest .msg.wh{color:var(--muted);font-style:italic;font-size:15px}
+.llist{max-height:190px;overflow:auto;margin-top:4px;display:flex;flex-direction:column;gap:4px;padding-right:4px;scroll-behavior:smooth}
+.li{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:baseline;font-size:15.5px;line-height:1.4;color:#3B4651;padding:3px 6px;border-radius:6px}
+.li .n{font:500 11px var(--mono);color:var(--muted)}.li .st{font:500 10.5px var(--mono);color:var(--muted);white-space:nowrap}
+.li.now{background:#fff;color:var(--ink);font-weight:500;font-size:17px;box-shadow:0 0 0 1px var(--line)}
+.li.now .st{color:var(--calm)}.li.wh{font-style:italic;color:#9AA6B0;font-size:13.5px}.li.esc{color:var(--alert)}
+.lsep{font:500 10.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-top:1px dashed var(--line);padding-top:4px;margin-top:2px}
 .skipbig{font:600 14px var(--sans);padding:12px 16px;border-radius:10px;border:2px solid var(--calm);background:#fff;color:var(--calm);white-space:nowrap}
 .skipbig:disabled{opacity:.35}
 .yourturn{background:var(--calm);color:#fff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600}
@@ -129,7 +133,7 @@ canvas#tlc{width:100%;height:74px;display:block}
       <label class="judge"><input type="checkbox" id="judge" checked> Show what CalmLine hid (demo view)</label></div>
     <div class="nowbar" aria-live="polite">
       <div class="cstate" id="cstate"><span id="cstateTxt">NO CALL</span><div class="lvl"><i id="clvl"></i></div><small id="cstateSub">waiting</small></div>
-      <div class="latest"><div class="lbl" id="latestLbl">Latest message for the agent</div><div class="msg" id="latestMsg">—</div><div class="vs" id="latestVs"></div></div>
+      <div class="latest"><div class="lbl" id="latestLbl">What the caller said — calm version, in order</div><div class="llist" id="llist"><div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div></div></div>
       <button class="skipbig" id="skipBig" disabled title="Stop the queued calm voice so you can answer now">Skip voice &<br>answer now</button>
     </div>
     <div class="tline" aria-label="Live timeline">
@@ -176,7 +180,7 @@ function attachCallerAnalyser(node){ // node = MediaElementSource (sample) or Me
   if(node.mediaElement){callerGain=ctx.createGain();node.connect(callerGain);callerGain.connect(ctx.destination);applyListen()}}
 function vadTick(){if(callerAn&&callerOn){callerAn.getFloatTimeDomainData(vadBuf);let e=0;for(let i=0;i<vadBuf.length;i++)e+=vadBuf[i]*vadBuf[i];
     const db=10*Math.log10(e/vadBuf.length+1e-12);const now=Date.now();document.getElementById('clvl').style.width=Math.max(0,Math.min(100,(db+60)*2))+'%';
-    if(db>-42){lastLoud=now;lastVoiced=now;const L=TL.voiced[TL.voiced.length-1];if(L&&now-L[1]<300)L[1]=now;else TL.voiced.push([now,now])}}
+    if(db>-42){if(lastVoiced&&now-lastVoiced>1500)needSep=true;lastLoud=now;lastVoiced=now;const L=TL.voiced[TL.voiced.length-1];if(L&&now-L[1]<300)L[1]=now;else TL.voiced.push([now,now])}}
   turnUI()}
 setInterval(vadTick,50);
 function applyListen(){if(gain)gain.gain.value=listen==='caller'?0:1;if(callerGain)callerGain.gain.value=listen==='agent'?0:1;document.querySelectorAll('#listen button').forEach(b=>b.classList.toggle('on',b.dataset.v===listen))}
@@ -216,7 +220,7 @@ let _h;function hatch(){if(_h)return _h;_h=document.createElement('canvas');_h.w
 function tlCard(m){if(!m.t||!(m.t[1]>0)||TL.start===null)return;TL.sents.push({idx:m.idx,t0:wallOf(m.t[0]),end:wallOf(m.t[1]),withheld:m.withheld&&m.route!=='ESCALATE',cardAt:Date.now(),voiceStart:null})}
 let voiceIdx=null,voiceFirst=false;
 let uttN=0,cardN=0,lagInfo={},voiceSrcs=[],skipUntil=0,lastVoiced=0,turnShown=false,lastCardAt=0;
-function skipNow(){voiceSrcs.forEach(x=>{try{x.stop()}catch(e){}});voiceSrcs=[];if(ctx)tVoice=ctx.currentTime;skipUntil=Date.now()+400;
+function skipNow(){document.querySelectorAll('.li .st').forEach(e=>{if(/queued|speaking|preparing/.test(e.textContent))e.textContent='skipped'});voiceSrcs.forEach(x=>{try{x.stop()}catch(e){}});voiceSrcs=[];if(ctx)tVoice=ctx.currentTime;skipUntil=Date.now()+400;
   TL.voice=TL.voice.filter(v=>v.a<Date.now()).map(v=>({...v,b:Math.min(v.b,Date.now())}));agentWs&&agentWs.send(JSON.stringify({type:'skip_to_now'}))}
 function turnUI(){const now=Date.now();const cs=document.getElementById('cstate');
   const speaking=lastVoiced&&now-lastVoiced<700;const finished=lastVoiced&&!speaking;
@@ -235,7 +239,9 @@ function turnCheck(){const now=Date.now();if(TL.start===null)return;
   if(!silent&&turnShown){turnShown=false;yt.hidden=true}}
 
 function tlVoiceMeta(m){voiceIdx=m.idx;voiceFirst=true;lagInfo[m.idx]=m}
-function tlVoiceChunk(startCtx,dur){if(voiceIdx===latestIdx&&voiceFirst){const w=Math.max(0,startCtx-ctx.currentTime);document.getElementById('latestVs').textContent=w>0.3?`calm voice: queued, starts in ${w.toFixed(1)} s`:'calm voice: playing now'}const wallStart=Date.now()+(startCtx-ctx.currentTime)*1000;const v={idx:voiceIdx,a:wallStart,b:wallStart+dur*1000,first:voiceFirst};TL.voice.push(v);
+function tlVoiceChunk(startCtx,dur){if(voiceFirst){const w=Math.max(0,startCtx-ctx.currentTime);setVoiceState(voiceIdx,w>0.3?`queued · ${w.toFixed(1)} s`:'speaking');
+    const id=voiceIdx;setTimeout(()=>setVoiceState(id,'speaking'),w*1000)}
+  {const id=voiceIdx,endAt=(startCtx-ctx.currentTime+dur)*1000;clearTimeout(window['vd'+id]);window['vd'+id]=setTimeout(()=>setVoiceState(id,'spoken ✓'),endAt+150)}const wallStart=Date.now()+(startCtx-ctx.currentTime)*1000;const v={idx:voiceIdx,a:wallStart,b:wallStart+dur*1000,first:voiceFirst};TL.voice.push(v);
   if(voiceFirst){const s=TL.sents.find(x=>x.idx===voiceIdx);if(s&&!s.voiceStart){s.voiceStart=wallStart;
       const li=lagInfo[voiceIdx]||{};const playWait=Math.max(0,(startCtx-ctx.currentTime)*1000);
       const lag=li.lag_ms!=null?(li.lag_ms+playWait)/1000:(wallStart-s.end)/1000;TL.lags.push(lag);
@@ -297,12 +303,15 @@ function cardUpdate(m){const d=document.querySelector(`.turn[data-idx="${m.idx}"
   if(m.intent&&m.intent!=='UNKNOWN'){d.querySelector('.tags').insertAdjacentHTML('beforeend',`<span>${esc(m.intent_label)} <span class="stat">${Math.round(100*m.intent_score)}% · Gemini, arrived late</span></span>`);
     if((m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score}}
   for(const [k,v] of Object.entries(m.slots||{})){sr[k]=sr[k]||new Set();v.forEach(x=>sr[k].add(x))}renderSR()}
-function setLatest(m){const msg=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;
-  const wh=m.withheld&&m.route!=='ESCALATE';const el=document.getElementById('latestMsg');el.className='msg'+(wh?' wh':'');
-  el.textContent=wh?'(sentence withheld — only abuse)':msg;
-  const shown=lastVoiced?((Date.now()-Math.max(lastVoiced,0))/1000):0;
-  document.getElementById('latestLbl').textContent=`Latest message · sentence #${no(m.idx)}`+(m.route==='ESCALATE'?' · THREAT — supervisor alerted':'');
-  document.getElementById('latestVs').textContent=wh?'nothing will be spoken':'calm voice: preparing…';latestIdx=m.idx}
+let turnNo=0,needSep=false;
+function setLatest(m){const list=document.getElementById('llist');if(!list.dataset.used){list.innerHTML='';list.dataset.used='1'}
+  if(needSep||!turnNo){turnNo++;needSep=false;if(turnNo>1)list.insertAdjacentHTML('beforeend',`<div class="lsep">caller turn ${turnNo}</div>`)}
+  const msg=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;const wh=m.withheld&&m.route!=='ESCALATE';
+  list.querySelectorAll('.li.now').forEach(x=>x.classList.remove('now'));
+  const d=document.createElement('div');d.className='li now'+(wh?' wh':'')+(m.route==='ESCALATE'?' esc':'');d.id='li'+m.idx;
+  d.innerHTML=`<span class="n">#${no(m.idx)}</span><span>${wh?'(withheld — only abuse, nothing to relay)':(m.route==='ESCALATE'?'⚠ ':'')+esc(msg)}</span><span class="st">${wh?'not spoken':'preparing voice…'}</span>`;
+  list.appendChild(d);list.scrollTop=list.scrollHeight;latestIdx=m.idx}
+function setVoiceState(idx,txt){const e=document.querySelector('#li'+idx+' .st');if(e)e.textContent=txt}
 let latestIdx=null;const dispNo={};let dispN=0;const no=i=>dispNo[i]??(dispNo[i]=++dispN);
 function voiceMeta(m){const el=document.getElementById('v'+m.idx);if(el)el.textContent=`voice ${m.first_audio_ms} ms to first sound (${m.via&&m.via.startsWith('live')?'Gemini Live'+(m.via.includes('fast')?', fast catch-up pace':''):'Gemini TTS'})`}
 function renderSR(){const b=document.getElementById('srb');
@@ -310,7 +319,7 @@ function renderSR(){const b=document.getElementById('srb');
   SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
 async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
   document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
-function resetView(){for(const k in dispNo)delete dispNo[k];dispN=0;tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;document.getElementById('latestMsg').textContent='—';document.getElementById('latestVs').textContent='';document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
+function resetView(){for(const k in dispNo)delete dispNo[k];dispN=0;tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;const L=document.getElementById('llist');L.innerHTML='<div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div>';delete L.dataset.used;turnNo=0;needSep=false;document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
   document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
   if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
 // ---------- caller: samples ----------
