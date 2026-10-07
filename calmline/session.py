@@ -33,6 +33,7 @@ class Settings:
     spotter: str = "tiny.en"        # pass 1 (mute decisions)
     pause_s: float = 0.45           # pause that closes a sentence-level utterance
     chunking: str = "clause"        # "sentence" (v17) or "clause" (v18: syntax/prosody-aware sub-sentence parts)
+    asr: str = os.getenv("CALMLINE_ASR", "auto")   # "whisper" (local two-pass) | "google" (Cloud STT streaming) | "auto"
 
 
 class CallSession:
@@ -75,6 +76,8 @@ class CallSession:
         start = len(self.audio) / SR
         self.audio = np.concatenate([self.audio, pcm.astype(np.float32)])
         ev = []
+        if self.use_google():
+            return self._ingest_google(pcm, start, final)
         db = 20 * np.log10(frame_rms(pcm).mean() + 1e-9)
         voiced = db > -45
         if voiced:
@@ -153,6 +156,59 @@ class CallSession:
         if self.utt_start is not None and (final or now - self.last_voice >= self.s.pause_s):
             ev.append({"type": "utt", "t0": self.utt_start, "t1": self.last_voice if not final else now})
             self.utt_start = None
+        return ev
+
+    def use_google(self):
+        if getattr(self, "_g_mode", None) is None:
+            mode = self.s.asr
+            if mode == "auto":
+                from .audio.google_stt import available
+                ok, why = available()
+                mode = "google" if ok else "whisper"
+                self.asr_note = why
+            self._g_mode = mode
+            if mode == "google":
+                from .audio.google_stt import GoogleStreamingSTT
+                self._g = GoogleStreamingSTT()
+        return self._g_mode == "google"
+
+    def _ingest_google(self, pcm, start, final):
+        """Google streaming: its endpointer closes each part; the final result is the part's transcript."""
+        ev = []
+        db = 20 * np.log10(frame_rms(pcm).mean() + 1e-9)
+        if db > -45:
+            self.baseline_db = db if self.baseline_db is None else 0.97 * self.baseline_db + 0.03 * min(db, self.baseline_db + 3)
+            self.anger = float(np.clip(0.8 * self.anger + 0.2 * np.clip((db - self.baseline_db) / 12, 0, 1), 0, 1))
+        self._g.feed(pcm)
+        if final:
+            import time as _t
+            self._g.close(wait=4.0)
+            _t.sleep(0.3)
+        for e in self._g.poll():
+            if e[0] == "final" and e[3]:
+                _, t0, t1, text, words = e
+                # precise mutes from word offsets (Shield mode)
+                r = self.det(text)
+                for sp in r.spans:
+                    acc = 0
+                    for (ws, we, wt) in words:
+                        a, b = text.lower().find(wt.lower(), acc), None
+                        if a < 0:
+                            continue
+                        b = a + len(wt); acc = b
+                        if not (b <= sp.start or a >= sp.end):
+                            self.mutes.append((ws - 0.15, we + 0.15, sp.label))
+                            ev.append({"type": "mute", "start": ws, "end": we, "label": sp.label})
+                ev.append({"type": "utt_text", "t0": t0, "t1": t1, "text": text})
+            elif e[0] == "interim":
+                _, t_end, text, stab = e
+                if stab >= 0.5 and text:
+                    r = self.det(text)
+                    if r.spans:     # approximate mute for Shield mode until the final arrives
+                        self.mutes.append((max(0.0, t_end - 0.9), t_end + 0.3, "interim"))
+            elif e[0] == "error":
+                ev.append({"type": "asr_error", "error": e[1]})
+        ev.append({"type": "partial", "anger": round(self.anger, 2), "ct": round(start + len(pcm) / SR, 3), "c0": round(start, 3), "voiced": bool(db > -45)})
         return ev
 
     def _quietest(self, a, b):

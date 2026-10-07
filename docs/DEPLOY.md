@@ -23,3 +23,21 @@
    WebSockets work on Cloud Run; `--session-affinity` keeps a caller and agent on the same instance (rooms are in-memory).
 5. Production STT: switch `Settings.spotter` / pass-2 to `calmline/audio/google_stt.py` (Speech-to-Text v2 streaming,
    `profanity_filter=False`). Sealed evidence → Cloud Storage bucket with CMEK + Firestore audit log (current code writes to `./evidence`).
+
+## Google Cloud Speech-to-Text streaming (replaces the local Whisper passes)
+
+Speech-to-Text does **not** accept API keys — it needs OAuth credentials (Application Default Credentials).
+
+```bash
+# 1. install the Google Cloud CLI (https://cloud.google.com/sdk/docs/install), then:
+gcloud auth login
+gcloud config set project YOUR_PROJECT            # a project with billing enabled
+gcloud services enable speech.googleapis.com
+gcloud auth application-default login             # creates ADC for the local server
+gcloud auth application-default set-quota-project YOUR_PROJECT
+```
+
+Restart the server. `GET /api/health` should report `"asr": "google-stt-streaming"`.
+`CALMLINE_ASR=whisper` forces the local path; `CALMLINE_ASR=google` forces Google.
+Model: `CALMLINE_GOOGLE_STT_MODEL` (default `latest_short`; `phone_call` is an alternative for 8 kHz telephony audio).
+On Cloud Run the service account's credentials are used automatically (grant it `roles/speech.client`).

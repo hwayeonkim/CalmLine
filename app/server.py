@@ -157,7 +157,11 @@ def tts(text: str):
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST)}
+    from calmline.audio.google_stt import available
+    mode = os.getenv("CALMLINE_ASR", "auto")
+    ok, why = available() if mode in ("auto", "google") else (False, "disabled")
+    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST),
+            "asr": "google-stt-streaming" if (mode == "google" or (mode == "auto" and ok)) else "whisper-local", "asr_note": why}
 
 
 async def finish(r, s):
@@ -562,14 +566,18 @@ async def _playout(r, s, seq, pending, lag, end_wall, t_lock):
         r["voice_lock"].release()
 
 
-async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
+async def process_utt(r, s, t0, t1, detected_at=None, seq=0, text=None):
     """Pass 2 for one sentence: ASR -> pipeline (Gemini + checks) -> card -> calm voice.
     Sentences run in parallel (a slow Gemini answer no longer holds up the next sentence); cards are emitted in order."""
     loop = asyncio.get_running_loop()
     end_wall = (r["started"] or time.time()) + t1          # when the caller finished this sentence (wall clock)
     lag = {"sentence_end_detect_ms": round(((detected_at or time.time()) - end_wall) * 1000)}
     tq = time.time()
-    text, asr_ms = await loop.run_in_executor(None, s.transcribe, t0, t1)
+    if text is None:
+        text, asr_ms = await loop.run_in_executor(None, s.transcribe, t0, t1)
+    else:
+        from calmline.audio.stt import normalize_asr
+        text, asr_ms = normalize_asr(text), 0.0          # Google streaming: the final result is the transcript
     if text and s.s.protection == "calm_voice" and r.get("filler", False):
         from calmline.pipeline import needs_gemini
         tox = await loop.run_in_executor(None, s.det, text)
@@ -686,10 +694,13 @@ def voice(sid: str, idx: int):
 
 def on_events(r, s, events):
     for e in events:
-        if e.get("type") == "utt":
+        if e.get("type") in ("utt", "utt_text"):
             e["detected_at"] = time.time()
             seq = r.get("utt_seq", 0); r["utt_seq"] = seq + 1
-            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"], e["detected_at"], seq)))
+            if e["type"] == "utt_text":
+                e["type"] = "utt"      # the agent page counts parts on 'utt'
+            r.setdefault("pending", []).append(asyncio.create_task(
+                process_utt(r, s, e["t0"], e["t1"], e["detected_at"], seq, text=e.get("text"))))
 
 
 async def playback_loop(name):
