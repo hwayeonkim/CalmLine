@@ -35,6 +35,15 @@ async def warm():
         from calmline.audio.stt import load_whisper
         load_whisper(Settings().whisper); load_whisper(Settings().spotter)
     await loop.run_in_executor(None, _w)
+    from calmline.gemini import available
+    if available():
+        async def _warm_prefaces():
+            for k in PREFACES:
+                try:
+                    await preface_audio(k)
+                except Exception as e:  # noqa: BLE001
+                    print("preface warm-up failed:", str(e)[:100], flush=True)
+        asyncio.create_task(_warm_prefaces())
 
 
 app.mount("/static", StaticFiles(directory=os.path.join(ROOT, "static")), name="static")
@@ -197,6 +206,45 @@ async def _live(r, pace="normal"):
     return r[key] or None
 
 
+PREFACES = {"upset": "The caller is upset. One moment.", "wait": "One moment."}
+_PREFACE_PCM: dict = {}
+
+
+async def preface_audio(key):
+    """Short lexical fillers, rendered once with the calm voice and kept in memory, so they play with zero latency.
+    Lexical fillers mitigate perceived delay better than artificial wait indicators (virtual-agent / HRI studies)."""
+    if key in _PREFACE_PCM:
+        return _PREFACE_PCM[key]
+    path = os.path.join(os.path.dirname(ROOT), "data", "cache", f"preface_{key}.npy")
+    if os.path.exists(path):
+        _PREFACE_PCM[key] = np.load(path); return _PREFACE_PCM[key]
+    from calmline.live_voice import LiveReader
+    rd = LiveReader(pace="fast")
+    try:
+        chunks = [c async for c in rd.speak(PREFACES[key])]
+    finally:
+        await rd.close()
+    x = np.concatenate(chunks).astype(np.float32)
+    os.makedirs(os.path.dirname(path), exist_ok=True); np.save(path, x)
+    _PREFACE_PCM[key] = x
+    return x
+
+
+async def play_preface(r, s, key, idx):
+    """Fill the silence while Gemini prepares an abusive part: goes through the voice queue like any other audio."""
+    x = await preface_audio(key)
+    async with r.setdefault("voice_lock", asyncio.Lock()):
+        t = time.time()
+        await broadcast(r, {"type": "preface", "idx": idx, "text": PREFACES[key]})
+        for k in range(0, len(x), 3200):
+            ch = x[k:k + 3200]
+            s.voice_log.append((time.time() - (r["started"] or time.time()), ch))
+            r["voice_end"] = max(r.get("voice_end", 0), time.time()) + len(ch) / SR
+            await broadcast(r, b"\x03" + (np.clip(ch, -1, 1) * 32767).astype("<i2").tobytes())
+        if idx in r.get("lag", {}) or True:
+            r.setdefault("preface_at", {})[idx] = t
+
+
 async def speak(r, s, text, idx=None):
     """Speak one verified calm sentence to the agents (binary prefix 2).
     Gemini Live verbatim reader (~0.7 s to first audio) -> streaming Gemini TTS -> browser voice on the agent page."""
@@ -291,7 +339,23 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
     end_wall = (r["started"] or time.time()) + t1          # when the caller finished this sentence (wall clock)
     lag = {"sentence_end_detect_ms": round(((detected_at or time.time()) - end_wall) * 1000)}
     tq = time.time()
-    card = await loop.run_in_executor(None, s.process_utterance, t0, t1, seq)
+    text, asr_ms = await loop.run_in_executor(None, s.transcribe, t0, t1)
+    if text and s.s.protection == "calm_voice" and r.get("filler", True):
+        from calmline.pipeline import needs_gemini
+        tox = await loop.run_in_executor(None, s.det, text)
+        gemini_bound = tox.is_toxic or needs_gemini(text)
+        idle = r.get("voice_end", 0) < time.time() + 0.15 and r.get("emitted", 0) >= seq and not tox.is_threat
+        card_fut = loop.run_in_executor(None, s.card_from_text, text, t0, t1, asr_ms, seq)
+        if gemini_bound and idle:
+            # filler only if Gemini has not answered within 0.8 s (fillers help with long waits, cost time on short ones)
+            done, _ = await asyncio.wait({card_fut}, timeout=0.8)
+            if not done and r.get("voice_end", 0) < time.time() + 0.15:
+                asyncio.create_task(play_preface(r, s, "wait", seq))
+                lag["preface_ms"] = round((time.time() - end_wall) * 1000)
+                await asyncio.sleep(0)
+        card = await card_fut
+    else:
+        card = await loop.run_in_executor(None, s.card_from_text, text, t0, t1, asr_ms, seq)
     t_wait = time.time()
     await _turn(r, seq)
     lag["wait_previous_sentence_ms"] = round((time.time() - t_wait) * 1000)
@@ -465,6 +529,8 @@ async def ws_agent(ws: WebSocket, name: str):
             s = r["session"]
             if m.get("type") == "protection":
                 s.s.protection = m["value"]; s.audit.append([time.time(), "protection", m["value"]])
+            elif m.get("type") == "filler":
+                r["filler"] = bool(m.get("value")); s.audit.append([time.time(), "filler", r["filler"]])
             elif m.get("type") == "skip_to_now":
                 r["voice_gen"] = r.get("voice_gen", 0) + 1; r["voice_end"] = time.time()
                 s.audit.append([time.time(), "skip_to_now"]); await broadcast(r, {"type": "skipped"})

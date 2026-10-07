@@ -165,6 +165,19 @@ class CallSession:
         """Typed caller text (judges testing without a microphone): same pipeline, no ASR."""
         return self._card(text, [0.0, 0.0], asr_ms=0, idx=getattr(self, "_typed_seq", 0))
 
+    def transcribe(self, t0, t1):
+        """Pass-2 ASR for one part. Returns (text, asr_ms)."""
+        import time as _t
+        from .audio.stt import load_whisper, normalize_asr
+        _ts = _t.perf_counter()
+        x = self.audio[int(max(0, t0) * SR):int((t1 + 0.05) * SR)]
+        segs, _ = load_whisper(self.s.whisper).transcribe(x, language="en", beam_size=1, initial_prompt=self.stt.PROFANITY_PROMPT,
+                                                          condition_on_previous_text=False)
+        return normalize_asr(" ".join(s.text.strip() for s in segs).strip()), (_t.perf_counter() - _ts) * 1000
+
+    def card_from_text(self, text, t0, t1, asr_ms, idx=None):
+        return self._card(text, [t0, t1], asr_ms, idx) if text else None
+
     def _close_utterance(self, t0, t1, idx=None):
         import time as _t
         _ts = _t.perf_counter()
