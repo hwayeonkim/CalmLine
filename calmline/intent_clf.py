@@ -64,7 +64,9 @@ class EmbeddingIntent:
         self.proto = self._enc(texts)
 
     def _enc(self, texts):
-        return _st(self.model_id).encode(texts, normalize_embeddings=True, convert_to_numpy=True, batch_size=64)
+        from .toxicity import GPU_LOCK
+        with GPU_LOCK:
+            return _st(self.model_id).encode(texts, normalize_embeddings=True, convert_to_numpy=True, batch_size=64)
 
     def scores(self, text: str):
         sims = self.proto @ self._enc([text])[0]

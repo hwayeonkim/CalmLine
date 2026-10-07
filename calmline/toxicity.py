@@ -66,6 +66,12 @@ class LexiconDetector:
                               labels={s.label: 1.0 for s in spans})
 
 
+import threading as _threading
+# PyTorch MPS is not thread-safe: concurrent inference from the live session's worker threads crashed the
+# Metal command buffer (IOGPUMetalCommandBuffer assertion). Every GPU call takes this lock (each is 10-30 ms).
+GPU_LOCK = _threading.RLock()
+
+
 @lru_cache(maxsize=4)
 def _load(model_id: str, device: str):
     import torch
@@ -105,6 +111,10 @@ class ModelDetector:
         return res
 
     def _scores(self, texts):
+        with GPU_LOCK:
+            return self._scores_unlocked(texts)
+
+    def _scores_unlocked(self, texts):
         import torch
         tok, mdl = _load(self.model_id, self.device)
         with torch.no_grad():
@@ -256,6 +266,10 @@ class NLIDetector:
         self.name = "nli(" + model_id.split("/")[-1] + ")"
 
     def clause_scores(self, units):
+        with GPU_LOCK:
+            return self._clause_scores(units)
+
+    def _clause_scores(self, units):
         import torch
         tok, mdl = _load_nli(self.model_id, self.device)
         pairs = [(u, HYPOTHESES[c]) for u in units for c in self.cats]

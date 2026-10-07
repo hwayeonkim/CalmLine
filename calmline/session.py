@@ -26,7 +26,7 @@ CLAUSE_STARTERS = {"and", "but", "so", "because", "cause", "which", "who", "then
 @dataclass
 class Settings:
     delay_s: float = 2.0
-    chunk_s: float = 0.5
+    chunk_s: float = 0.3
     protection: str = "calm_voice"  # calm_voice (default: agent hears only the calm Gemini voice) | shield | raw
     compress: bool = True
     whisper: str = "base.en"        # pass 2 (utterance card); small.en cost ~1 s per sentence on CPU
@@ -122,7 +122,13 @@ class CallSession:
                     # conjunctions; Bangalore et al. 2012 prosodic pauses). wait-1: the boundary is only taken once the
                     # next word has been heard, and a part must be >= 1.0 s and >= 4 words so it can be judged on its own.
                     in_utt = [x for x in words if x.start >= self.utt_start - 0.05 and x.end <= w.end + 0.01]
-                    if nxt_w is None or len(in_utt) < 4 or w.end < self.utt_start + 1.0 or now - w.end < 0.25:
+                    short_abuse = False
+                    if len(in_utt) < 4 and w.text.endswith((",", ".", "!", "?")) and len(in_utt) >= 2:
+                        # "Listen, you idiot," — a short abusive lead-in becomes its own part so it can be withheld at once
+                        from .lexicon import find_spans
+                        short_abuse = bool(find_spans(" ".join(x.text for x in in_utt), include_mild=False, extended="v11"))
+                    if nxt_w is None or (len(in_utt) < 4 and not short_abuse) or (w.end < self.utt_start + 1.0 and not short_abuse) \
+                            or now - w.end < 0.15:
                         continue
                     punct = w.text.endswith((".", "?", "!", ",", ";", ":"))
                     conj = re.sub(r"[^a-z']", "", nxt_w.text.lower()) in CLAUSE_STARTERS

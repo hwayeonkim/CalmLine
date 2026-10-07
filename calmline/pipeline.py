@@ -27,7 +27,7 @@ ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
                  mask_for_intent=True, unknown_mode="mask", mask_mild=False, mask_slots=False, understanding=None,
-                 understand_all=False, checker=None, gemini_detects=False, budget_s=None, selective=False):
+                 understand_all=False, checker=None, gemini_detects=False, budget_s=None, selective=False, offline_first=False):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
@@ -39,6 +39,7 @@ class Pipeline:
         self.gemini_detects = gemini_detects
         self.budget_s = budget_s
         self.selective = selective
+        self.offline_first = offline_first
         self.context = ""        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
@@ -96,6 +97,19 @@ class Pipeline:
         from .render import mask
         t1 = time.perf_counter()
         budget = self.budget_s
+        if self.offline_first and d.route == "CALM":
+            # v20 LLM cascade: profanity used as an intensifier, or a part that is nothing but abuse, needs no LLM
+            from .offline_calm import offline_calm
+            msg, ok = offline_calm(text, tox, self.detector)
+            if ok:
+                d.delivered, d.tier = msg, 0
+                d.debug["path"] = "withheld offline (only abuse)" if msg == "" else "offline (profanity removed, no LLM)"
+                d.debug["late_future"] = _POOL.submit(self.understanding.analyze, text, self.context, False)
+                d.slots = slotmod.extract(text)
+                d.intent, d.intent_score = self.intent_clf(msg or text)
+                t["understand"] = 0.0
+                d.timings_ms = t
+                return d
         if self.selective and d.route == "PASS" and not needs_gemini(text):
             budget = 0.0      # v18 selective LLM: clean, undirected part -> relay now, Gemini only refines the card later
         if budget is not None and self.budget_s:

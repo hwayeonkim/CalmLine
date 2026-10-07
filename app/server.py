@@ -167,6 +167,9 @@ async def finish(r, s):
     if pend:
         await asyncio.gather(*pend, return_exceptions=True)
     r["pending"] = []
+    t_wait = time.time()
+    while time.time() - t_wait < 40 and ((r.get("playq") is not None and not r["playq"].empty()) or r.get("voice_end", 0) > time.time() - 0.2):
+        await asyncio.sleep(0.2)
     async with r.setdefault("voice_lock", asyncio.Lock()):
         s.save_evidence()
     r["last_done"] = s.id
@@ -243,6 +246,87 @@ async def play_preface(r, s, key, idx):
             await broadcast(r, b"\x03" + (np.clip(ch, -1, 1) * 32767).astype("<i2").tobytes())
         if idx in r.get("lag", {}) or True:
             r.setdefault("preface_at", {})[idx] = t
+
+
+async def _playout_loop(r, s):
+    """Single ordered playout per call: parts are generated ahead (on alternating Live readers) and played back-to-back,
+    so the 0.7-1.5 s time-to-first-audio of each part no longer opens a silent gap between parts."""
+    q = r["playq"]
+    while True:
+        item = await q.get()
+        if item is None:
+            return
+        kind, idx, chunks, meta = item
+        first = True
+        while True:
+            ch = await chunks.get()
+            if ch is None:
+                break
+            if isinstance(ch, Exception):
+                await broadcast(r, {"type": "voice_fallback", "text": meta.get("text", ""), "error": str(ch)[:120]}); break
+            if r.get("voice_gen", 0) != meta.get("gen", 0):
+                continue                                   # skipped by the agent
+            if first and kind == "voice":
+                first = False
+                info = dict(queued_ms=round((time.time() - meta["t_req"]) * 1000 - meta.get("gen_first_ms", 0)),
+                            first_audio_ms=meta.get("gen_first_ms", 0), via="live (prefetched)")
+                if idx in r.get("lag", {}):
+                    end_wall, lag = r["lag"][idx]
+                    lag.update(wait_previous_voice_ms=max(0, info["queued_ms"]), voice_first_sound_ms=info["first_audio_ms"])
+                    info["lag_ms"] = round((time.time() - end_wall) * 1000); info["breakdown"] = lag
+                    print("LAG", idx, info["lag_ms"], lag, flush=True)
+                s.audit.append([time.time(), "voice_first_audio", info])
+                await broadcast(r, {"type": "voice_meta", "idx": idx, **info})
+            if kind == "filler" and first:
+                first = False
+                await broadcast(r, {"type": "preface", "idx": idx, "text": meta.get("text", "")})
+            s.voice_log.append((time.time() - (r["started"] or time.time()), ch))
+            if kind == "voice" and idx is not None:
+                s.voice_by_idx = getattr(s, "voice_by_idx", {}); s.voice_by_idx.setdefault(idx, []).append(ch)
+            # pace the sending at ~real time so a later 'skip' can still cut what has not been sent yet
+            ahead = r.get("voice_end", 0) - time.time()
+            if ahead > 1.0:
+                await asyncio.sleep(ahead - 1.0)
+            r["voice_end"] = max(r.get("voice_end", 0), time.time()) + len(ch) / SR
+            await broadcast(r, (b"\x02" if kind == "voice" else b"\x03") + (np.clip(ch, -1, 1) * 32767).astype("<i2").tobytes())
+
+
+def _ensure_playout(r, s):
+    if r.get("playq_session") is not s:
+        r["playq"] = asyncio.Queue(); r["playq_session"] = s
+        asyncio.create_task(_playout_loop(r, s))
+
+
+async def enqueue_voice(r, s, text, idx):
+    """Start generating now (prefetch) and queue the part for ordered playout. Returns immediately."""
+    _ensure_playout(r, s)
+    chunks: asyncio.Queue = asyncio.Queue()
+    meta = {"t_req": time.time(), "gen": r.get("voice_gen", 0), "text": text}
+    r["playq"].put_nowait(("voice", idx, chunks, meta))
+
+    async def gen():
+        try:
+            pool = await _reader_pool(r)
+            rd = pool[r.get("pool_i", 0) % 2]; r["pool_i"] = r.get("pool_i", 0) + 1
+            t0 = time.time(); first = True
+            async for ch in rd.speak(text):
+                if first:
+                    first = False; meta["gen_first_ms"] = round((time.time() - t0) * 1000)
+                await chunks.put(ch)
+        except Exception as e:  # noqa: BLE001
+            await chunks.put(e)
+        await chunks.put(None)
+    asyncio.create_task(gen())
+
+
+async def enqueue_filler(r, s, key, idx):
+    _ensure_playout(r, s)
+    x = await preface_audio(key)
+    chunks: asyncio.Queue = asyncio.Queue()
+    for k in range(0, len(x), 3200):
+        chunks.put_nowait(x[k:k + 3200])
+    chunks.put_nowait(None)
+    r["playq"].put_nowait(("filler", idx, chunks, {"gen": r.get("voice_gen", 0), "text": PREFACES[key]}))
 
 
 async def speak(r, s, text, idx=None):
@@ -486,13 +570,15 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
     lag = {"sentence_end_detect_ms": round(((detected_at or time.time()) - end_wall) * 1000)}
     tq = time.time()
     text, asr_ms = await loop.run_in_executor(None, s.transcribe, t0, t1)
-    if text and s.s.protection == "calm_voice" and r.get("filler", True):
+    if text and s.s.protection == "calm_voice" and r.get("filler", False):
         from calmline.pipeline import needs_gemini
         tox = await loop.run_in_executor(None, s.det, text)
-        gemini_bound = tox.is_toxic or needs_gemini(text)
+        from calmline.offline_calm import offline_calm
+        off_ok = (not tox.is_threat) and tox.is_toxic and offline_calm(text, tox, s.det)[1]
+        gemini_bound = (tox.is_toxic and not off_ok) or (not tox.is_toxic and needs_gemini(text))
         idle = r.get("voice_end", 0) < time.time() + 0.15 and r.get("emitted", 0) >= seq and not tox.is_threat
         streamed_task = None
-        if gemini_bound and os.getenv("CALMLINE_PHRASE_STREAM", "1") == "1" and not tox.is_threat:
+        if gemini_bound and os.getenv("CALMLINE_PHRASE_STREAM", "0") == "1" and not tox.is_threat:
             r.setdefault("lag", {})[seq] = (end_wall, lag)
             streamed_task = asyncio.create_task(phrase_relay(r, s, text, seq, lag, end_wall))
         async def _card_after_stream():
@@ -504,10 +590,10 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
         if gemini_bound and idle:
             # filler only if Gemini has not answered within 0.8 s (fillers help with long waits, cost time on short ones)
             t_f = time.time()
-            while time.time() - t_f < 0.8 and not card_fut.done() and r.get("voice_end", 0) < time.time():
+            while time.time() - t_f < float(os.getenv("CALMLINE_FILLER_AFTER", "1.2")) and not card_fut.done() and r.get("voice_end", 0) < time.time():
                 await asyncio.sleep(0.05)
             if not card_fut.done() and r.get("voice_end", 0) < time.time() + 0.15:
-                asyncio.create_task(play_preface(r, s, "wait", seq))
+                await enqueue_filler(r, s, "wait", seq)
                 lag["preface_ms"] = round((time.time() - end_wall) * 1000)
                 await asyncio.sleep(0)
         card = await card_fut
@@ -541,10 +627,8 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
         text = card["delivered"].split("] ", 1)[-1] if card["delivered"].startswith("[SAFETY") else card["delivered"]
         if card["route"] == "ESCALATE":
             text = "Safety alert. A supervisor is joining. " + text
-        task = asyncio.create_task(speak(r, s, text, card.get("idx")))
-        await asyncio.sleep(0)          # let speak() join the voice queue before the next sentence does
+        await enqueue_voice(r, s, text, card.get("idx"))
         await _done(r)
-        await task
     else:
         await _done(r)
 
@@ -585,7 +669,7 @@ async def process_typed(r, s, text):
         t = card["delivered"].split("] ", 1)[-1]
         if card["route"] == "ESCALATE":
             t = "Safety alert. A supervisor is joining. " + t
-        await speak(r, s, t, card.get("idx"))
+        await enqueue_voice(r, s, t, card.get("idx"))
 
 
 @app.get("/api/voice/{sid}/{idx}")
