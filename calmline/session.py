@@ -175,6 +175,9 @@ class CallSession:
                                                           condition_on_previous_text=False)
         return normalize_asr(" ".join(s.text.strip() for s in segs).strip()), (_t.perf_counter() - _ts) * 1000
 
+    def current_context(self):
+        return " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-4:] if c["delivered"])
+
     def card_from_text(self, text, t0, t1, asr_ms, idx=None):
         return self._card(text, [t0, t1], asr_ms, idx) if text else None
 
@@ -199,7 +202,8 @@ class CallSession:
         if gen is not None and hasattr(gen, "context"):
             gen.context = " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-3:])
         if hasattr(self.pipe, "context"):
-            self.pipe.context = " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-4:] if c["delivered"])
+            fixed = getattr(self, "ctx_for", {}).get(idx)
+            self.pipe.context = fixed if fixed is not None else self.current_context()
         d = self.pipe(text)
         _pipe = (_t.perf_counter() - _ts) * 1000
         from .intents import INTENTS_ALL as INTENTS

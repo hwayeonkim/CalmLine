@@ -114,7 +114,27 @@ def _early(buf: str):
     return d if all(k in d for k in EARLY_KEYS) else None
 
 
-def _stream_analyze(self, text, context="", on_early=None):
+def _partial_calm(buf: str):
+    """Return (text_so_far, finished) of the calm_message string in a partially streamed JSON object."""
+    import re as _re
+    m = _re.search(r'"calm_message"\s*:\s*"', buf)
+    if not m:
+        return None, False
+    i, out = m.end(), []
+    while i < len(buf):
+        c = buf[i]
+        if c == "\\":
+            if i + 1 >= len(buf):
+                break
+            nxt = buf[i + 1]
+            out.append({"n": "\n", "t": "\t", '"': '"', "\\": "\\", "/": "/"}.get(nxt, nxt)); i += 2; continue
+        if c == '"':
+            return "".join(out), True
+        out.append(c); i += 1
+    return "".join(out), False
+
+
+def _stream_analyze(self, text, context="", on_early=None, on_partial=None):
     """Streaming variant: calls on_early(dict) as soon as the safety fields + calm message are complete."""
     from .textnorm import fact_present as _fp
     self.stats["calls"] += 1
@@ -130,6 +150,8 @@ def _stream_analyze(self, text, context="", on_early=None):
             try:
                 for ch in self.G.client().models.generate_content_stream(model=m, contents=prompt, config=self.cfg):
                     raw += ch.text or ""
+                    if on_partial:
+                        on_partial(raw)
                     if on_early and not fired:
                         e = _early(raw)
                         if e is not None:
@@ -150,6 +172,8 @@ def _stream_analyze(self, text, context="", on_early=None):
     except Exception:  # noqa: BLE001
         self.stats["errors"] += 1
         return None
+    if hit and on_partial:
+        on_partial(raw)
     if on_early and hit:
         on_early({k: out.get(k) for k in EARLY_KEYS} | {"model": model})
     slots, dropped = {}, []

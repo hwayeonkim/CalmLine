@@ -88,7 +88,7 @@ async def reset_room(name):
     prot = old.s.protection
     r["session"] = new_session(); r["session"].s.protection = prot
     r["started"] = None
-    r["utt_seq"] = 0; r["emitted"] = 0; r["voice_end"] = 0; r["lag"] = {}
+    r["utt_seq"] = 0; r["emitted"] = 0; r["voice_end"] = 0; r["lag"] = {}; r["streamed"] = {}; r["utt_end"] = {}
     await broadcast(r, {"type": "reset", "session": r["session"].id})
     return r
 
@@ -282,8 +282,13 @@ async def speak(r, s, text, idx=None):
         # Live streams roughly in real time, so a sentence that had to queue behind the previous one is "behind"
         backlog = max(r.get("voice_end", 0) - time.time(), t_lock - t_req)
         pace = "fast" if (backlog > 0.8 or os.getenv("CALMLINE_PACE", "fast") == "fast") else "normal"
-        via = "live" if pace == "normal" else "live (fast pace)"
-        live = await _live(r, pace)
+        via = "live (fast pace)"
+        try:
+            pool = await _reader_pool(r)
+            live = pool[r.get("pool_i", 0) % 2]; r["pool_i"] = r.get("pool_i", 0) + 1
+        except Exception as e:  # noqa: BLE001
+            live = None
+            print("pool failed:", str(e)[:120], flush=True)
         if live is not None:
             try:
                 async for ch in live.speak(text):
@@ -293,7 +298,6 @@ async def speak(r, s, text, idx=None):
                 print("live failed:", str(e)[:120], flush=True)
                 if not first:      # drifted mid-sentence: stop, show the text, don't re-speak
                     await broadcast(r, {"type": "voice_cut", "text": text}); return
-                await live.close(); r["live" if pace == "normal" else "live_fast"] = None
         via = "tts"
         if r.get("tts_down") and time.time() < r["tts_down"]:
             await broadcast(r, {"type": "voice_fallback", "text": text}); return
@@ -332,6 +336,148 @@ async def _done(r):
         cond.notify_all()
 
 
+async def _reader_pool(r):
+    """Two calm-voice readers used alternately: Live generates at ~1.0x real time, so while one reads phrase k the other
+    already generates phrase k+1 and there is no gap between phrases."""
+    from calmline.live_voice import LiveReader
+    if not r.get("pool"):
+        r["pool"] = [LiveReader(pace="fast"), LiveReader(pace="fast")]
+        await asyncio.gather(*[x.connect() for x in r["pool"]], return_exceptions=True)
+        r["pool_i"] = 0
+    return r["pool"]
+
+
+async def phrase_relay(r, s, text, seq, lag, end_wall):
+    """v19 incremental relay: stream Gemini's JSON, cut the calm message into phrases as it is written, verify each
+    phrase, and start speaking the first phrase before Gemini has finished (SpeakStream-style text-streaming TTS).
+    Returns True if the part was spoken this way."""
+    import re as _re
+    from calmline.understand import _partial_calm, _early
+    from calmline.textnorm import numbers
+    loop = asyncio.get_running_loop()
+    q: asyncio.Queue = asyncio.Queue()
+    sent = {"n": 0, "flags": None}
+
+    def on_partial(raw):
+        if sent["flags"] is None:
+            e = _early(raw) if '"calm_message"' in raw else None
+            m = _re.search(r'"nothing_to_relay"\s*:\s*(true|false)', raw)
+            t = _re.search(r'"threat"\s*:\s*(true|false)', raw)
+            h = _re.search(r'"self_harm"\s*:\s*(true|false)', raw)
+            if m and t and h:
+                sent["flags"] = dict(threat=t.group(1) == "true", self_harm=h.group(1) == "true", nothing=m.group(1) == "true")
+                loop.call_soon_threadsafe(q.put_nowait, ("flags", sent["flags"]))
+        calm, done = _partial_calm(raw)
+        if calm is None:
+            return
+        rest = calm[sent["n"]:]
+        cuts = [mm.end() for mm in _re.finditer(r"[.,;!?](?=\s)", rest)]
+        cut = None
+        for c in cuts:
+            if len(rest[:c].split()) >= 4:
+                cut = c
+        if done:
+            cut = len(rest)
+        if cut:
+            ph = rest[:cut].strip()
+            sent["n"] += cut
+            if ph:
+                loop.call_soon_threadsafe(q.put_nowait, ("phrase", ph))
+        if done and sent.get("closed") is None:
+            sent["closed"] = True
+            loop.call_soon_threadsafe(q.put_nowait, ("end", None))
+
+    ctx = s.current_context()
+    s.ctx_for = getattr(s, "ctx_for", {}); s.ctx_for[seq] = ctx
+    und = s.pipe.understanding
+    fut = loop.run_in_executor(None, lambda: und.analyze_stream(text, ctx, None, on_partial))
+    pool = await _reader_pool(r)
+    phrases, gens = [], []
+
+    async def gen(ph, k):
+        rd = pool[r.get("pool_i", 0) % 2]; r["pool_i"] = r.get("pool_i", 0) + 1
+        out: asyncio.Queue = asyncio.Queue()
+        async def run():
+            try:
+                async for ch in rd.speak(ph):
+                    await out.put(ch)
+            except Exception as e:  # noqa: BLE001
+                await out.put(e)
+            await out.put(None)
+        asyncio.create_task(run())
+        return out
+
+    # wait for the safety flags (they precede calm_message in the JSON)
+    try:
+        kind, val = await asyncio.wait_for(q.get(), timeout=float(os.getenv("CALMLINE_GEMINI_BUDGET", "2.5")))
+    except asyncio.TimeoutError:
+        return False
+    if kind != "flags" or val["threat"] or val["self_harm"] or val["nothing"]:
+        return False
+    # wait our turn in the voice order, but start generating phrases immediately
+    turn_task = asyncio.create_task(_turn(r, seq))
+    k = 0
+    pending = []
+    first = True
+    t_lock = None
+    while True:
+        kind, val = await q.get()
+        if kind == "end":
+            break
+        if kind != "phrase":
+            continue
+        bad = s.det(val).is_toxic or (numbers(val) - numbers(text) - {"311"})
+        if bad:
+            lag["phrase_rejected"] = val[:60]
+            break
+        pending.append((val, await gen(val, k))); k += 1
+        if first:
+            first = False
+            await turn_task
+            await r.setdefault("voice_lock", asyncio.Lock()).acquire()
+            t_lock = time.time()
+            asyncio.create_task(_playout(r, s, seq, pending, lag, end_wall, t_lock))
+    if first:          # nothing spoken (rejected first phrase / empty)
+        if not turn_task.done():
+            turn_task.cancel()
+        return False
+    pending.append(None)     # end marker for playout
+    r.setdefault("streamed", {})[seq] = True
+    return True
+
+
+async def _playout(r, s, seq, pending, lag, end_wall, t_lock):
+    """Play phrase audio in order (holds the voice lock until the whole part has been sent)."""
+    try:
+        i, first = 0, True
+        while True:
+            while i >= len(pending):
+                await asyncio.sleep(0.02)
+            item = pending[i]
+            if item is None:
+                break
+            ph, qu = item
+            while True:
+                ch = await qu.get()
+                if ch is None or isinstance(ch, Exception):
+                    break
+                if first:
+                    first = False
+                    info = dict(queued_ms=0, first_audio_ms=round((time.time() - t_lock) * 1000), via="live (phrase stream)",
+                                lag_ms=round((time.time() - end_wall) * 1000))
+                    lag.update(wait_previous_voice_ms=0, voice_first_sound_ms=info["first_audio_ms"])
+                    info["breakdown"] = lag
+                    print("LAG", seq, info["lag_ms"], lag, flush=True)
+                    await broadcast(r, {"type": "voice_meta", "idx": seq, **info})
+                s.voice_log.append((time.time() - (r["started"] or time.time()), ch))
+                s.voice_by_idx = getattr(s, "voice_by_idx", {}); s.voice_by_idx.setdefault(seq, []).append(ch)
+                r["voice_end"] = max(r.get("voice_end", 0), time.time()) + len(ch) / SR
+                await broadcast(r, b"\x02" + (np.clip(ch, -1, 1) * 32767).astype("<i2").tobytes())
+            i += 1
+    finally:
+        r["voice_lock"].release()
+
+
 async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
     """Pass 2 for one sentence: ASR -> pipeline (Gemini + checks) -> card -> calm voice.
     Sentences run in parallel (a slow Gemini answer no longer holds up the next sentence); cards are emitted in order."""
@@ -345,11 +491,22 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
         tox = await loop.run_in_executor(None, s.det, text)
         gemini_bound = tox.is_toxic or needs_gemini(text)
         idle = r.get("voice_end", 0) < time.time() + 0.15 and r.get("emitted", 0) >= seq and not tox.is_threat
-        card_fut = loop.run_in_executor(None, s.card_from_text, text, t0, t1, asr_ms, seq)
+        streamed_task = None
+        if gemini_bound and os.getenv("CALMLINE_PHRASE_STREAM", "1") == "1" and not tox.is_threat:
+            r.setdefault("lag", {})[seq] = (end_wall, lag)
+            streamed_task = asyncio.create_task(phrase_relay(r, s, text, seq, lag, end_wall))
+        async def _card_after_stream():
+            if streamed_task is not None:
+                # the stream caches Gemini's answer under the same prompt, so the card is built without a second call
+                await asyncio.wait({streamed_task}, timeout=6)
+            return await loop.run_in_executor(None, s.card_from_text, text, t0, t1, asr_ms, seq)
+        card_fut = asyncio.ensure_future(_card_after_stream())
         if gemini_bound and idle:
             # filler only if Gemini has not answered within 0.8 s (fillers help with long waits, cost time on short ones)
-            done, _ = await asyncio.wait({card_fut}, timeout=0.8)
-            if not done and r.get("voice_end", 0) < time.time() + 0.15:
+            t_f = time.time()
+            while time.time() - t_f < 0.8 and not card_fut.done() and r.get("voice_end", 0) < time.time():
+                await asyncio.sleep(0.05)
+            if not card_fut.done() and r.get("voice_end", 0) < time.time() + 0.15:
                 asyncio.create_task(play_preface(r, s, "wait", seq))
                 lag["preface_ms"] = round((time.time() - end_wall) * 1000)
                 await asyncio.sleep(0)
@@ -374,6 +531,9 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0):
         if card.get("route") == "ESCALATE":
             await broadcast(r, {"type": "alert", "label": "threat"})
     if card.get("withheld") and card.get("route") != "ESCALATE":
+        await _done(r)
+        return
+    if r.get("streamed", {}).get(card["idx"]):
         await _done(r)
         return
     if s.s.protection == "calm_voice":
@@ -476,7 +636,7 @@ async def ws_caller(ws: WebSocket, name: str):
     if r["session"].closed:
         r = await reset_room(name)
     s = r["session"]
-    asyncio.create_task(_live(r, "fast"))
+    asyncio.create_task(_reader_pool(r))
     clock_started = False
     buf = np.zeros(0, np.float32)
     loop = asyncio.get_running_loop()
@@ -554,7 +714,7 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     import soundfile as sf
     await ws.accept()
     r = await reset_room(name); s = r["session"]
-    asyncio.create_task(_live(r, "fast"))
+    asyncio.create_task(_reader_pool(r))
     try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
         await asyncio.wait_for(ws.receive_text(), timeout=8)
     except Exception:
