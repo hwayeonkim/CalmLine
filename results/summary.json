@@ -1185,6 +1185,31 @@
    },
    "latency_p50": 8.3319,
    "latency_p95": 27.2075
+  },
+  "passive": {
+   "n": 40,
+   "route_acc": 0.55,
+   "abuse_recall": 0.1,
+   "leak_rate": 1.0,
+   "protected": 0.0,
+   "threat_recall": NaN,
+   "threat_precision": NaN,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 0.9833,
+   "sufficiency_toxic": 0.95,
+   "fact_recall_all": 0.9917,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 1.0,
+   "intent_acc_all": 0.05,
+   "wrong_issue_rate": 0.0,
+   "tier_dist": {
+    "0": 38,
+    "1": 2,
+    "2": 0,
+    "3": 0
+   },
+   "latency_p50": 10.6982,
+   "latency_p95": 21.1299
   }
  },
  "v12": {
@@ -1486,6 +1511,110 @@
    "latency_p95": 9413.8063,
    "residual_toxicity": 0.0482
   },
-  "desc": "Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified."
+  "desc": "Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.",
+  "passive": {
+   "n": 40,
+   "route_acc": 0.55,
+   "abuse_recall": 0.1,
+   "leak_rate": 0.9,
+   "protected": 0.1,
+   "threat_recall": NaN,
+   "threat_precision": NaN,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 1.0,
+   "sufficiency_toxic": 1.0,
+   "fact_recall_all": 1.0,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 1.0,
+   "intent_acc_all": 0.975,
+   "wrong_issue_rate": 0.0,
+   "tier_dist": {
+    "0": 38,
+    "1": 2,
+    "2": 0,
+    "3": 0
+   },
+   "latency_p50": 1373.5626,
+   "latency_p95": 5346.7858
+  }
+ },
+ "v16": {
+  "passive": {
+   "n": 40,
+   "route_acc": 0.975,
+   "abuse_recall": 0.95,
+   "leak_rate": 0.05,
+   "protected": 0.95,
+   "threat_recall": NaN,
+   "threat_precision": NaN,
+   "false_positive_rate": 0.0,
+   "fact_recall_toxic": 1.0,
+   "sufficiency_toxic": 1.0,
+   "fact_recall_all": 1.0,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.9474,
+   "intent_acc_all": 0.95,
+   "wrong_issue_rate": 0.0,
+   "tier_dist": {
+    "0": 21,
+    "1": 19,
+    "2": 0,
+    "3": 0
+   },
+   "latency_p50": 2193.0377,
+   "latency_p95": 13843.5516
+  },
+  "desc": "v15 + passive-aggressive belittling: Gemini flags polite-sounding sarcasm/condescension toward the agent (but not the caller's frustration), and a Gemini-only flag is enough to relay the calm version",
+  "hardneg": {
+   "n": 98,
+   "route_acc": 0.9898,
+   "abuse_recall": NaN,
+   "leak_rate": NaN,
+   "protected": NaN,
+   "threat_recall": NaN,
+   "threat_precision": 0.0,
+   "false_positive_rate": 0.0102,
+   "fact_recall_toxic": NaN,
+   "sufficiency_toxic": NaN,
+   "fact_recall_all": 1.0,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.0,
+   "intent_acc_all": 0.2551,
+   "wrong_issue_rate": 1.0,
+   "tier_dist": {
+    "0": 97,
+    "1": 1,
+    "2": 0,
+    "3": 0
+   },
+   "latency_p50": 2264.8326,
+   "latency_p95": 13009.2669
+  },
+  "test": {
+   "n": 134,
+   "route_acc": 0.9925,
+   "abuse_recall": 1.0,
+   "leak_rate": 0.0,
+   "protected": 1.0,
+   "threat_recall": 1.0,
+   "threat_precision": 0.9286,
+   "false_positive_rate": 0.0213,
+   "fact_recall_toxic": 0.9237,
+   "sufficiency_toxic": 0.8916,
+   "fact_recall_all": 0.9453,
+   "halluc_rate": 0.0,
+   "intent_acc_routed": 0.9318,
+   "intent_acc_all": 0.9254,
+   "wrong_issue_rate": 0.0682,
+   "tier_dist": {
+    "0": 46,
+    "1": 86,
+    "2": 0,
+    "3": 2
+   },
+   "latency_p50": 2297.3661,
+   "latency_p95": 12582.0353,
+   "residual_toxicity": 0.0602
+  }
  }
 }

@@ -6,7 +6,7 @@ from .render import TemplateRenderer, HybridRenderer, MaskRenderer, ConfidenceGa
 
 def _best():
     from .gemini import available
-    return "v15" if available() else "v11"
+    return "v16" if available() else "v11"
 
 
 BEST = _best()   # v13 (Gemini relay) when a key is configured, else the offline v11
@@ -27,6 +27,7 @@ DESCRIPTIONS = {
     "v12": "v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown",
     "v13": "Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback",
     "v15": "Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.",
+    "v16": "v15 + passive-aggressive belittling: Gemini flags polite-sounding sarcasm/condescension toward the agent (but not the caller's frustration), and a Gemini-only flag is enough to relay the calm version",
     "llm_all": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) — is the template ladder still needed?",
     "llm_raw": "Ablation: every abusive utterance rewritten by the LLM, *unverified* — what verification buys",
 }
@@ -100,6 +101,9 @@ def build(version: str) -> Pipeline:
             name = "none"
         checker = VerifiedRewriter(_NoGen(), p.detector, p.renderer)  # only .check() is used
         p.understanding, p.understand_all, p.checker, p.name = GeminiUnderstanding(), True, checker, "v15"
+        return p
+    if version == "v16":
+        p = build("v15"); p.gemini_detects = True; p.name = "v16"
         return p
     if version in ("v12", "llm_all", "llm_raw"):
         from .llm import VerifiedRewriter

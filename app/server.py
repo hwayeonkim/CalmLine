@@ -203,6 +203,9 @@ async def speak(r, s, text, idx=None):
             if first:
                 first = False
                 info = dict(queued_ms=round((t_lock - t_req) * 1000), first_audio_ms=round((time.time() - t_lock) * 1000), via=via)
+                t1 = r.get("utt_end", {}).get(idx)
+                if t1 and r.get("started"):
+                    info["lag_ms"] = round((time.time() - (r["started"] + t1)) * 1000)   # caller finished -> first calm sound sent
                 s.audit.append([time.time(), "voice_first_audio", info]); print("TIMING voice", info, flush=True)
                 await broadcast(r, {"type": "voice_meta", "idx": idx, **info})
             if idx is not None:
@@ -256,12 +259,15 @@ async def process_utt(r, s, t0, t1):
             return
         card["timing"]["queued_ms"] = round((time.time() - tq) * 1000) - card["timing"]["asr_ms"] - card["timing"]["rewrite_pipeline_ms"]
         print("TIMING card", card["timing"], "speech_end", round(t1, 2), "emitted_at_call_s", round(time.time() - (r["started"] or time.time()), 2), flush=True)
+        if card["t"][1] > 0 and r["started"]:
+            card["ready_lag_ms"] = round((time.time() - (r["started"] + card["t"][1])) * 1000)
         await broadcast(r, card)
         if card.get("route") == "ESCALATE":
             await broadcast(r, {"type": "alert", "label": "threat"})
     if card.get("withheld") and card.get("route") != "ESCALATE":
         return
     if s.s.protection == "calm_voice":
+        r.setdefault("utt_end", {})[card["idx"]] = card["t"][1]
         text = card["delivered"].split("] ", 1)[-1] if card["delivered"].startswith("[SAFETY") else card["delivered"]
         if card["route"] == "ESCALATE":
             text = "Safety alert. A supervisor is joining. " + text

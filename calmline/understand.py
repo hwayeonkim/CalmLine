@@ -41,7 +41,11 @@ Use the earlier sentences of the call for context when the latest words alone ar
 slots: copy each value VERBATIM from the latest words (an exact substring); leave a slot out if it is not said.
   location (address, street, cross streets), apartment, when (start time/day/frequency), how_long, previous_contact,
   reference_number, vehicle, plate, people_affected (vulnerable people, e.g. "three kids", "my mother"), caller_request.
-abusive_phrases: exact substrings that are insults, profanity, sexual remarks, slurs or threats.
+abusive_phrases: exact substrings that are insults, profanity, sexual remarks, slurs or threats — and also polite-sounding
+  belittling of the agent: sarcasm or condescension about the agent's intelligence, competence or job, and patronising pet
+  names. Judge whether the phrase is aimed at the agent as a person. Do NOT include the caller's own feelings, urgency or
+  legitimate complaints about the service (frustration, repeated calls, waiting time, nobody coming): those are information
+  the agent needs.
 calm_message: what a calm, polite caller would have said instead — first person, natural spoken English, every fact kept,
   all abuse dropped, nothing added (no invented requests, numbers or details). Questions stay questions.
   When an insult stands for a person ("some asshole parked..."), say "someone"; when it describes the agent or agency, drop it.

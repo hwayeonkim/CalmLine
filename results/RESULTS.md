@@ -21,6 +21,7 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 | v12 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 78.3 | 85.8 | 3.5 | 0.0 | — |
 | v13 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 86.8 | 93.5 | 13.8 | 0.0 | — |
 | v15 † | 98.8 | 1.2 | 100.0 | 100.0 | 92.9 | 2.1 | — | 89.2 | 92.7 | 10.3 | 0.0 | — |
+| v16 † | 100.0 | 0.0 | 100.0 | 100.0 | 92.9 | 2.1 | 1.0 | 89.2 | 92.4 | 6.8 | 0.0 | — |
 
 *protected* = abusive utterance detected **and** no abusive span reached the agent. *sufficiency* = every gold fact needed to resolve the complaint survives in what the agent receives (abusive utterances only). *FPR* = clean utterances that were rewritten. *halluc* = numbers in the agent's text that the caller never said. *wrong issue* = the agent's text asserts the wrong complaint type. *p95 ms* = clean per-utterance latency on Apple M5 (`eval/latency.py`), measured for the milestone versions. † = post-hoc: built after reading v10's test errors, so its test numbers are optimistic.
 
@@ -83,6 +84,7 @@ All numbers are produced by `python -m eval.run_text <versions>`; every version 
 - **v12** — v11 + tier 2: verified LLM rewrite (Gemini if GEMINI_API_KEY is set, else local Gemma 3 1B) for utterances whose intent is unknown
 - **v13** — Calm-voice relay: v11 detection + every abusive utterance rewritten by Gemini (3.5-flash-lite, fallback chain) into a natural first-person message, accepted only if it passes the deterministic checks; v11 template ladder as fallback
 - **v15** — Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.
+- **v16** — v15 + passive-aggressive belittling: Gemini flags polite-sounding sarcasm/condescension toward the agent (but not the caller's frustration), and a Gemini-only flag is enough to relay the calm version
 
 ## Detector benchmark (utterance level)
 

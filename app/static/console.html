@@ -66,6 +66,12 @@ body.nojudge .hood{display:none}
 .speaking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
 .bars{display:flex;gap:3px;align-items:flex-end;height:16px}.bars i{width:3px;background:var(--calm);border-radius:2px;animation:bar .9s infinite ease-in-out}
 .bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}@keyframes bar{0%,100%{height:4px}50%{height:16px}}
+/* live timeline */
+.tline{padding:10px 14px 8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.tlhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px}
+.now{font-weight:600}.lag{font:500 12px var(--mono);padding:3px 7px;border-radius:6px;background:var(--soft);border:1px solid var(--line)}
+.legend{display:flex;gap:12px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}.legend i{display:inline-block;width:12px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+canvas#tlc{width:100%;height:74px;display:block}
 /* service request */
 .srb{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .srow{display:grid;grid-template-columns:118px 1fr;gap:8px;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:6px}
@@ -108,6 +114,11 @@ body.nojudge .hood{display:none}
     <div class="abar"><span class="pill" id="state">idle</span><span class="stat" id="timer">00:00</span>
       <div class="meter">Agitation<div class="g"><i id="g"></i></div></div><span class="stat" id="blocked">0 words muted</span>
       <label class="judge"><input type="checkbox" id="judge" checked> Show what CalmLine hid (demo view)</label></div>
+    <div class="tline" aria-label="Live timeline">
+      <div class="tlhead"><span class="now" id="now">Waiting for a call</span><span class="lag" id="laglast" title="Time from the caller finishing a sentence to the agent hearing its calm version">delay: —</span><span class="stat" id="lagavg"></span></div>
+      <canvas id="tlc" height="74"></canvas>
+      <div class="legend"><span><i style="background:#9AA7B2"></i>caller speaking</span><span><i style="background:#C24A3A"></i>muted word</span><span><i style="background:repeating-linear-gradient(45deg,#E0A35F 0 3px,#F6E3C8 3px 6px)"></i>CalmLine processing (agent hears silence)</span><span><i style="background:#1D6E68"></i>agent hears calm voice</span><span><i style="background:#D9A23A"></i>withheld</span></div>
+    </div>
     <div class="conv" id="conv"><div id="alerts"></div>
       <div class="empty" id="empty"><b>Nothing yet.</b> Play a sample call on the left, speak, or type a sentence. Each caller sentence appears here as what the agent hears; the grey strip under it shows what CalmLine actually heard and did.</div>
       <div class="speaking" id="speaking" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span>Caller is speaking…</span></div>
@@ -135,6 +146,7 @@ const SCEN=[
  ['Pothole','street condition',"Write this down, genius: the pothole on Linden Boulevard near Euclid Avenue wrecked my tire yesterday."],
  ['Missed pickup','missed collection',"You lazy bums skipped recycling on Bergen Street again, that's three weeks now."],
  ['Rats / dumping','rodents',"These rats are killing me, there's trash piled behind the deli on Tremont Avenue every night."],
+ ['Polite but belittling','passive-aggressive',"I'll speak slowly so even you can follow: the street light at Church Avenue and East 18th Street has been out for two weeks."],
  ['Threat (tests escalation)','threat',"If nobody fixes my heat today I'm going to come down there and beat somebody."],
  ['Polite caller (should pass)','no abuse',"Hi, water is leaking through my bathroom ceiling at 222 East 21st Street, could you send an inspector this week?"],
 ];
@@ -144,7 +156,45 @@ function applyListen(){if(gain)gain.gain.value=listen==='caller'?0:1;if(sampleAu
 function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16Array(buf.slice(1));if(!pcm.length||!ctx)return;
   const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
   const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
-  if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
+  if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tlVoiceChunk(tVoice,b.duration);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
+// ---------- live timeline ----------
+const TL={start:null,voiced:[],mutes:[],sents:[],voice:[],cur:null,lags:[]};
+function wallOf(ct){return TL.start===null?null:TL.start+ct*1000}
+function tlPartial(m){const est=Date.now()-m.ct*1000;TL.start=TL.start===null?est:Math.min(TL.start,est);
+  if(m.voiced)TL.voiced.push([wallOf(m.c0),wallOf(m.ct)])}
+function tlReset(){TL.start=null;TL.voiced=[];TL.mutes=[];TL.sents=[];TL.voice=[];TL.cur=null;TL.lags=[];document.getElementById('laglast').textContent='delay: —';document.getElementById('lagavg').textContent=''}
+function drawTL(){const c=document.getElementById('tlc');const W=c.clientWidth,H=74;if(c.width!==W*devicePixelRatio){c.width=W*devicePixelRatio;c.height=H*devicePixelRatio}
+  const g=c.getContext('2d');g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);g.clearRect(0,0,W,H);
+  const now=Date.now(),span=20000,L=64,x=t=>L+(t-(now-span))/span*(W-L-4);
+  g.font='11px IBM Plex Sans, sans-serif';g.fillStyle='#5E6D7B';g.fillText('Caller',4,22);g.fillText('Agent hears',4,56);
+  g.fillStyle='#F5F8F9';g.fillRect(L,8,W-L-4,24);g.fillRect(L,42,W-L-4,24);
+  for(let k=0;k<=20;k+=5){const xx=x(now-k*1000);g.fillStyle='#DAE1E6';g.fillRect(xx,6,1,62);g.fillStyle='#9AA7B2';g.fillText(k?`-${k}s`:'now',xx-(k?10:22),74)}
+  const bar=(a,b,y,h,col)=>{if(b<now-span||a>now)return;const xa=Math.max(L,x(a)),xb=Math.min(W-4,x(b));if(xb>xa){g.fillStyle=col;g.fillRect(xa,y,Math.max(1.5,xb-xa),h)}};
+  TL.voiced.forEach(([a,b])=>bar(a,b,12,16,'#9AA7B2'));
+  TL.mutes.forEach(([a,b])=>bar(a,b,10,20,'#C24A3A'));
+  TL.sents.forEach(s=>{if(s.end==null)return;const a=s.end,b=s.voiceStart||(s.withheld?s.cardAt:now);
+    if(!s.withheld||s.cardAt){const pat=g.createPattern(hatch(),'repeat');g.fillStyle=pat;const xa=Math.max(L,x(a)),xb=Math.min(W-4,x(b||now));if(xb>xa&&b>now-span)g.fillRect(xa,46,xb-xa,16)}
+    if(s.withheld&&s.cardAt)bar(s.cardAt,s.cardAt+500,46,16,'#D9A23A');
+    if(s.t0!=null){const xa=x(s.t0),xb=x(s.end);if(xb>L&&xa<W){g.strokeStyle='#5E6D7B';g.lineWidth=1;g.strokeRect(Math.max(L,xa)+.5,8.5,Math.max(2,xb-Math.max(L,xa)-1),23);g.fillStyle='#16202A';if(xa>L)g.fillText('#'+(s.idx+1),xa+3,20)}}});
+  TL.voice.forEach(v=>{bar(v.a,v.b,46,16,'#1D6E68');if(v.first&&x(v.a)>L){g.fillStyle='#fff';g.fillText('#'+(v.idx+1),x(v.a)+3,58)}});
+  // status line
+  const speaking=TL.voiced.length&&now-TL.voiced[TL.voiced.length-1][1]<900;
+  const playing=TL.voice.find(v=>v.a<=now&&v.b>=now);const proc=TL.sents.filter(s=>s.end&&!s.voiceStart&&!s.withheld);
+  const parts=[];if(speaking)parts.push('Caller is speaking');if(playing)parts.push(`agent is hearing sentence #${playing.idx+1} (calm voice)`);
+  else if(proc.length)parts.push(`agent hears silence — CalmLine is processing sentence #${proc[0].idx+1}`);
+  else if(TL.start!==null)parts.push('agent hears silence');
+  document.getElementById('now').textContent=parts.length?parts.join(' · '):'Waiting for a call';
+  requestAnimationFrame(drawTL)}
+let _h;function hatch(){if(_h)return _h;_h=document.createElement('canvas');_h.width=_h.height=6;const q=_h.getContext('2d');q.fillStyle='#F6E3C8';q.fillRect(0,0,6,6);q.strokeStyle='#E0A35F';q.lineWidth=2;q.beginPath();q.moveTo(0,6);q.lineTo(6,0);q.stroke();return _h}
+function tlCard(m){if(!m.t||!(m.t[1]>0)||TL.start===null)return;TL.sents.push({idx:m.idx,t0:wallOf(m.t[0]),end:wallOf(m.t[1]),withheld:m.withheld&&m.route!=='ESCALATE',cardAt:Date.now(),voiceStart:null})}
+let voiceIdx=null,voiceFirst=false;
+function tlVoiceMeta(m){voiceIdx=m.idx;voiceFirst=true}
+function tlVoiceChunk(startCtx,dur){const wallStart=Date.now()+(startCtx-ctx.currentTime)*1000;const v={idx:voiceIdx,a:wallStart,b:wallStart+dur*1000,first:voiceFirst};TL.voice.push(v);
+  if(voiceFirst){const s=TL.sents.find(x=>x.idx===voiceIdx);if(s&&!s.voiceStart){s.voiceStart=wallStart;const lag=(wallStart-s.end)/1000;TL.lags.push(lag);
+      document.getElementById('laglast').textContent=`delay: ${lag.toFixed(1)} s`;const avg=TL.lags.reduce((a,b)=>a+b,0)/TL.lags.length;document.getElementById('lagavg').textContent=`avg ${avg.toFixed(1)} s over ${TL.lags.length} sentence${TL.lags.length>1?'s':''}`;
+      const el=document.getElementById('v'+voiceIdx);if(el)el.textContent+=` · heard ${lag.toFixed(1)} s after the caller finished`}}
+  voiceFirst=false}
+requestAnimationFrame(drawTL);
 // ---------- agent socket ----------
 function connectAgent(){return new Promise(res=>{if(agentWs&&agentWs.readyState===1)return res();
   agentWs=new WebSocket(`${proto}://${location.host}/ws/agent/${room}`);agentWs.binaryType='arraybuffer';
@@ -152,12 +202,12 @@ function connectAgent(){return new Promise(res=>{if(agentWs&&agentWs.readyState=
   agentWs.onmessage=e=>{if(typeof e.data!=='string'){onAudio(e.data);return}const m=JSON.parse(e.data);
     if(m.type==='hello')sid=m.session;
     if(m.type==='reset'){sid=m.session;resetView()}
-    if(m.type==='partial'){started();document.getElementById('g').style.width=Math.round(100*m.anger)+'%';showSpeaking()}
-    if(m.type==='mute'){muted++;document.getElementById('blocked').textContent=muted+' word'+(muted>1?'s':'')+' muted'}
+    if(m.type==='partial'){tlPartial(m);started();document.getElementById('g').style.width=Math.round(100*m.anger)+'%';showSpeaking()}
+    if(m.type==='mute'){if(TL.start!==null)TL.mutes.push([wallOf(m.start-0.25),wallOf(m.end+0.25)]);muted++;document.getElementById('blocked').textContent=muted+' word'+(muted>1?'s':'')+' muted'}
     if(m.type==='alert')banner(m.label);
     if(m.type==='typed')started();
-    if(m.type==='card')turn(m);
-    if(m.type==='voice_meta')voiceMeta(m);
+    if(m.type==='card'){tlCard(m);turn(m)}
+    if(m.type==='voice_meta'){tlVoiceMeta(m);voiceMeta(m)}
     if(m.type==='voice_fallback'&&listen!=='caller'&&'speechSynthesis' in window){speechSynthesis.speak(new SpeechSynthesisUtterance(m.text))}
     if(m.type==='ended'){setState('call ended');clearInterval(timer);document.getElementById('speaking').hidden=true}
     if(m.type==='compare_ready')showCompare()}})}
@@ -196,7 +246,7 @@ function renderSR(){const b=document.getElementById('srb');
   SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
 async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
   document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
-function resetView(){document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
+function resetView(){tlReset();document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
   document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
   if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
 // ---------- caller: samples ----------

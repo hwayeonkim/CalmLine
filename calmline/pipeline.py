@@ -12,7 +12,7 @@ ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
                  mask_for_intent=True, unknown_mode="mask", mask_mild=False, mask_slots=False, understanding=None,
-                 understand_all=False, checker=None):
+                 understand_all=False, checker=None, gemini_detects=False):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
@@ -21,6 +21,7 @@ class Pipeline:
         self.mask_mild = mask_mild
         self.mask_slots = mask_slots
         self.understanding, self.understand_all, self.checker = understanding, understand_all, checker
+        self.gemini_detects = gemini_detects
         self.context = ""        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
@@ -98,6 +99,16 @@ class Pipeline:
             d.tier = 1
             d.timings_ms = t
             return d
+        if d.route == "PASS" and self.gemini_detects and u.get("abusive_phrases"):
+            # v16: Gemini-only detection (passive-aggressive belittling has no lexical or Jigsaw signal)
+            d.route = "CALM"
+            d.abuse_types = sorted(set(d.abuse_types) | {"belittling"})
+            from .schema import Span
+            for ph in u["abusive_phrases"]:
+                i = text.lower().find(ph.lower())
+                if i >= 0:
+                    tox.spans.append(Span(i, i + len(ph), "belittling", ph))
+            tox.is_toxic = True
         if d.route == "PASS":
             d.timings_ms = t
             return d

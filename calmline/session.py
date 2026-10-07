@@ -102,7 +102,8 @@ class CallSession:
                     ev.append({"type": "mute", "start": w.start, "end": w.end, "label": sp.label})
                     # no alert from pass 1: a 3-second window of tiny.en is too noisy to page a supervisor on;
                     # the alert is raised from the verified pass-2 sentence (process_utt) instead.
-        ev.append({"type": "partial", "anger": round(self.anger, 2)})
+        ev.append({"type": "partial", "anger": round(self.anger, 2), "ct": round(start + len(pcm) / SR, 3),
+                   "c0": round(start, 3), "voiced": bool(voiced)})
         # pass 2 is scheduled, not run here, so mute decisions on the next chunks are never blocked.
         # Utterance boundary = a short pause (sentence-level relay) or end of call.
         now = start + len(pcm) / SR
