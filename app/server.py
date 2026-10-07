@@ -190,8 +190,10 @@ async def _live(r, pace="normal"):
         except Exception as e:  # noqa: BLE001
             print("live connect failed:", str(e)[:120], flush=True)
             r[key] = False
-    if pace == "normal" and r.get("live_fast") is None:
+    if r.get("live_fast") is None and pace == "normal":
         asyncio.create_task(_live(r, "fast"))
+    if r.get("live") is None and pace == "fast":
+        asyncio.create_task(_live(r, "normal"))
     return r[key] or None
 
 
@@ -231,8 +233,8 @@ async def speak(r, s, text, idx=None):
         # if the agent is still hearing earlier sentences, read this one faster to catch up
         # Live streams roughly in real time, so a sentence that had to queue behind the previous one is "behind"
         backlog = max(r.get("voice_end", 0) - time.time(), t_lock - t_req)
-        pace = "fast" if backlog > 0.8 else "normal"
-        via = "live" if pace == "normal" else "live (fast catch-up)"
+        pace = "fast" if (backlog > 0.8 or os.getenv("CALMLINE_PACE", "fast") == "fast") else "normal"
+        via = "live" if pace == "normal" else "live (fast pace)"
         live = await _live(r, pace)
         if live is not None:
             try:
@@ -410,7 +412,7 @@ async def ws_caller(ws: WebSocket, name: str):
     if r["session"].closed:
         r = await reset_room(name)
     s = r["session"]
-    asyncio.create_task(_live(r))
+    asyncio.create_task(_live(r, "fast"))
     clock_started = False
     buf = np.zeros(0, np.float32)
     loop = asyncio.get_running_loop()
@@ -486,7 +488,7 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     import soundfile as sf
     await ws.accept()
     r = await reset_room(name); s = r["session"]
-    asyncio.create_task(_live(r))
+    asyncio.create_task(_live(r, "fast"))
     try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
         await asyncio.wait_for(ws.receive_text(), timeout=8)
     except Exception:

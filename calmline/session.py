@@ -19,6 +19,8 @@ import numpy as np
 from .audio.acoustic import LookaheadCompressor, frame_rms
 
 SR = 16000
+import re
+CLAUSE_STARTERS = {"and", "but", "so", "because", "cause", "which", "who", "then", "or", "since", "while", "when", "if", "anyway", "plus"}
 
 
 @dataclass
@@ -30,6 +32,7 @@ class Settings:
     whisper: str = "base.en"        # pass 2 (utterance card); small.en cost ~1 s per sentence on CPU
     spotter: str = "tiny.en"        # pass 1 (mute decisions)
     pause_s: float = 0.45           # pause that closes a sentence-level utterance
+    chunking: str = "clause"        # "sentence" (v17) or "clause" (v18: syntax/prosody-aware sub-sentence parts)
 
 
 class CallSession:
@@ -112,9 +115,26 @@ class CallSession:
         if self.utt_start is not None and not final and words:
             cands = []
             for i, w in enumerate(words):
+                nxt_w = words[i + 1] if i + 1 < len(words) else None
+                nxt = nxt_w.start if nxt_w else w.end + 0.4
+                if self.s.chunking == "clause":
+                    # v18 clause-level parts (SASST-style syntactic completeness, approximated with punctuation and
+                    # conjunctions; Bangalore et al. 2012 prosodic pauses). wait-1: the boundary is only taken once the
+                    # next word has been heard, and a part must be >= 1.0 s and >= 4 words so it can be judged on its own.
+                    in_utt = [x for x in words if x.start >= self.utt_start - 0.05 and x.end <= w.end + 0.01]
+                    if nxt_w is None or len(in_utt) < 4 or w.end < self.utt_start + 1.0 or now - w.end < 0.25:
+                        continue
+                    punct = w.text.endswith((".", "?", "!", ",", ";", ":"))
+                    conj = re.sub(r"[^a-z']", "", nxt_w.text.lower()) in CLAUSE_STARTERS
+                    pause = nxt - w.end >= 0.25
+                    if not (punct or conj or pause):
+                        continue
+                    if not pause and nxt - w.end < 0.05 and not w.text.endswith((".", "?", "!")):
+                        continue      # glued words: likely mid-phrase
+                    cands.append((w.end, nxt))
+                    continue
                 if not w.text.endswith((".", "?", "!")) or w.end < self.utt_start + 1.5 or now - w.end < 0.3:
                     continue
-                nxt = words[i + 1].start if i + 1 < len(words) else w.end + 0.4
                 if nxt - w.end < 0.08 and i + 1 < len(words):
                     continue          # no audible gap: Whisper punctuation, not a real sentence break
                 cands.append((w.end, nxt))

@@ -6,7 +6,7 @@ from .render import TemplateRenderer, HybridRenderer, MaskRenderer, ConfidenceGa
 
 def _best():
     from .gemini import available
-    return "v17" if available() else "v11"
+    return "v18" if available() else "v11"
 
 
 BEST = _best()   # v13 (Gemini relay) when a key is configured, else the offline v11
@@ -29,6 +29,7 @@ DESCRIPTIONS = {
     "v15": "Gemini understanding: one structured call per sentence returns complaint type (26 NYC 311 intents), verbatim slots (dropped unless literally in the caller's words) and the calm message (verified); v11 ladder as fallback. Runs on clean sentences too, so free speech is classified.",
     "v16": "v15 + passive-aggressive belittling: Gemini flags polite-sounding sarcasm/condescension toward the agent (but not the caller's frustration), and a Gemini-only flag is enough to relay the calm version",
     "v17": "v16 + 1.5 s latency budget: if Gemini has not answered, the sentence goes out on the offline v11 path immediately; the late Gemini answer only updates the complaint type / service request. Exhausted models are skipped (circuit breaker).",
+    "v18": "v17 + selective LLM: clean parts that do not address the agent and carry no sarcasm cue are relayed without waiting for Gemini (Gemini still refines the card); used with clause-level chunking in the live session",
     "llm_all": "Ablation: every abusive utterance rewritten by the LLM (verified, extractive fallback) — is the template ladder still needed?",
     "llm_raw": "Ablation: every abusive utterance rewritten by the LLM, *unverified* — what verification buys",
 }
@@ -109,6 +110,9 @@ def build(version: str) -> Pipeline:
     if version == "v17":
         import os
         p = build("v16"); p.budget_s = float(os.getenv("CALMLINE_GEMINI_BUDGET", "2.5")); p.name = "v17"
+        return p
+    if version == "v18":
+        p = build("v17"); p.selective = True; p.name = "v18"
         return p
     if version in ("v12", "llm_all", "llm_raw"):
         from .llm import VerifiedRewriter

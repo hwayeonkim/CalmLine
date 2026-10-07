@@ -48,7 +48,8 @@ abusive_phrases: exact substrings that are insults, profanity, sexual remarks, s
   names. Judge whether the phrase is aimed at the agent as a person. Do NOT include the caller's own feelings, urgency or
   legitimate complaints about the service (frustration, repeated calls, waiting time, nobody coming): those are information
   the agent needs.
-calm_message: what a calm, polite caller would have said instead — first person, natural spoken English, every fact kept,
+calm_message: what a calm, polite caller would have said instead — first person, natural spoken English, as SHORT as
+  possible (the agent hears it in real time, so drop filler and repetition), every fact kept,
   all abuse dropped, nothing added (no invented requests, numbers or details). Questions stay questions.
   When an insult stands for a person ("some asshole parked..."), say "someone"; when it describes the agent or agency, drop it.
 nothing_to_relay: true if the latest words are only abuse with no information for the agent.
