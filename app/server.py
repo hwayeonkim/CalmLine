@@ -177,17 +177,21 @@ async def broadcast(r, msg: dict | bytes):
         r["agents"].discard(ws)
 
 
-async def _live(r):
-    """One Gemini Live reader per room, connected ahead of time so the 0.7 s connect is off the critical path."""
+async def _live(r, pace="normal"):
+    """Gemini Live readers per room (normal pace + fast catch-up pace), connected ahead of time so the
+    0.7 s connect is off the critical path."""
     from calmline.live_voice import LiveReader
-    if r.get("live") is None:
-        r["live"] = LiveReader()
+    key = "live" if pace == "normal" else "live_fast"
+    if r.get(key) is None:
+        r[key] = LiveReader(pace=pace)
         try:
-            await r["live"].connect()
+            await r[key].connect()
         except Exception as e:  # noqa: BLE001
             print("live connect failed:", str(e)[:120], flush=True)
-            r["live"] = False
-    return r["live"] or None
+            r[key] = False
+    if pace == "normal" and r.get("live_fast") is None:
+        asyncio.create_task(_live(r, "fast"))
+    return r[key] or None
 
 
 async def speak(r, s, text, idx=None):
@@ -195,26 +199,40 @@ async def speak(r, s, text, idx=None):
     Gemini Live verbatim reader (~0.7 s to first audio) -> streaming Gemini TTS -> browser voice on the agent page."""
     import queue, threading
     t_req = time.time()
+    gen = r.get("voice_gen", 0)
     async with r.setdefault("voice_lock", asyncio.Lock()):
         t_lock = time.time(); first = True
+        if r.get("voice_gen", 0) != gen:      # agent pressed "Skip to now" while this sentence was queued
+            return
 
         async def emit(chunk):
             nonlocal first
+            if r.get("voice_gen", 0) != gen:
+                return          # skipped by the agent: drain the reader silently, play nothing
             if first:
                 first = False
                 info = dict(queued_ms=round((t_lock - t_req) * 1000), first_audio_ms=round((time.time() - t_lock) * 1000), via=via)
-                t1 = r.get("utt_end", {}).get(idx)
-                if t1 and r.get("started"):
-                    info["lag_ms"] = round((time.time() - (r["started"] + t1)) * 1000)   # caller finished -> first calm sound sent
+                if idx in r.get("lag", {}):
+                    end_wall, lag = r["lag"][idx]
+                    lag.update(wait_previous_voice_ms=info["queued_ms"], voice_first_sound_ms=info["first_audio_ms"])
+                    info["lag_ms"] = round((time.time() - end_wall) * 1000)   # caller finished -> first calm sound leaves the server
+                    info["breakdown"] = lag
+                    print("LAG", idx, info["lag_ms"], lag, flush=True)
                 s.audit.append([time.time(), "voice_first_audio", info]); print("TIMING voice", info, flush=True)
                 await broadcast(r, {"type": "voice_meta", "idx": idx, **info})
             if idx is not None:
                 s.voice_by_idx = getattr(s, "voice_by_idx", {}); s.voice_by_idx.setdefault(idx, []).append(chunk)
             s.voice_log.append((time.time() - (r["started"] or time.time()), chunk))
+            r["voice_end"] = max(r.get("voice_end", 0), time.time()) + len(chunk) / SR   # estimated end of agent playback
             await broadcast(r, b"\x02" + (np.clip(chunk, -1, 1) * 32767).astype("<i2").tobytes())
 
-        via = "live"
-        live = await _live(r)
+        # adaptive pace (decided after the previous sentence's audio has been fully generated):
+        # if the agent is still hearing earlier sentences, read this one faster to catch up
+        # Live streams roughly in real time, so a sentence that had to queue behind the previous one is "behind"
+        backlog = max(r.get("voice_end", 0) - time.time(), t_lock - t_req)
+        pace = "fast" if backlog > 0.8 else "normal"
+        via = "live" if pace == "normal" else "live (fast catch-up)"
+        live = await _live(r, pace)
         if live is not None:
             try:
                 async for ch in live.speak(text):
@@ -224,7 +242,7 @@ async def speak(r, s, text, idx=None):
                 print("live failed:", str(e)[:120], flush=True)
                 if not first:      # drifted mid-sentence: stop, show the text, don't re-speak
                     await broadcast(r, {"type": "voice_cut", "text": text}); return
-                await live.close(); r["live"] = None
+                await live.close(); r["live" if pace == "normal" else "live_fast"] = None
         via = "tts"
         if r.get("tts_down") and time.time() < r["tts_down"]:
             await broadcast(r, {"type": "voice_fallback", "text": text}); return
@@ -249,15 +267,23 @@ async def speak(r, s, text, idx=None):
             await emit(item)
 
 
-async def process_utt(r, s, t0, t1):
+async def process_utt(r, s, t0, t1, detected_at=None):
     """Pass 2 for one sentence: ASR -> pipeline (Gemini rewrite + checks) -> card -> calm voice. Cards stay in order."""
     loop = asyncio.get_running_loop()
+    end_wall = (r["started"] or time.time()) + t1          # when the caller finished this sentence (wall clock)
+    lag = {"sentence_end_detect_ms": round(((detected_at or time.time()) - end_wall) * 1000)}
+    t_wait = time.time()
     async with r.setdefault("card_lock", asyncio.Lock()):
+        lag["wait_previous_sentence_ms"] = round((time.time() - t_wait) * 1000)
         tq = time.time()
         card = await loop.run_in_executor(None, s.process_utterance, t0, t1)
         if not card:
+            await broadcast(r, {"type": "utt_empty"})
             return
         card["timing"]["queued_ms"] = round((time.time() - tq) * 1000) - card["timing"]["asr_ms"] - card["timing"]["rewrite_pipeline_ms"]
+        lag.update(asr_ms=card["timing"]["asr_ms"], gemini_and_checks_ms=card["timing"]["rewrite_pipeline_ms"])
+        r.setdefault("lag", {})[card["idx"]] = (end_wall, lag)
+        asyncio.create_task(late_update(r, s, card["idx"]))
         print("TIMING card", card["timing"], "speech_end", round(t1, 2), "emitted_at_call_s", round(time.time() - (r["started"] or time.time()), 2), flush=True)
         if card["t"][1] > 0 and r["started"]:
             card["ready_lag_ms"] = round((time.time() - (r["started"] + card["t"][1])) * 1000)
@@ -274,12 +300,33 @@ async def process_utt(r, s, t0, t1):
         await speak(r, s, text, card.get("idx"))
 
 
+async def late_update(r, s, idx):
+    """Gemini answered after the latency budget: refresh the complaint type and facts on screen (no re-speaking)."""
+    fut = getattr(s, "late", {}).pop(idx, None)
+    if fut is None:
+        return
+    try:
+        u = await asyncio.wrap_future(fut)
+    except Exception:  # noqa: BLE001
+        return
+    if not u:
+        return
+    from calmline.intents import INTENTS_ALL
+    from calmline.understand import TO_REGEX
+    it = u.get("intent", "UNKNOWN")
+    await broadcast(r, {"type": "card_update", "idx": idx, "intent": it, "intent_score": round(float(u.get("intent_confidence") or 0), 2),
+                        "intent_label": INTENTS_ALL[it]["issue"] if it in INTENTS_ALL else None,
+                        "nyc_types": INTENTS_ALL[it]["nyc"] if it in INTENTS_ALL else [],
+                        "slots": {TO_REGEX.get(k, k): [v] for k, v in (u.get("slots") or {}).items()}})
+
+
 async def process_typed(r, s, text):
     loop = asyncio.get_running_loop()
     async with r.setdefault("card_lock", asyncio.Lock()):
         card = await loop.run_in_executor(None, s.process_text, text)
         await broadcast(r, {"type": "typed", "text": text})
         await broadcast(r, card)
+        asyncio.create_task(late_update(r, s, card["idx"]))
         if card.get("route") == "ESCALATE":
             await broadcast(r, {"type": "alert", "label": "threat"})
     if card.get("withheld") and card.get("route") != "ESCALATE":
@@ -306,7 +353,8 @@ def voice(sid: str, idx: int):
 def on_events(r, s, events):
     for e in events:
         if e.get("type") == "utt":
-            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"])))
+            e["detected_at"] = time.time()
+            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"], e["detected_at"])))
 
 
 async def playback_loop(name):
@@ -337,10 +385,8 @@ async def ws_caller(ws: WebSocket, name: str):
     if r["session"].closed:
         r = await reset_room(name)
     s = r["session"]
-    if r["started"] is None:
-        r["started"] = time.time()
-        asyncio.create_task(playback_loop(name))
-        asyncio.create_task(_live(r))
+    asyncio.create_task(_live(r))
+    clock_started = False
     buf = np.zeros(0, np.float32)
     loop = asyncio.get_running_loop()
     chunk = int(s.s.chunk_s * SR)
@@ -348,6 +394,10 @@ async def ws_caller(ws: WebSocket, name: str):
         while True:
             msg = await ws.receive()
             if msg.get("bytes"):
+                if not clock_started:
+                    clock_started = True
+                    r["started"] = time.time()
+                    asyncio.create_task(playback_loop(name))
                 buf = np.concatenate([buf, np.frombuffer(msg["bytes"], "<i2").astype(np.float32) / 32768])
                 while len(buf) >= chunk:
                     part, buf = buf[:chunk], buf[chunk:]
@@ -388,6 +438,9 @@ async def ws_agent(ws: WebSocket, name: str):
             s = r["session"]
             if m.get("type") == "protection":
                 s.s.protection = m["value"]; s.audit.append([time.time(), "protection", m["value"]])
+            elif m.get("type") == "skip_to_now":
+                r["voice_gen"] = r.get("voice_gen", 0) + 1; r["voice_end"] = time.time()
+                s.audit.append([time.time(), "skip_to_now"]); await broadcast(r, {"type": "skipped"})
             elif m.get("type") == "end_call_request":
                 s.audit.append([time.time(), "end_call_request"]); await broadcast(r, {"type": "end_call_ack"})
             elif m.get("type") == "reveal":
@@ -407,8 +460,13 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     """Server-side playback of a sample call into a room (for judges without a microphone)."""
     import soundfile as sf
     await ws.accept()
-    r = await reset_room(name); s = r["session"]; r["started"] = time.time()
+    r = await reset_room(name); s = r["session"]
     asyncio.create_task(_live(r))
+    try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
+        await asyncio.wait_for(ws.receive_text(), timeout=8)
+    except Exception:
+        pass
+    r["started"] = time.time()
     asyncio.create_task(playback_loop(name))
     x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
     loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)

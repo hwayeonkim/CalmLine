@@ -6,13 +6,16 @@ from .intents import UNKNOWN
 from .schema import Decision
 from . import slots as slotmod
 
+import concurrent.futures as _cf
+_POOL = _cf.ThreadPoolExecutor(max_workers=4)
+
 ALERT = "[SAFETY ALERT: the caller made a threatening or self-harm statement. A supervisor has been notified.] "
 
 
 class Pipeline:
     def __init__(self, detector, intent_clf, renderer, fallback=None, llm=None, name="pipeline", intent_min=0.0,
                  mask_for_intent=True, unknown_mode="mask", mask_mild=False, mask_slots=False, understanding=None,
-                 understand_all=False, checker=None, gemini_detects=False):
+                 understand_all=False, checker=None, gemini_detects=False, budget_s=None):
         self.detector, self.intent_clf, self.renderer = detector, intent_clf, renderer
         self.fallback = fallback          # renderer used when intent is UNKNOWN (tier 3 mask by default)
         self.llm = llm                    # optional tier-2 rewriter
@@ -22,6 +25,7 @@ class Pipeline:
         self.mask_slots = mask_slots
         self.understanding, self.understand_all, self.checker = understanding, understand_all, checker
         self.gemini_detects = gemini_detects
+        self.budget_s = budget_s
         self.context = ""        # v4: once a call is being rewritten, also strip mild profanity  # "mask": tier-3 masked transcript; "generic": template with generic header
 
     def __call__(self, text: str) -> Decision:
@@ -78,7 +82,18 @@ class Pipeline:
         from .understand import TO_REGEX
         from .render import mask
         t1 = time.perf_counter()
-        u = self.understanding.analyze(text, self.context)
+        if self.budget_s:
+            # v17 latency budget: never wait for Gemini longer than budget_s; the late answer only updates the card
+            import concurrent.futures as cf
+            fut = _POOL.submit(self.understanding.analyze, text, self.context, False)
+            try:
+                u = fut.result(timeout=self.budget_s)
+            except cf.TimeoutError:
+                u = None
+                d.debug["late_future"] = fut
+                d.debug["path"] = f"fast path (Gemini > {self.budget_s:.1f} s)"
+        else:
+            u = self.understanding.analyze(text, self.context)
         t["understand"] = (time.perf_counter() - t1) * 1000
         regex_slots = slotmod.extract(mask(text, tox.spans))
         if u is None:

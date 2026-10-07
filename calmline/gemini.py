@@ -69,16 +69,29 @@ def _retryable(e):
     return any(c in s for c in ("429", "503", "500", "RESOURCE_EXHAUSTED", "UNAVAILABLE", "overloaded"))
 
 
-def generate_text(prompt: str, config=None, models=None, use_cache=True):
-    """Returns (text, model_used). Walks the fallback chain; one backoff round if every model is busy."""
+_dead_until: dict = {}   # circuit breaker: model -> time before which it is skipped
+
+
+def _trip(model, err):
+    s = str(err)
+    if "PerDay" in s:
+        _dead_until[model] = time.time() + 3600      # daily quota gone: skip for an hour
+    elif "429" in s or "503" in s or "UNAVAILABLE" in s:
+        _dead_until[model] = time.time() + 30
+
+
+def generate_text(prompt: str, config=None, models=None, use_cache=True, retry=True):
+    """Returns (text, model_used). Walks the fallback chain (skipping tripped models); one backoff round if all are busy."""
     payload = {"prompt": prompt}
     if use_cache:
         hit = cache_get("text", payload)
         if hit:
             return hit["text"], hit["model"] + " (cached)"
     last = None
-    for attempt in range(2):
+    for attempt in range(2 if retry else 1):
         for m in (models or TEXT_MODELS):
+            if _dead_until.get(m, 0) > time.time():
+                continue
             try:
                 r = client().models.generate_content(model=m, contents=prompt, config=config)
                 text = (r.text or "").strip()
@@ -87,7 +100,9 @@ def generate_text(prompt: str, config=None, models=None, use_cache=True):
                 return text, m
             except Exception as e:  # noqa: BLE001
                 last = e
+                _trip(m, e)
                 if not _retryable(e) and "404" not in str(e):
                     raise
-        time.sleep(4 + 4 * attempt)
-    raise last
+        if retry:
+            time.sleep(4 + 4 * attempt)
+    raise last or RuntimeError("all Gemini models unavailable")

@@ -66,6 +66,8 @@ body.nojudge .hood{display:none}
 .speaking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
 .bars{display:flex;gap:3px;align-items:flex-end;height:16px}.bars i{width:3px;background:var(--calm);border-radius:2px;animation:bar .9s infinite ease-in-out}
 .bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}@keyframes bar{0%,100%{height:4px}50%{height:16px}}
+.yourturn{background:var(--calm);color:#fff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600}
+.yourturn .stat{color:#D5ECE8}.yourturn button{margin-left:auto;background:#fff;color:var(--calm);border:0}
 /* live timeline */
 .tline{padding:10px 14px 8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
 .tlhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px}
@@ -115,11 +117,11 @@ canvas#tlc{width:100%;height:74px;display:block}
       <div class="meter">Agitation<div class="g"><i id="g"></i></div></div><span class="stat" id="blocked">0 words muted</span>
       <label class="judge"><input type="checkbox" id="judge" checked> Show what CalmLine hid (demo view)</label></div>
     <div class="tline" aria-label="Live timeline">
-      <div class="tlhead"><span class="now" id="now">Waiting for a call</span><span class="lag" id="laglast" title="Time from the caller finishing a sentence to the agent hearing its calm version">delay: —</span><span class="stat" id="lagavg"></span></div>
+      <div class="tlhead"><span class="now" id="now">Waiting for a call</span><span class="lag" id="laglast" title="Time from the caller finishing a sentence to the agent hearing its calm version">delay: —</span><span class="stat" id="lagavg"></span><button class="btn" id="skip" title="Stop the queued calm voice and jump to the latest message">Skip to now</button></div>
       <canvas id="tlc" height="74"></canvas>
       <div class="legend"><span><i style="background:#9AA7B2"></i>caller speaking</span><span><i style="background:#C24A3A"></i>muted word</span><span><i style="background:repeating-linear-gradient(45deg,#E0A35F 0 3px,#F6E3C8 3px 6px)"></i>CalmLine processing (agent hears silence)</span><span><i style="background:#1D6E68"></i>agent hears calm voice</span><span><i style="background:#D9A23A"></i>withheld</span></div>
     </div>
-    <div class="conv" id="conv"><div id="alerts"></div>
+    <div class="conv" id="conv"><div id="alerts"></div><div class="yourturn" id="yourturn" hidden><span>Caller has finished — your turn</span><span class="stat" id="turnstat"></span><button class="btn" id="skip2">Skip voice & answer now</button></div>
       <div class="empty" id="empty"><b>Nothing yet.</b> Play a sample call on the left, speak, or type a sentence. Each caller sentence appears here as what the agent hears; the grey strip under it shows what CalmLine actually heard and did.</div>
       <div class="speaking" id="speaking" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span>Caller is speaking…</span></div>
     </div>
@@ -156,13 +158,13 @@ function applyListen(){if(gain)gain.gain.value=listen==='caller'?0:1;if(sampleAu
 function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16Array(buf.slice(1));if(!pcm.length||!ctx)return;
   const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
   const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
-  if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tlVoiceChunk(tVoice,b.duration);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
+  if(kind===2){if(skipUntil&&Date.now()<skipUntil)return;tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);voiceSrcs.push(s);s.onended=()=>{voiceSrcs=voiceSrcs.filter(x=>x!==s)};tlVoiceChunk(tVoice,b.duration);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
 // ---------- live timeline ----------
 const TL={start:null,voiced:[],mutes:[],sents:[],voice:[],cur:null,lags:[]};
 function wallOf(ct){return TL.start===null?null:TL.start+ct*1000}
-function tlPartial(m){const est=Date.now()-m.ct*1000;TL.start=TL.start===null?est:Math.min(TL.start,est);
+function tlPartial(m){if(m.voiced)lastVoiced=Date.now();if(!TL.anchored){const est=Date.now()-m.ct*1000;TL.start=TL.start===null?est:Math.min(TL.start,est)}
   if(m.voiced)TL.voiced.push([wallOf(m.c0),wallOf(m.ct)])}
-function tlReset(){TL.start=null;TL.voiced=[];TL.mutes=[];TL.sents=[];TL.voice=[];TL.cur=null;TL.lags=[];document.getElementById('laglast').textContent='delay: —';document.getElementById('lagavg').textContent=''}
+function tlReset(){TL.anchored=false;TL.start=null;TL.voiced=[];TL.mutes=[];TL.sents=[];TL.voice=[];TL.cur=null;TL.lags=[];document.getElementById('laglast').textContent='delay: —';document.getElementById('lagavg').textContent=''}
 function drawTL(){const c=document.getElementById('tlc');const W=c.clientWidth,H=74;if(c.width!==W*devicePixelRatio){c.width=W*devicePixelRatio;c.height=H*devicePixelRatio}
   const g=c.getContext('2d');g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);g.clearRect(0,0,W,H);
   const now=Date.now(),span=20000,L=64,x=t=>L+(t-(now-span))/span*(W-L-4);
@@ -188,9 +190,23 @@ function drawTL(){const c=document.getElementById('tlc');const W=c.clientWidth,H
 let _h;function hatch(){if(_h)return _h;_h=document.createElement('canvas');_h.width=_h.height=6;const q=_h.getContext('2d');q.fillStyle='#F6E3C8';q.fillRect(0,0,6,6);q.strokeStyle='#E0A35F';q.lineWidth=2;q.beginPath();q.moveTo(0,6);q.lineTo(6,0);q.stroke();return _h}
 function tlCard(m){if(!m.t||!(m.t[1]>0)||TL.start===null)return;TL.sents.push({idx:m.idx,t0:wallOf(m.t[0]),end:wallOf(m.t[1]),withheld:m.withheld&&m.route!=='ESCALATE',cardAt:Date.now(),voiceStart:null})}
 let voiceIdx=null,voiceFirst=false;
-function tlVoiceMeta(m){voiceIdx=m.idx;voiceFirst=true}
+let uttN=0,cardN=0,lagInfo={},voiceSrcs=[],skipUntil=0,lastVoiced=0,turnShown=false,lastCardAt=0;
+function skipNow(){voiceSrcs.forEach(x=>{try{x.stop()}catch(e){}});voiceSrcs=[];if(ctx)tVoice=ctx.currentTime;skipUntil=Date.now()+400;
+  TL.voice=TL.voice.filter(v=>v.a<Date.now()).map(v=>({...v,b:Math.min(v.b,Date.now())}));agentWs&&agentWs.send(JSON.stringify({type:'skip_to_now'}))}
+function turnCheck(){const now=Date.now();if(TL.start===null)return;
+  const silent=lastVoiced&&now-lastVoiced>1200;const yt=document.getElementById('yourturn');
+  if(silent&&!turnShown&&lastCardAt&&cardN>=uttN){turnShown=true;yt.hidden=false;const conv=document.getElementById('conv');conv.insertBefore(yt,document.getElementById('speaking'));
+    const textLag=((lastCardAt-lastVoiced)/1000);const voiceLeft=Math.max(0,(tVoice-(ctx?ctx.currentTime:0)));
+    document.getElementById('turnstat').textContent=`last calm message on screen ${Math.max(0,textLag).toFixed(1)} s after the caller stopped · calm voice ${voiceLeft>0.2?'still has '+voiceLeft.toFixed(1)+' s to play':'finished'}`}
+  if(!silent&&turnShown){turnShown=false;yt.hidden=true}}
+setInterval(turnCheck,250);
+function tlVoiceMeta(m){voiceIdx=m.idx;voiceFirst=true;lagInfo[m.idx]=m}
 function tlVoiceChunk(startCtx,dur){const wallStart=Date.now()+(startCtx-ctx.currentTime)*1000;const v={idx:voiceIdx,a:wallStart,b:wallStart+dur*1000,first:voiceFirst};TL.voice.push(v);
-  if(voiceFirst){const s=TL.sents.find(x=>x.idx===voiceIdx);if(s&&!s.voiceStart){s.voiceStart=wallStart;const lag=(wallStart-s.end)/1000;TL.lags.push(lag);
+  if(voiceFirst){const s=TL.sents.find(x=>x.idx===voiceIdx);if(s&&!s.voiceStart){s.voiceStart=wallStart;
+      const li=lagInfo[voiceIdx]||{};const playWait=Math.max(0,(startCtx-ctx.currentTime)*1000);
+      const lag=li.lag_ms!=null?(li.lag_ms+playWait)/1000:(wallStart-s.end)/1000;TL.lags.push(lag);
+      if(li.breakdown){const b=li.breakdown;const parts=[['sentence end detected',b.sentence_end_detect_ms],['waiting for previous sentence',b.wait_previous_sentence_ms],['ASR',b.asr_ms],['Gemini + checks',b.gemini_and_checks_ms],['waiting for previous voice to finish',b.wait_previous_voice_ms+playWait],['voice first sound',b.voice_first_sound_ms]];
+        const el=document.querySelector(`.turn[data-idx="${voiceIdx}"] .stat:last-child`);if(el)el.insertAdjacentHTML('afterend',`<div class="stat">delay ${lag.toFixed(1)} s = ${parts.filter(p=>p[1]>30).map(p=>`${p[0]} ${(p[1]/1000).toFixed(1)}s`).join(' + ')}</div>`)}
       document.getElementById('laglast').textContent=`delay: ${lag.toFixed(1)} s`;const avg=TL.lags.reduce((a,b)=>a+b,0)/TL.lags.length;document.getElementById('lagavg').textContent=`avg ${avg.toFixed(1)} s over ${TL.lags.length} sentence${TL.lags.length>1?'s':''}`;
       const el=document.getElementById('v'+voiceIdx);if(el)el.textContent+=` · heard ${lag.toFixed(1)} s after the caller finished`}}
   voiceFirst=false}
@@ -206,7 +222,10 @@ function connectAgent(){return new Promise(res=>{if(agentWs&&agentWs.readyState=
     if(m.type==='mute'){if(TL.start!==null)TL.mutes.push([wallOf(m.start-0.25),wallOf(m.end+0.25)]);muted++;document.getElementById('blocked').textContent=muted+' word'+(muted>1?'s':'')+' muted'}
     if(m.type==='alert')banner(m.label);
     if(m.type==='typed')started();
-    if(m.type==='card'){tlCard(m);turn(m)}
+    if(m.type==='utt')uttN++;
+    if(m.type==='utt_empty')cardN++;
+    if(m.type==='card'){tlCard(m);turn(m);lastCardAt=Date.now();cardN++}
+    if(m.type==='card_update')cardUpdate(m);
     if(m.type==='voice_meta'){tlVoiceMeta(m);voiceMeta(m)}
     if(m.type==='voice_fallback'&&listen!=='caller'&&'speechSynthesis' in window){speechSynthesis.speak(new SpeechSynthesisUtterance(m.text))}
     if(m.type==='ended'){setState('call ended');clearInterval(timer);document.getElementById('speaking').hidden=true}
@@ -225,7 +244,7 @@ function turn(m){started();document.getElementById('empty').hidden=true;
   const types=(m.abuse_types||[]).filter(x=>x!=='mild');
   const slots=Object.entries(m.slots||{}).flatMap(([k,v])=>v.map(x=>`<span><i>${esc(LBL[k]||k)}:</i> ${esc(x)}</span>`)).join('');
   const ck=m.checks&&Object.keys(m.checks).length?Object.entries(m.checks).filter(([k,v])=>k==='no abuse left'||k==='no new numbers').map(([k,v])=>`<span class="${v?'ok':'bad'}">${v?'✓':'✗'} ${k}</span>`).join(' · ')+(m.checks['fallback used']?' · <span class="bad">Gemini output rejected → template</span>':''):'';
-  const tm=m.timing||{};const lat=[tm.asr_ms?`ASR ${tm.asr_ms} ms`:null,tm.understand?`Gemini ${tm.understand} ms`:null,`<span id="v${m.idx}"></span>`].filter(Boolean).join(' · ');
+  const tm=m.timing||{};const lat=[m.path?`<b>${esc(m.path)}</b>`:null,tm.asr_ms?`ASR ${tm.asr_ms} ms`:null,tm.understand?`Gemini ${tm.understand} ms`:null,`<span id="v${m.idx}"></span>`].filter(Boolean).join(' · ');
   const d=document.createElement('div');d.className='turn '+cls;d.dataset.idx=m.idx;
   d.innerHTML=`<div class="bub">${m.withheld&&m.route!=='ESCALATE'?'':`<button class="play" title="Replay calm voice" aria-label="Replay" data-idx="${m.idx}">▶</button>`}<div>${m.withheld&&m.route!=='ESCALATE'?'Nothing relayed — the sentence was only abuse.':esc(msg)}</div></div>
    <div class="tags">${tag}${m.intent&&m.intent!=='UNKNOWN'?`<span>${esc(m.intent_label||m.intent)} <span class="stat">${Math.round(100*(m.intent_score||0))}%</span></span>`:''}</div>
@@ -240,13 +259,17 @@ function turn(m){started();document.getElementById('empty').hidden=true;
   if(m.intent&&m.intent!=='UNKNOWN'&&(m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score}
   for(const [k,v] of Object.entries(m.slots||{})){const key=['cross_street','street'].includes(k)?'address':k;sr[key]=sr[key]||new Set();v.forEach(x=>sr[key].add(x.replace(/^(at|on|in|near|corner of)\s+/i,'')))}
   renderSR()}
-function voiceMeta(m){const el=document.getElementById('v'+m.idx);if(el)el.textContent=`voice ${m.first_audio_ms} ms to first sound (${m.via==='live'?'Gemini Live':'Gemini TTS'})`}
+function cardUpdate(m){const d=document.querySelector(`.turn[data-idx="${m.idx}"]`);if(!d)return;
+  if(m.intent&&m.intent!=='UNKNOWN'){d.querySelector('.tags').insertAdjacentHTML('beforeend',`<span>${esc(m.intent_label)} <span class="stat">${Math.round(100*m.intent_score)}% · Gemini, arrived late</span></span>`);
+    if((m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score}}
+  for(const [k,v] of Object.entries(m.slots||{})){sr[k]=sr[k]||new Set();v.forEach(x=>sr[k].add(x))}renderSR()}
+function voiceMeta(m){const el=document.getElementById('v'+m.idx);if(el)el.textContent=`voice ${m.first_audio_ms} ms to first sound (${m.via&&m.via.startsWith('live')?'Gemini Live'+(m.via.includes('fast')?', fast catch-up pace':''):'Gemini TTS'})`}
 function renderSR(){const b=document.getElementById('srb');
   b.innerHTML=`<div><div class="ctype">${esc(sr.type||'Listening…')}</div><div class="stat">${esc(sr.nyc||'29 NYC 311 complaint types · 88% of call volume')}</div>${sr._score?`<div class="conf"><i style="width:${Math.round(100*sr._score)}%"></i></div>`:''}</div>`+
   SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
 async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
   document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
-function resetView(){tlReset();document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
+function resetView(){tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;document.getElementById('yourturn').hidden=true;document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
   document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
   if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
 // ---------- caller: samples ----------
@@ -256,7 +279,7 @@ async function loadSamples(){const list=await (await fetch('/api/samples')).json
     const btn=d.querySelector('button');btn.onclick=async()=>{ensureAudio();await connectAgent();
       if(sampleAudio){sampleAudio.pause()}sampleAudio=new Audio(`/static/samples/${s.id}.wav?v=2`);applyListen();
       const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
-      w.onopen=()=>setTimeout(()=>sampleAudio.play().catch(()=>{}),120);w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='done')btn.disabled=false};w.onclose=()=>btn.disabled=false};
+      w.onopen=()=>{sampleAudio.onplaying=()=>{tlReset();TL.start=Date.now()-sampleAudio.currentTime*1000;TL.anchored=true;w.send(JSON.stringify({type:'go'}))};sampleAudio.play().catch(()=>w.send(JSON.stringify({type:'go'})))};w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='done')btn.disabled=false};w.onclose=()=>btn.disabled=false};
     box.appendChild(d)})}
 // ---------- caller: mic ----------
 let mctx,msrc,mnode,mstream;
@@ -264,7 +287,8 @@ document.getElementById('mic').onclick=async()=>{ensureAudio();await connectAgen
   callerWs=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);callerWs.binaryType='arraybuffer';await new Promise(r=>callerWs.onopen=r);
   try{mstream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}})}catch(e){document.getElementById('micstate').textContent='microphone blocked — use the Type tab';return}
   mctx=new AudioContext();msrc=mctx.createMediaStreamSource(mstream);mnode=mctx.createScriptProcessor(4096,1,1);const ratio=mctx.sampleRate/16000;
-  mnode.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0),n=Math.floor(x.length/ratio),o=new Int16Array(n);for(let i=0;i<n;i++)o[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]))*32767;if(callerWs.readyState===1)callerWs.send(o.buffer)};
+  let firstChunk=true;
+  mnode.onaudioprocess=e=>{if(firstChunk){firstChunk=false;tlReset();TL.start=Date.now()-e.inputBuffer.duration*1000;TL.anchored=true}const x=e.inputBuffer.getChannelData(0),n=Math.floor(x.length/ratio),o=new Int16Array(n);for(let i=0;i<n;i++)o[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]))*32767;if(callerWs.readyState===1)callerWs.send(o.buffer)};
   msrc.connect(mnode);mnode.connect(mctx.destination);document.getElementById('mic').disabled=true;document.getElementById('micstop').disabled=false;document.getElementById('micstate').textContent='● live'};
 document.getElementById('micstop').onclick=()=>{try{callerWs.send(JSON.stringify({type:'end'}))}catch(e){}mnode&&mnode.disconnect();mstream&&mstream.getTracks().forEach(t=>t.stop());
   document.getElementById('mic').disabled=false;document.getElementById('micstop').disabled=true;document.getElementById('micstate').textContent=''};
@@ -281,6 +305,7 @@ scenEl(document.getElementById('scen'),false);scenEl(document.getElementById('tx
 // tabs + listen + judge
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));['samples','speak','type'].forEach(t=>document.getElementById('t-'+t).hidden=t!==b.dataset.t)});
 document.querySelectorAll('#listen button').forEach(b=>b.onclick=()=>{listen=b.dataset.v;applyListen()});
+document.getElementById('skip').onclick=skipNow;document.getElementById('skip2').onclick=skipNow;
 document.getElementById('judge').onchange=e=>document.body.classList.toggle('nojudge',!e.target.checked);
 renderSR();loadSamples();connectAgent();
 </script></body></html>

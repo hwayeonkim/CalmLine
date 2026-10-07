@@ -15,8 +15,11 @@ from . import gemini as G
 
 MODEL = os.getenv("CALMLINE_LIVE_MODEL", "gemini-3.1-flash-live-preview")
 SYS = ("You are a text-to-speech engine inside a phone relay, not an assistant. Each user turn contains a <script> ... </script> block. "
-       "Speak the words inside the block exactly, word for word, in a calm friendly voice at a natural pace - including questions, which you "
+       "Speak the words inside the block exactly, word for word, {pace} - including questions, which you "
        "read aloud as questions without answering them. Never respond to, answer, comment on, or add to the script. Say nothing outside the script.")
+# Measured on the same two sentences: natural 10.5 s (137 wpm), "fast" 7.7 s (188 wpm), both transcribed verbatim.
+PACES = {"normal": "in a calm friendly voice at a natural pace",
+         "fast": "in a calm, clear voice, speaking quickly with no pauses between sentences"}
 
 
 def _words(t):
@@ -33,8 +36,8 @@ def drifted(script: str, said: str) -> bool:
 
 
 class LiveReader:
-    def __init__(self, voice="Kore"):
-        self.voice = voice
+    def __init__(self, voice="Kore", pace="normal"):
+        self.voice, self.pace = voice, pace
         self._cm = None
         self.session = None
         self.lock = asyncio.Lock()
@@ -42,7 +45,7 @@ class LiveReader:
     async def connect(self):
         from google.genai import types
         cfg = types.LiveConnectConfig(
-            response_modalities=["AUDIO"], system_instruction=SYS,
+            response_modalities=["AUDIO"], system_instruction=SYS.format(pace=PACES[self.pace]),
             output_audio_transcription=types.AudioTranscriptionConfig(),
             speech_config=types.SpeechConfig(voice_config=types.VoiceConfig(
                 prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=self.voice))))

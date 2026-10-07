@@ -182,7 +182,11 @@ class CallSession:
             out = d.delivered.split("] ", 1)[-1]
             checks = {"no abuse left": not self.det(out).is_toxic, "no new numbers": not (numbers(out) - numbers(text) - {"311"}),
                       "fallback used": d.tier == 3, "rejected": d.debug.get("rejected")}
+        late = d.debug.get("late_future")
+        if late is not None:
+            self.late = getattr(self, "late", {}); self.late[len(self.cards)] = late
         card = dict(type="card", idx=len(self.cards), original=text, spans=sorted(spans),
+                    path=d.debug.get("path") or ("Gemini" if u else "offline"),
                     intent_label=INTENTS[d.intent]["issue"] if d.intent in INTENTS else None,
                     nyc_types=INTENTS[d.intent]["nyc"] if d.intent in INTENTS else [], intent_score=round(d.intent_score, 2),
                     slots_dropped=u.get("slots_dropped", []), checks=checks, model=u.get("model"),

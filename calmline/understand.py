@@ -72,10 +72,11 @@ class GeminiUnderstanding:
                 "HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT")])
         self.stats = {"calls": 0, "slots_kept": 0, "slots_dropped_not_in_source": 0, "errors": 0}
 
-    def analyze(self, text: str, context: str = "") -> dict | None:
+    def analyze(self, text: str, context: str = "", retry=True) -> dict | None:
         self.stats["calls"] += 1
         try:
-            raw, model = self.G.generate_text(PROMPT.format(catalog=CATALOG, context=context or "(start of call)", text=text), config=self.cfg)
+            raw, model = self.G.generate_text(PROMPT.format(catalog=CATALOG, context=context or "(start of call)", text=text),
+                                              config=self.cfg, retry=retry)
             out = json.loads(raw)
         except Exception:  # noqa: BLE001
             self.stats["errors"] += 1
