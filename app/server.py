@@ -137,6 +137,19 @@ def health():
     return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST)}
 
 
+async def finish(r, s):
+    """End of call: wait for outstanding sentences and voice, then seal the evidence."""
+    s.closed = True
+    pend = r.get("pending", [])
+    if pend:
+        await asyncio.gather(*pend, return_exceptions=True)
+    r["pending"] = []
+    async with r.setdefault("voice_lock", asyncio.Lock()):
+        s.save_evidence()
+    r["last_done"] = s.id
+    await broadcast(r, {"type": "compare_ready", "session": s.id})
+
+
 async def broadcast(r, msg: dict | bytes):
     dead = []
     for ws in list(r["agents"]):
@@ -151,22 +164,60 @@ async def broadcast(r, msg: dict | bytes):
         r["agents"].discard(ws)
 
 
-async def speak(r, s, text):
-    """Stream the calm Gemini voice for one card to the agents (prefix byte 2).
-    If Google TTS is unavailable (e.g. free-tier daily quota), the agent page speaks the card with the browser voice."""
-    if r.get("tts_down") and time.time() < r["tts_down"]:
-        await broadcast(r, {"type": "voice_fallback", "text": text}); return
-    import queue, threading
-    from calmline import tts
-    q: queue.Queue = queue.Queue()
-    def work():
+async def _live(r):
+    """One Gemini Live reader per room, connected ahead of time so the 0.7 s connect is off the critical path."""
+    from calmline.live_voice import LiveReader
+    if r.get("live") is None:
+        r["live"] = LiveReader()
         try:
-            for ch in tts.stream(text):
-                q.put(ch)
+            await r["live"].connect()
         except Exception as e:  # noqa: BLE001
-            q.put(e)
-        q.put(None)
+            print("live connect failed:", str(e)[:120], flush=True)
+            r["live"] = False
+    return r["live"] or None
+
+
+async def speak(r, s, text):
+    """Speak one verified calm sentence to the agents (binary prefix 2).
+    Gemini Live verbatim reader (~0.7 s to first audio) -> streaming Gemini TTS -> browser voice on the agent page."""
+    import queue, threading
+    t_req = time.time()
     async with r.setdefault("voice_lock", asyncio.Lock()):
+        t_lock = time.time(); first = True
+
+        async def emit(chunk):
+            nonlocal first
+            if first:
+                first = False
+                info = dict(queued_ms=round((t_lock - t_req) * 1000), first_audio_ms=round((time.time() - t_lock) * 1000), via=via)
+                s.audit.append([time.time(), "voice_first_audio", info]); print("TIMING voice", info, flush=True)
+            s.voice_log.append((time.time() - (r["started"] or time.time()), chunk))
+            await broadcast(r, b"\x02" + (np.clip(chunk, -1, 1) * 32767).astype("<i2").tobytes())
+
+        via = "live"
+        live = await _live(r)
+        if live is not None:
+            try:
+                async for ch in live.speak(text):
+                    await emit(ch)
+                return
+            except Exception as e:  # noqa: BLE001
+                print("live failed:", str(e)[:120], flush=True)
+                if not first:      # drifted mid-sentence: stop, show the text, don't re-speak
+                    await broadcast(r, {"type": "voice_cut", "text": text}); return
+                await live.close(); r["live"] = None
+        via = "tts"
+        if r.get("tts_down") and time.time() < r["tts_down"]:
+            await broadcast(r, {"type": "voice_fallback", "text": text}); return
+        from calmline import tts
+        q: queue.Queue = queue.Queue()
+        def work():
+            try:
+                for ch in tts.stream(text):
+                    q.put(ch)
+            except Exception as e:  # noqa: BLE001
+                q.put(e)
+            q.put(None)
         threading.Thread(target=work, daemon=True).start()
         while True:
             item = await asyncio.get_running_loop().run_in_executor(None, q.get)
@@ -176,17 +227,35 @@ async def speak(r, s, text):
                 r["tts_down"] = time.time() + 600
                 await broadcast(r, {"type": "voice_fallback", "text": text, "error": str(item)[:160]})
                 break
-            s.voice_log.append((time.time() - (r["started"] or time.time()), item))
-            await broadcast(r, b"\x02" + (np.clip(item, -1, 1) * 32767).astype("<i2").tobytes())
+            await emit(item)
+
+
+async def process_utt(r, s, t0, t1):
+    """Pass 2 for one sentence: ASR -> pipeline (Gemini rewrite + checks) -> card -> calm voice. Cards stay in order."""
+    loop = asyncio.get_running_loop()
+    async with r.setdefault("card_lock", asyncio.Lock()):
+        tq = time.time()
+        card = await loop.run_in_executor(None, s.process_utterance, t0, t1)
+        if not card:
+            return
+        card["timing"]["queued_ms"] = round((time.time() - tq) * 1000) - card["timing"]["asr_ms"] - card["timing"]["rewrite_pipeline_ms"]
+        print("TIMING card", card["timing"], "speech_end", round(t1, 2), "emitted_at_call_s", round(time.time() - (r["started"] or time.time()), 2), flush=True)
+        await broadcast(r, card)
+        if card.get("route") == "ESCALATE":
+            await broadcast(r, {"type": "alert", "label": "threat"})
+    if card.get("withheld") and card.get("route") != "ESCALATE":
+        return
+    if s.s.protection == "calm_voice":
+        text = card["delivered"].split("] ", 1)[-1] if card["delivered"].startswith("[SAFETY") else card["delivered"]
+        if card["route"] == "ESCALATE":
+            text = "Safety alert. A supervisor is joining. " + text
+        await speak(r, s, text)
 
 
 def on_events(r, s, events):
     for e in events:
-        if e.get("type") == "card" and s.s.protection == "calm_voice":
-            text = e["delivered"].split("] ", 1)[-1] if e["delivered"].startswith("[SAFETY") else e["delivered"]
-            if e["route"] == "ESCALATE":
-                text = "Safety alert. A supervisor is joining. " + text
-            asyncio.create_task(speak(r, s, text))
+        if e.get("type") == "utt":
+            r.setdefault("pending", []).append(asyncio.create_task(process_utt(r, s, e["t0"], e["t1"])))
 
 
 async def playback_loop(name):
@@ -217,6 +286,7 @@ async def ws_caller(ws: WebSocket, name: str):
     if r["started"] is None:
         r["started"] = time.time()
         asyncio.create_task(playback_loop(name))
+        asyncio.create_task(_live(r))
     buf = np.zeros(0, np.float32)
     loop = asyncio.get_running_loop()
     chunk = int(s.s.chunk_s * SR)
@@ -245,12 +315,7 @@ async def ws_caller(ws: WebSocket, name: str):
     for e in events:
         await broadcast(r, e)
     on_events(r, s, events)
-    s.closed = True
-    await asyncio.sleep(0.5)
-    async with r.setdefault("voice_lock", asyncio.Lock()):
-        s.save_evidence()
-    r["last_done"] = s.id
-    await broadcast(r, {"type": "compare_ready", "session": s.id})
+    await finish(r, s)
 
 
 @app.websocket("/ws/agent/{name}")
@@ -286,6 +351,7 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     import soundfile as sf
     await ws.accept()
     r = await reset_room(name); s = r["session"]; r["started"] = time.time()
+    asyncio.create_task(_live(r))
     asyncio.create_task(playback_loop(name))
     x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
     loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)
@@ -301,10 +367,5 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
             await ws.send_text(json.dumps({"type": "progress", "t": (k + len(part)) / SR, "dur": len(x) / SR}))
         except Exception:
             pass
-    s.closed = True
-    await asyncio.sleep(0.5)
-    async with r.setdefault("voice_lock", asyncio.Lock()):
-        s.save_evidence()
-    r["last_done"] = s.id
-    await broadcast(r, {"type": "compare_ready", "session": s.id})
+    await finish(r, s)
     await ws.send_text(json.dumps({"type": "done", "session": s.id}))

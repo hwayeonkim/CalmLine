@@ -27,8 +27,9 @@ class Settings:
     chunk_s: float = 0.5
     protection: str = "calm_voice"  # calm_voice (default: agent hears only the calm Gemini voice) | shield | raw
     compress: bool = True
-    whisper: str = "small.en"       # pass 2 (utterance card)
+    whisper: str = "base.en"        # pass 2 (utterance card); small.en cost ~1 s per sentence on CPU
     spotter: str = "tiny.en"        # pass 1 (mute decisions)
+    pause_s: float = 0.45           # pause that closes a sentence-level utterance
 
 
 class CallSession:
@@ -103,28 +104,64 @@ class CallSession:
                         self.alerted = True
                         ev.append({"type": "alert", "label": sp.label})
         ev.append({"type": "partial", "anger": round(self.anger, 2)})
-        # pass 2: utterance boundary = pause >= 0.8 s after speech (or end of call)
+        # pass 2 is scheduled, not run here, so mute decisions on the next chunks are never blocked.
+        # Utterance boundary = a short pause (sentence-level relay) or end of call.
         now = start + len(pcm) / SR
-        if self.utt_start is not None and (final or now - self.last_voice >= 0.8):
-            card = self._close_utterance(self.utt_start, self.last_voice if not final else now)
-            if card:
-                ev.append(card)
+        # sentence-level relay without waiting for a pause: if pass 1 has seen a sentence end (. ? !) at least
+        # 0.3 s ago and 1.5 s into the utterance, cut there so long rants are relayed sentence by sentence.
+        if self.utt_start is not None and not final and words:
+            cands = []
+            for i, w in enumerate(words):
+                if not w.text.endswith((".", "?", "!")) or w.end < self.utt_start + 1.5 or now - w.end < 0.3:
+                    continue
+                nxt = words[i + 1].start if i + 1 < len(words) else w.end + 0.4
+                if nxt - w.end < 0.08 and i + 1 < len(words):
+                    continue          # no audible gap: Whisper punctuation, not a real sentence break
+                cands.append((w.end, nxt))
+            if cands:
+                a, b = cands[-1]
+                cut = self._quietest(a - 0.12, max(b, a + 0.12))
+                ev.append({"type": "utt", "t0": self.utt_start, "t1": cut})
+                self.utt_start = cut
+                return ev
+        if self.utt_start is not None and (final or now - self.last_voice >= self.s.pause_s):
+            ev.append({"type": "utt", "t0": self.utt_start, "t1": self.last_voice if not final else now})
             self.utt_start = None
         return ev
 
+    def _quietest(self, a, b):
+        """Time of the lowest-energy 20 ms frame in [a, b] — where a sentence cut is least likely to split a word."""
+        i, j = int(max(0, a) * SR), int(b * SR)
+        x = self.audio[i:j]
+        if len(x) < 640:
+            return (a + b) / 2
+        e = frame_rms(x, 320, 160)
+        return a + float(np.argmin(e)) * 160 / SR + 0.01
+
+    def process_utterance(self, t0, t1):
+        return self._close_utterance(t0, t1)
+
     def _close_utterance(self, t0, t1):
+        import time as _t
+        _ts = _t.perf_counter()
         from .audio.stt import load_whisper
-        x = self.audio[int(max(0, t0 - 0.2) * SR):int((t1 + 0.3) * SR)]
+        x = self.audio[int(max(0, t0) * SR):int((t1 + 0.05) * SR)]
         segs, _ = load_whisper(self.s.whisper).transcribe(x, language="en", beam_size=1, initial_prompt=self.stt.PROFANITY_PROMPT,
                                                           condition_on_previous_text=False)
         from .audio.stt import normalize_asr
         text = normalize_asr(" ".join(s.text.strip() for s in segs).strip())
         if not text:
             return None
+        _asr = (_t.perf_counter() - _ts) * 1000
+        gen = getattr(getattr(self.pipe, "renderer", None), "gen", None)
+        if gen is not None and hasattr(gen, "context"):
+            gen.context = " ".join(c["delivered"].split("] ", 1)[-1] for c in self.cards[-3:])
         d = self.pipe(text)
-        card = dict(type="card", route=d.route, delivered=d.delivered, intent=d.intent, slots=d.slots, tier=d.tier,
+        _pipe = (_t.perf_counter() - _ts) * 1000 - _asr
+        card = dict(type="card", route=d.route, delivered=d.delivered, withheld=(d.route != "PASS" and not d.delivered.split("] ", 1)[-1].strip()), intent=d.intent, slots=d.slots, tier=d.tier,
                     abuse_types=d.abuse_types, anger=round(max(self.anger, d.anger if d.route != "PASS" else 0), 2),
-                    t=[t0, t1], latency_ms=round(sum(d.timings_ms.values()), 1))
+                    t=[t0, t1], latency_ms=round(sum(d.timings_ms.values()), 1),
+                    timing=dict(wait_for_pause_s=self.s.pause_s, asr_ms=round(_asr), rewrite_pipeline_ms=round(_pipe)))
         card_public = dict(card)
         # sealed original: kept for evidence, never sent to the agent UI
         with open(os.path.join(self.evidence_dir, "transcript.jsonl"), "a") as f:

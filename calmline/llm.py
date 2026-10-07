@@ -23,6 +23,7 @@ PROMPT_V2 = (
     "people affected, previous calls, and exactly what the caller is asking for.\n"
     "Drop all insults, profanity, sexual remarks, slurs, threats and rhetorical jabs. Do not mention that anything was removed.\n"
     "Never add a fact, request or detail the caller did not say. If the words carry no request, do not invent one.\n"
+    "If nothing meaningful is left once the abuse is removed (e.g. the words are only an insult), output exactly: [NOTHING]\n"
     "Output only the message.\n\nCaller's words: {text}\n\nCalm message:"
 )
 
@@ -50,6 +51,7 @@ class GeminiRewriter:
         self.prompt = prompt or PROMPT_V2
         self.cached = cached
         self.last_model = None
+        self.context = ""   # sentences already relayed in this call (sentence-level relay)
         self.client = G.client()
         from google.genai import types
         # This is a content-moderation use case: the input is abusive by construction.
@@ -59,7 +61,10 @@ class GeminiRewriter:
                 "HARM_CATEGORY_HARASSMENT", "HARM_CATEGORY_HATE_SPEECH", "HARM_CATEGORY_SEXUALLY_EXPLICIT", "HARM_CATEGORY_DANGEROUS_CONTENT")])
 
     def generate(self, text):
-        out, self.last_model = self.G.generate_text(self.prompt.format(text=text), config=self.cfg, models=self.models, use_cache=self.cached)
+        prompt = self.prompt.format(text=text)
+        if self.context:
+            prompt = (f"Already relayed earlier in this call (for context only, do not repeat it or greet again): {self.context}\n\n" + prompt)
+        out, self.last_model = self.G.generate_text(prompt, config=self.cfg, models=self.models, use_cache=self.cached)
         return out.strip().strip('"')
 
 
@@ -116,12 +121,26 @@ class VerifiedRewriter:
             return self.fallback(text, intent, slots, tox)
         finally:
             self.stats["ms"].append((time.perf_counter() - t0) * 1000)
+        if out.strip().upper().strip(".") in ("[NOTHING]", "NOTHING"):
+            self.stats["accepted"] += 1
+            return ""          # withheld: pure abuse, nothing to relay
         reason = self.check(text, out, slots)
         if reason:
             self.stats["rej_" + reason] += 1
+            if self.withhold_if_empty(text, slots, tox):
+                return ""
             return self.fallback(text, intent, slots, tox)
         self.stats["accepted"] += 1
         return out
+
+    @staticmethod
+    def withhold_if_empty(text, slots, tox):
+        """Sentence-level relay: a sentence with no facts left after removing the abuse is not relayed at all."""
+        from .render import mask
+        from .textnorm import content_tokens
+        rest = mask(text, tox.spans)
+        facty = any(slots.get(k) for k in ("address", "street", "cross_street", "apartment", "reference", "plate", "vehicle", "time", "duration", "request"))
+        return not facty and len(content_tokens(rest)) < 5
 
     def check(self, text, out, slots):
         if not out or len(out) < 8:

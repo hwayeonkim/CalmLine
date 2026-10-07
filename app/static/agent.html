@@ -38,6 +38,7 @@ button:focus-visible{outline:2px solid var(--calm);outline-offset:2px}
 .fact{display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--line);padding-bottom:8px}
 .fact span{font-size:11.5px;color:var(--muted);text-transform:capitalize}.fact b{font-weight:500;font-size:14px}
 .stat{font:13px var(--mono);color:var(--muted)}
+.withheld{font-style:italic;padding-left:4px}
 </style></head><body>
 <div class="top">
   <div class="who"><b>Incoming 311 call</b><span id="roomtag"></span></div>
@@ -86,10 +87,13 @@ function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16A
   const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
   const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
   if(kind===2){tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
-function banner(label){const a=document.createElement('div');a.className='banner';
+function banner(label){if(document.querySelector('.banner'))return;const a=document.createElement('div');a.className='banner';
   a.innerHTML=`<span>${label==='self_harm'?'Caller expressed self-harm intent. Crisis protocol and your supervisor have been notified.':'Threat detected. Your supervisor has been notified. You may end this call.'}</span>`;
   document.getElementById('alerts').prepend(a)}
 function card(m){document.getElementById('empty').hidden=true;
+  if(m.withheld&&m.route!=='ESCALATE'){const w=document.createElement('div');w.className='meta withheld';
+    w.textContent=`One sentence withheld — only ${(m.abuse_types||[]).filter(x=>x!=='mild').join(', ')||'abuse'}, nothing to relay.`;
+    const conv=document.getElementById('conv');conv.insertBefore(w,document.getElementById('speaking'));return}
   const text=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;
   const removed=(m.abuse_types||[]).filter(x=>x!=='mild');const d=document.createElement('div');d.className='msg'+(m.route==='ESCALATE'?' esc':'');
   const tag=m.route==='PASS'?'<span class="tag plain">relayed as spoken</span>':m.route==='ESCALATE'?'<span class="tag esc">calm version · threat removed</span>':'<span class="tag">calm version</span>';
@@ -97,7 +101,7 @@ function card(m){document.getElementById('empty').hidden=true;
   const conv=document.getElementById('conv');conv.insertBefore(d,document.getElementById('speaking'));conv.scrollTop=conv.scrollHeight;
   for(const [k,v] of Object.entries(m.slots||{}))for(const x of v){const key=LABEL[k]||k;facts[key]=facts[key]||new Set();facts[key].add(x.replace(/^(at|on|in|near|corner of)\s+/i,''))}
   document.getElementById('facts').innerHTML=Object.keys(facts).length?Object.entries(facts).map(([k,s])=>`<div class="fact"><span>${esc(k)}</span><b>${[...s].map(esc).join(' · ')}</b></div>`).join(''):'<div class="stat">No facts yet.</div>'}
-function reset(){document.querySelectorAll('.msg,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;blocked=0;document.getElementById('pstats').textContent='0 abusive words blocked';
+function reset(){document.querySelectorAll('.msg,.banner,.withheld').forEach(x=>x.remove());document.getElementById('empty').hidden=false;blocked=0;document.getElementById('pstats').textContent='0 abusive words blocked';
   for(const k in facts)delete facts[k];document.getElementById('facts').innerHTML='<div class="stat">Facts the caller mentions collect here.</div>';t0=null;clearInterval(timerId);document.getElementById('timer').textContent='00:00';setState('ready');
   if(ctx){tLine=tVoice=ctx.currentTime+0.1}}
 document.getElementById('join').onclick=join;
