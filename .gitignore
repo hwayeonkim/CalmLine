@@ -11,3 +11,7 @@ evidence/
 data/cache/
 .env.old
 .env.prev
+
+# local-only
+.claude/
+docs/report_ko.html
