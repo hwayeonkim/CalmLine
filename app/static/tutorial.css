@@ -1,0 +1,38 @@
+.header-tools { display: flex; align-items: center; gap: 16px; }
+.tour-launch { white-space: nowrap; }
+.tour-layer { position: fixed; inset: 0; z-index: 1000; }
+.tour-backdrop { position: absolute; inset: 0; }
+.tour-highlight {
+  position: fixed; border: 2px solid #86c4ac; border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(18, 35, 29, .52);
+  pointer-events: none;
+}
+.tour-panel {
+  position: fixed; width: 360px; max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px); overflow: auto;
+  background: white; border: 1px solid #dce8e1; border-radius: 16px;
+  padding: 21px; box-shadow: 0 12px 50px #10291c30;
+}
+.tour-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.tour-count { color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.tour-close { border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 3px; }
+.tour-panel h2 { font-size: 19px; letter-spacing: -.3px; margin-bottom: 9px; }
+.tour-panel p { color: #64726b; font-size: 13px; line-height: 1.7; }
+.tour-progress { display: flex; gap: 5px; margin: 18px 0; }
+.tour-progress span { flex: 1; height: 3px; border-radius: 3px; background: #e9eeeb; }
+.tour-progress span.current { background: var(--green); }
+.tour-progress span.past { background: #a4cfbb; }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-actions .tour-skip { margin-right: auto; }
+.tour-panel[data-side="below"]::before,
+.tour-panel[data-side="above"]::before {
+  content: ""; position: fixed; left: var(--arrow-x); width: 12px; height: 12px;
+  background: white; transform: rotate(45deg);
+}
+.tour-panel[data-side="below"]::before { top: calc(var(--panel-top) - 6px); border-top: 1px solid #dce8e1; border-left: 1px solid #dce8e1; }
+.tour-panel[data-side="above"]::before { top: calc(var(--panel-bottom) - 6px); border-bottom: 1px solid #dce8e1; border-right: 1px solid #dce8e1; }
+@media (max-width: 800px) {
+  .header-tools { flex-direction: column; align-items: flex-end; gap: 8px; }
+  .tour-launch { font-size: 12px; padding: 6px 10px; }
+  .tour-panel { padding: 18px; }
+}

@@ -1,404 +1,158 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CalmLine</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CalmLine · Live comparison</title>
 <style>
-:root{--bg:#EDF1F3;--panel:#fff;--ink:#16202A;--muted:#5E6D7B;--line:#DAE1E6;--soft:#F5F8F9;
---calm:#1D6E68;--calm-soft:#E1F0EE;--alert:#B4302A;--alert-soft:#FBE7E5;--hide:#C24A3A;--hide-soft:#FCEBE8;--amber:#9A6A12;--amber-soft:#FBF1DC;
---sans:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--sans)}
-button{font:inherit;cursor:pointer}button:focus-visible,textarea:focus-visible{outline:2px solid var(--calm);outline-offset:2px}
-.hero{background:var(--panel);border-bottom:1px solid var(--line);padding:18px 22px 16px}
-.hero-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.hero h1{margin:0;font-size:22px;letter-spacing:-.01em}.hero .tl{font-size:16px;color:var(--ink)}.hero .tl b{color:var(--calm)}
-.flow{display:grid;grid-template-columns:1fr auto 1.35fr auto 1fr;gap:10px;align-items:stretch;margin-top:14px}
-.flow .st{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--soft);font-size:13px;color:var(--muted)}
-.flow .st b{display:block;color:var(--ink);font-size:13.5px;margin-bottom:2px}.flow .st.mid{background:var(--calm-soft);border-color:#C5E2DD}
-.flow .ar{align-self:center;color:var(--muted);font-size:18px}
-@media (max-width:900px){.flow{grid-template-columns:1fr}.flow .ar{transform:rotate(90deg);justify-self:center}}
-.wrap{display:grid;grid-template-columns:340px 1fr 300px;gap:14px;padding:14px;align-items:start}
-@media (max-width:1250px){.wrap{grid-template-columns:330px 1fr}.sr{grid-column:1/-1}}
-@media (max-width:820px){.wrap{grid-template-columns:1fr}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.ph{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600;font-size:13px;letter-spacing:.02em}
-.ph .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.tabs{display:flex;border-bottom:1px solid var(--line)}.tabs button{flex:1;border:0;background:none;padding:9px 6px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent}
-.tabs button.on{color:var(--calm);border-bottom-color:var(--calm)}
-.pane{padding:12px 14px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 290px);overflow:auto}
-.sample{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
-.sample .row{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.sample b{font-size:13.5px}.sample p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
-.chip{display:inline-block;font:500 11px/1 var(--mono);padding:4px 6px;border-radius:5px;background:#E9EEF1;color:var(--muted);margin:0 4px 0 0}
-.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 11px;font-weight:500;font-size:13px}
-.btn.primary{background:var(--calm);border-color:var(--calm);color:#fff}.btn.danger{color:var(--alert);border-color:#EBC0BC}
-.btn:disabled{opacity:.5;cursor:default}
-.scen{border:1px dashed var(--line);border-radius:10px;padding:9px 11px;font-size:12.5px}.scen b{font-size:13px}
-.scen q{display:block;color:var(--ink);font-style:italic;margin-top:3px;quotes:none}
-.scen button{margin-top:6px;font-size:12px;padding:4px 8px}
-textarea{width:100%;min-height:86px;border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;resize:vertical}
-.listen{display:flex;gap:6px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);flex-wrap:wrap}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--panel);padding:5px 9px;font-size:12.5px;color:var(--muted)}
-.seg button.on{background:var(--calm);color:#fff}
-/* agent */
-.abar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}
-.pill{font:500 11.5px/1 var(--mono);padding:5px 8px;border-radius:99px;background:#E7EBEE;color:var(--muted)}
-.pill.live{background:var(--calm-soft);color:var(--calm)}.pill.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--calm);margin-right:6px;animation:pulse 1.4s infinite}
-@keyframes pulse{50%{opacity:.25}}@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.meter{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.meter .g{width:90px;height:6px;border-radius:9px;background:#E3E8EC;overflow:hidden}
-.meter .g i{display:block;height:100%;width:0;background:linear-gradient(90deg,#86BDB2,#E0A35F,#C8553D);transition:width .4s}
-.judge{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
-.judge:first-of-type{margin-left:auto}
-.conv{padding:14px;display:flex;flex-direction:column;gap:12px;min-height:420px;max-height:calc(100vh - 300px);overflow:auto}
-.empty{border:1px dashed var(--line);border-radius:12px;padding:18px;color:var(--muted);font-size:13.5px}
-.banner{background:var(--alert-soft);color:var(--alert);border:1px solid #EFC2BE;border-radius:10px;padding:10px 14px;font-weight:600}
-.turn{display:grid;grid-template-columns:1fr;gap:6px}
-.bub{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:11px 13px;font-size:15.5px;line-height:1.5}
-.bub .play{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--soft);font-size:11px;color:var(--calm)}
-.turn.esc .bub{border-color:#EFC2BE}.turn.withheld .bub{background:var(--soft);color:var(--muted);font-style:italic;font-size:14px}
-.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
-.tag{font:500 11px/1 var(--mono);padding:4px 7px;border-radius:6px}
-.t-pass{background:#E9EDF0;color:var(--muted)}.t-calm{background:var(--calm-soft);color:var(--calm)}.t-esc{background:var(--alert-soft);color:var(--alert)}.t-wh{background:var(--amber-soft);color:var(--amber)}
-.hood{border-left:3px solid var(--line);margin-left:6px;padding:4px 0 2px 12px;display:flex;flex-direction:column;gap:5px;font-size:12.5px}
-.hood .lbl{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.orig{font-family:var(--mono);font-size:12.5px;color:#3B4651;line-height:1.55}
-.orig mark{background:var(--hide-soft);color:var(--hide);text-decoration:line-through;text-decoration-thickness:1px;border-radius:3px;padding:0 2px}
-body.nojudge .hood,body.nojudge .conv,body.nojudge .dbg{display:none}
-.kv{display:flex;flex-wrap:wrap;gap:4px}.kv span{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px}
-.kv span i{font-style:normal;color:var(--muted)}
-.ok{color:var(--calm)}.bad{color:var(--alert)}
-.speaking{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
-.bars{display:flex;gap:3px;align-items:flex-end;height:16px}.bars i{width:3px;background:var(--calm);border-radius:2px;animation:bar .9s infinite ease-in-out}
-.bars i:nth-child(2){animation-delay:.15s}.bars i:nth-child(3){animation-delay:.3s}.bars i:nth-child(4){animation-delay:.45s}@keyframes bar{0%,100%{height:4px}50%{height:16px}}
-.nowbar{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
-.nowbar .cstate{grid-column:1/-1}
-@media (max-width:820px){.nowbar{grid-template-columns:1fr}}
-.cstate{border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;letter-spacing:.01em;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;background:#E7EBEE;color:var(--muted);transition:background .25s,color .25s}
-.cstate .lvl{grid-row:1/3;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.08);display:grid;place-items:center;overflow:hidden;position:relative}
-.cstate .lvl i{position:absolute;bottom:0;left:0;right:0;height:0;background:currentColor;opacity:.35;transition:height .08s}
-.cstate .lvl::after{content:"";width:12px;height:12px;border-radius:50%;background:currentColor}
-.cstate small{font-weight:400;font-size:12.5px;opacity:.9}
-.cstate.speaking{background:#FFF1E6;color:#A0521E}
-.cstate.done{background:var(--calm);color:#fff;font-size:20px;box-shadow:0 0 0 0 rgba(29,110,104,.5);animation:ring 1.6s infinite}
-@keyframes ring{0%{box-shadow:0 0 0 0 rgba(29,110,104,.45)}70%{box-shadow:0 0 0 12px rgba(29,110,104,0)}100%{box-shadow:0 0 0 0 rgba(29,110,104,0)}}
-.latest{min-width:0}.latest .lbl{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.llist{max-height:190px;overflow:auto;margin-top:4px;display:flex;flex-direction:column;gap:4px;padding-right:4px;scroll-behavior:smooth}
-.li{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:baseline;font-size:15.5px;line-height:1.4;color:#3B4651;padding:3px 6px;border-radius:6px}
-.li .n{font:500 11px var(--mono);color:var(--muted)}.li .st{font:500 10.5px var(--mono);color:var(--muted);white-space:nowrap}
-.li.now{background:#fff;color:var(--ink);font-weight:500;font-size:17px;box-shadow:0 0 0 1px var(--line)}
-.li.now .st{color:var(--calm)}.li.wh{font-style:italic;color:#9AA6B0;font-size:13.5px}.li.esc{color:var(--alert)}
-.lsep{font:500 10.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-top:1px dashed var(--line);padding-top:4px;margin-top:2px}
-.say{grid-column:1/-1;display:none;flex-direction:column;gap:6px;background:#fff;border:2px solid var(--calm);border-radius:12px;padding:10px 12px}
-.say.on{display:flex}.say .lbl{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--calm)}
-.say .opt{display:flex;gap:10px;align-items:baseline;font-size:15.5px;line-height:1.45}.say .opt b{font:600 11px var(--mono);color:var(--muted);min-width:84px;text-transform:uppercase;letter-spacing:.04em}
-.skipbig{font:600 14px var(--sans);padding:12px 16px;border-radius:10px;border:2px solid var(--calm);background:#fff;color:var(--calm);white-space:nowrap}
-.skipbig:disabled{opacity:.35}
-.yourturn{background:var(--calm);color:#fff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600}
-.yourturn .stat{color:#D5ECE8}.yourturn button{margin-left:auto;background:#fff;color:var(--calm);border:0}
-/* live timeline */
-.tline{padding:10px 14px 8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
-.tlhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px}
-.now{font-weight:600}.lag{font:500 12px var(--mono);padding:3px 7px;border-radius:6px;background:var(--soft);border:1px solid var(--line)}
-.legend{display:flex;gap:12px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}.legend i{display:inline-block;width:12px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
-canvas#tlc{width:100%;height:74px;display:block}
-/* service request */
-.srb{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-.srow{display:grid;grid-template-columns:118px 1fr;gap:8px;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:6px}
-.srow span{color:var(--muted);font-size:12px}.srow b{font-weight:500}.srow b.nil{color:#A8B3BC;font-weight:400}
-.ctype{font-size:15px;font-weight:600}.conf{height:5px;background:#E3E8EC;border-radius:9px;overflow:hidden;margin-top:4px}.conf i{display:block;height:100%;background:var(--calm)}
-.cmp{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-top:1px solid var(--line)}.cmp audio{width:100%;height:32px}
-.stat{font:12px var(--mono);color:var(--muted)}
-</style></head><body class="nojudge">
-<header class="hero">
-  <div class="hero-top"><h1>CalmLine</h1><span class="tl">Callers' abuse <b>never reaches the 311 agent</b>. Every fact still does.</span></div>
-  <div class="flow">
-    <div class="st"><b>1 · Caller speaks</b>Shouting, swearing, insults, harassment, threats — mixed in with a real problem.</div><div class="ar">→</div>
-    <div class="st mid"><b>2 · CalmLine, sentence by sentence (~2 s)</b>Transcribes, detects abuse, classifies the NYC 311 complaint, extracts the facts, writes a calm version with Gemini, and checks it adds nothing.</div><div class="ar">→</div>
-    <div class="st"><b>3 · Agent hears a calm voice</b>Only the calm version, with a pre-filled service request. Threats alert a supervisor. The original is sealed as evidence.</div>
-  </div>
-</header>
-<div class="wrap">
-  <!-- CALLER -->
-  <section class="panel" aria-label="Caller simulator">
-    <div class="ph"><span class="who">Caller side</span> Try it</div>
-    <div class="tabs" role="tablist"><button class="on" data-t="samples">Sample calls</button><button data-t="speak">Speak</button><button data-t="type">Type</button></div>
-    <div class="pane" id="t-samples"></div>
-    <div class="pane" id="t-speak" hidden>
-      <div class="row" style="display:flex;gap:8px;align-items:center"><button class="btn primary" id="mic">🎙 Start speaking</button><button class="btn" id="micstop" disabled>End call</button><span class="stat" id="micstate"></span></div>
-      <p class="stat" style="margin:0">English only. Use headphones. Pause briefly between sentences. Say anything about a city problem — or pick a situation below and read the angry line.</p>
-      <div id="scen"></div>
-    </div>
-    <div class="pane" id="t-type" hidden>
-      <p class="stat" style="margin:0">No microphone? Type what an angry caller says. Each send is one sentence of the same call.</p>
-      <textarea id="txt" placeholder="e.g. Are you deaf? I said there's NO HOT WATER at 455 Park Place, apartment 1R!"></textarea>
-      <div style="display:flex;gap:8px"><button class="btn primary" id="send">Send as caller</button><button class="btn" id="newcall">New call</button></div>
-      <div id="txtex"></div>
-    </div>
-    <div class="listen">You hear: <div class="seg" id="listen"><button data-v="agent" class="on">Agent</button><button data-v="caller">Caller</button><button data-v="both">Both</button></div></div>
-  </section>
-
-  <!-- AGENT -->
-  <section class="panel" aria-label="Agent console">
-    <div class="ph"><span class="who">Agent side</span> 311 agent console</div>
-    <div class="abar"><span class="pill" id="state">idle</span><span class="stat" id="timer">00:00</span>
-      <div class="meter">Agitation<div class="g"><i id="g"></i></div></div><span class="stat" id="blocked">0 words muted</span>
-      <label class="judge" title="While Gemini prepares a part that contained abuse, say a short 'One moment.' instead of leaving silence. Shorter silence, but the content arrives ~1 s later."><input type="checkbox" id="filler"> “One moment” filler</label>
-      <label class="judge"><input type="checkbox" id="judge"> Debug view — what CalmLine hid, per-part details &amp; timings</label></div>
-    <div class="nowbar" aria-live="polite">
-      <div class="cstate" id="cstate"><div class="lvl"><i id="clvl"></i></div><span id="cstateTxt">No call yet</span><small id="cstateSub">Play a sample call, speak, or type on the left.</small></div>
-
-      <div class="latest"><div class="lbl" id="latestLbl">What the caller said — calm version</div><div class="llist" id="llist"><div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div></div></div>
-      <button class="skipbig" id="skipBig" disabled title="Stop the queued calm voice so you can answer now">Skip voice &<br>answer now</button>
-    </div>
-    <div class="tline" aria-label="Live timeline">
-      <div class="tlhead"><span class="now" id="now">Waiting for a call</span><span class="lag" id="laglast" title="Time from the caller finishing a part to you hearing its calm version">delay: —</span><span class="stat" id="lagavg"></span></div>
-      <canvas id="tlc" height="74"></canvas>
-      <div class="legend"><span><i style="background:#9AA7B2"></i>caller talking</span><span><i style="background:#C24A3A"></i>blocked word</span><span><i style="background:#1D6E68"></i>you hear the calm voice</span><span><i style="background:#8FC3BB"></i>"one moment" filler</span><span>gap between them = delay</span></div>
-    </div>
-    <div class="conv" id="conv"><div id="alerts"></div>
-      <div class="empty" id="empty"><b>Nothing yet.</b> Play a sample call on the left, speak, or type a sentence. Each caller sentence appears here as what the agent hears; the grey strip under it shows what CalmLine actually heard and did.</div>
-      <div class="speaking" id="speaking" hidden><div class="bars"><i></i><i></i><i></i><i></i></div><span>Caller is speaking…</span></div>
-    </div>
-  </section>
-
-  <!-- SERVICE REQUEST -->
-  <section class="panel sr" aria-label="Service request">
-    <div class="ph"><span class="who">Auto-filled</span> 311 service request</div>
-    <div class="srb" id="srb"></div>
-    <div class="cmp" id="cmp" hidden><b style="font-size:13px">Before / after</b><span class="stat">Original caller</span><audio id="aOrig" controls></audio><span class="stat">What the agent heard</span><audio id="aProt" controls></audio></div>
-  </section>
-</div>
+:root{--bg:#f2f4f3;--paper:#fff;--ink:#23312e;--muted:#71807a;--line:#e0e7e3;--green:#176c58;--soft:#edf6f1;--orange:#a76639;--red:#aa403a}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #83bba7;outline-offset:3px}
+header{max-width:1440px;margin:auto;padding:30px 36px 23px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-size:25px;font-weight:750;letter-spacing:-1px}.brand span{color:var(--green)}header p{margin:3px 0 0;color:var(--muted);font-size:14px}.demo-note{font-size:12px;color:var(--muted);max-width:260px;text-align:right}.workspace{max-width:1440px;margin:auto;padding:0 36px 36px;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}.side{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden}.side-head{padding:24px 25px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.6px;font-weight:700;color:var(--orange)}.protected .eyebrow{color:var(--green)}h1,h2,h3,p{margin:0}h1{font-size:24px;letter-spacing:-.6px;margin-top:3px}h2{font-size:15px}h3{font-size:14px}.status{font-size:12px;color:var(--muted);white-space:nowrap;border:1px solid var(--line);border-radius:20px;padding:4px 10px}.status.running{color:var(--green);background:var(--soft);border-color:#cde4d8}.audio-control{margin:0 25px 21px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fafbf9}.audio-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}.toggle{border:0;border-radius:16px;background:var(--green);color:white;padding:4px 12px;font-size:11px;font-weight:700;min-width:45px}.toggle[aria-pressed="false"]{background:#e8ece9;color:var(--muted)}.volume-row{display:flex;gap:12px;align-items:center;margin-top:10px}.volume-row input{width:100%;accent-color:var(--green);cursor:pointer}.volume-row output{font-size:12px;color:var(--muted);min-width:38px;text-align:right}.input-area{padding:0 25px 22px;border-bottom:1px solid var(--line)}.tabs{display:flex;gap:5px;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:15px}.tabs button{flex:1;background:transparent;color:var(--muted);border:0;border-radius:7px;padding:7px 4px;font-size:13px}.tabs button[aria-selected="true"]{background:white;color:var(--ink);box-shadow:0 1px 4px #23312e12;font-weight:600}.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:9px 14px;border-radius:9px;font-size:13px;font-weight:600}.btn.primary{background:var(--green);color:white;border-color:var(--green)}.row{display:flex;gap:9px;align-items:center}.row select{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;background:white;padding:10px;font-size:13px}.hint{font-size:12px;color:var(--muted);margin-top:9px}.sample-summary{margin-top:12px;color:#64726c;font-size:13px;line-height:1.65}.sample-tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}.badge{font-size:10px;border-radius:5px;padding:3px 7px;background:#f0f3f1;color:var(--muted)}textarea{width:100%;resize:vertical;min-height:96px;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:14px;line-height:1.5;margin-bottom:9px}.link{border:0;background:none;color:var(--muted);font-size:12px;padding:4px}.transcript-head{padding:19px 25px 10px;display:flex;justify-content:space-between;align-items:center}.transcript-head span{font-size:11px;color:var(--muted)}.transcript{position:relative;padding:0 25px 24px;display:flex;flex-direction:column;gap:12px;max-height:490px;min-height:160px;overflow:auto;scrollbar-width:thin}.empty{padding:24px 0;color:#92a097;font-size:14px}.sentence{border:1px solid var(--line);border-radius:12px;padding:14px 15px;transition:border-color .2s,background .2s}.sentence.playing{border-color:#8cbeaa;background:var(--soft)}.sentence-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:8px}.sentence-id{font-size:10px;font-weight:650;color:var(--muted);letter-spacing:.7px}.sentence p{font-size:15px;line-height:1.7;overflow-wrap:anywhere}.replay{border:1px solid var(--line);border-radius:6px;background:white;color:var(--muted);font-size:11px;padding:3px 8px}.sentence mark{color:var(--red);background:#fbefec;border-radius:3px;padding:1px 2px}.sentence.withheld p{font-style:italic;color:var(--muted)}.sentence .badge.calm{color:var(--green);background:var(--soft)}.sentence .badge.alert{color:var(--red);background:#fbefec}.sentence .badge.wh{color:var(--orange);background:#fbf3e9}.protected .side-head{padding-bottom:18px}.protected .transcript{max-height:370px}.facts{border-top:1px solid var(--line);padding:20px 25px 24px;background:#fafcfb}.facts-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}.facts-head span{font-size:11px;color:var(--muted)}.issue{font-size:17px;font-weight:650;color:var(--green);margin-bottom:3px}.category{font-size:11px;color:var(--muted);margin-bottom:13px}.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}.fact{min-width:0}.fact label{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}.fact p{font-size:13px;overflow-wrap:anywhere}.fact.wide{grid-column:1/-1}.fact-empty{font-size:13px;color:#92a097;padding:8px 0}.alert-banner{margin:0 25px 15px;border:1px solid #eecbc5;background:#fcf0ed;color:var(--red);border-radius:10px;padding:10px 13px;font-size:13px}.error{max-width:1368px;margin:0 auto 16px;padding:10px 14px;background:#fff2e9;border:1px solid #efd6c1;border-radius:10px;color:#8e552f;font-size:13px}.footer-note{max-width:1440px;padding:0 36px 24px;margin:auto;color:var(--muted);font-size:11px}.pending{font-size:12px;color:var(--muted);padding:0 25px 12px}.new-call{margin-left:auto}
+@media(max-width:800px){header{padding:22px 18px;align-items:start}.demo-note{max-width:160px;font-size:11px}.workspace{padding:0 14px 24px;gap:14px;grid-template-columns:1fr}.side-head,.facts{padding-left:19px;padding-right:19px}.audio-control{margin-left:19px;margin-right:19px}.input-area,.transcript,.transcript-head{padding-left:19px;padding-right:19px}.footer-note{padding:0 18px 24px}.transcript{max-height:320px}.error{margin:0 14px 14px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(min-width:801px){header{padding-top:22px;padding-bottom:18px}.side{height:calc(100dvh - 156px);min-height:560px;display:flex;flex-direction:column}.side-head,.protected .side-head{padding-top:18px;padding-bottom:14px;flex:none}h1{font-size:22px}.audio-control{margin-bottom:16px;flex:none}.input-area{padding-bottom:16px;flex:none}.sample-summary{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.transcript-head{flex:none;padding-top:15px}.transcript,.protected .transcript{flex:1;min-height:90px;max-height:none}.facts{flex:none;max-height:235px;overflow:auto;padding-top:15px;padding-bottom:17px}.fact-grid{gap:9px 20px}.facts-head{margin-bottom:9px}.category{margin-bottom:9px}.workspace{padding-bottom:18px}}
+@media(min-width:801px){.input-area .tabs{margin-bottom:10px}.input-area .tabs button{padding:5px 4px}.input-area textarea{min-height:64px;height:64px;margin-bottom:6px}.input-area .btn{padding:7px 12px}.input-area .hint{font-size:11px;margin-top:6px}.input-area .sample-summary{-webkit-line-clamp:2;font-size:12px}.input-area{padding-bottom:12px}}
+.mic-examples{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fafbf9}
+.mic-examples label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}
+.mic-examples select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink);font-size:13px}
+.mic-examples blockquote{margin:9px 0;font-size:13px;line-height:1.65;max-height:108px;overflow:auto;color:#53625b}
+</style>
+<link rel="stylesheet" href="/static/tutorial.css">
+</head>
+<body>
+<header><div><div class="brand">Calm<span>Line</span></div><p>Keep the facts. Change the experience.</p></div><div class="header-tools"><div class="demo-note">Demo comparison view<br>Agents hear the CalmLine voice only.</div><button class="btn tour-launch" id="tour-launch" aria-haspopup="dialog">? How to use</button></div></header>
+<div id="error" class="error" role="alert" hidden></div>
+<main class="workspace">
+<section class="side" aria-label="Original caller">
+ <div class="side-head"><div><div class="eyebrow">01 · Original</div><h1>The caller</h1></div><span class="status" id="status">Ready</span></div>
+ <div class="audio-control"><div class="audio-top"><span>Original voice</span><button class="toggle" id="original-toggle" aria-pressed="true" aria-label="Original voice enabled">ON</button></div><div class="volume-row"><input id="original-volume" type="range" min="0" max="100" value="15" aria-label="Original voice volume"><output id="original-value" for="original-volume">15%</output></div></div>
+ <div class="input-area">
+  <div class="tabs" role="tablist" aria-label="Caller input"><button id="tab-samples" role="tab" aria-controls="pane-samples" aria-selected="true" data-tab="samples">Sample calls</button><button id="tab-speak" role="tab" aria-controls="pane-speak" aria-selected="false" tabindex="-1" data-tab="speak">Microphone</button><button id="tab-type" role="tab" aria-controls="pane-type" aria-selected="false" tabindex="-1" data-tab="type">Type a message</button></div>
+  <div id="pane-samples" role="tabpanel" aria-labelledby="tab-samples"><div class="row"><select id="sample" aria-label="Sample call"><option>Loading samples…</option></select><button id="sample-play" class="btn primary" disabled>▶ Play call</button></div><p class="sample-summary" id="sample-summary"></p><div class="sample-tags" id="sample-tags"></div></div>
+  <div id="pane-speak" role="tabpanel" aria-labelledby="tab-speak" hidden><div class="row"><button class="btn primary" id="mic-start">Start microphone</button><button class="btn" id="mic-stop" disabled>End call</button></div><p class="hint">Speak in English and pause between sentences. Use headphones when monitoring the original voice.</p>
+   <div class="mic-examples"><label for="mic-example">Need an example? Pick a complaint and read it aloud.</label>
+    <select id="mic-example" aria-label="Example complaint for microphone"></select>
+    <blockquote id="mic-example-text"></blockquote><span class="badge" id="mic-example-tag"></span>
+   </div></div>
+  <div id="pane-type" role="tabpanel" aria-labelledby="tab-type" hidden><textarea id="message" aria-label="Caller message" placeholder="There's no hot water at 455 Park Place, apartment 1R. This is the third time I've called!"></textarea><div class="row"><button class="btn primary" id="send">Send message</button><span class="hint" style="margin:0">Enter to send · Shift+Enter for a new line</span></div><p class="hint">Text input has no original audio. The CalmLine voice still plays.</p></div>
+  <div class="row" style="margin-top:12px"><span class="hint" style="margin:0">Compare both voices, or switch either one off.</span><button class="link new-call" id="new-call">New call</button></div>
+ </div>
+ <div class="transcript-head"><h2>Original transcript</h2><span>Matched by sentence number</span></div>
+ <div id="original-list" class="transcript"><p class="empty">Play a sample, speak, or type to begin.</p></div>
+</section>
+<section class="side protected" aria-label="CalmLine output">
+ <div class="side-head"><div><div class="eyebrow">02 · Transformed</div><h1>A calmer conversation</h1></div><span class="status">CalmLine</span></div>
+ <div class="audio-control"><div class="audio-top"><span>CalmLine voice</span><button class="toggle" id="calm-toggle" aria-pressed="true" aria-label="CalmLine voice enabled">ON</button></div><div class="volume-row"><input id="calm-volume" type="range" min="0" max="100" value="100" aria-label="CalmLine voice volume"><output id="calm-value" for="calm-volume">100%</output></div></div>
+ <div id="alert" class="alert-banner" role="alert" hidden></div>
+ <div class="transcript-head"><h2>CalmLine transcript</h2><span>Same facts, calmer delivery</span></div>
+ <div id="pending" class="pending" role="status" hidden>Preparing the next message…</div>
+ <div id="calm-list" class="transcript" aria-live="polite"><p class="empty">The transformed messages will appear here.</p></div>
+ <div class="facts"><div class="facts-head"><h2>Extracted service request</h2><span>Updated as the call continues</span></div><div id="facts"><p class="fact-empty">Complaint details will build up here.</p></div></div>
+</section>
+</main>
+<p class="footer-note">Fictional sample calls. Live voices overlap with a processing delay; use the matching replay buttons to compare the same sentence.</p>
 <script>
-const room=new URLSearchParams(location.search).get('room')||('r'+Math.random().toString(36).slice(2,7));
-const proto=location.protocol==='https:'?'wss':'ws';
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let ctx,gain,tVoice=0,tLine=0,agentWs,callerWs,listen='agent',t0=null,timer,muted=0,sid=null,speakT,sampleAudio=null;
-const SR_FIELDS=[['type','Complaint type'],['nyc','NYC 311 category'],['address','Location'],['apartment','Apartment'],['time','When'],['duration','How long'],['prior_contact','Previous contact'],['reference','Reference no.'],['vehicle','Vehicle'],['plate','Plate'],['vulnerable','People affected'],['request','Caller asks for']];
-let sr={};
-const SCEN=[
- ['No heat','heat/hot water',"This is the fourth damn time I've called! No heat at 1820 Walton Avenue apartment 2C since Wednesday, my kids are freezing!"],
- ['Noisy neighbor','residential noise',"Are you deaf? The idiot upstairs in 5B has been blasting music since midnight and I have work at six."],
- ['Blocked driveway','blocked driveway',"Some asshole parked a black Honda across my driveway at 23-15 31st Street, plate KXR 4471, and I have to get to the hospital."],
- ['Pothole','street condition',"Write this down, genius: the pothole on Linden Boulevard near Euclid Avenue wrecked my tire yesterday."],
- ['Missed pickup','missed collection',"You lazy bums skipped recycling on Bergen Street again, that's three weeks now."],
- ['Rats / dumping','rodents',"These rats are killing me, there's trash piled behind the deli on Tremont Avenue every night."],
- ['Polite but belittling','passive-aggressive',"I'll speak slowly so even you can follow: the street light at Church Avenue and East 18th Street has been out for two weeks."],
- ['Threat (tests escalation)','threat',"If nobody fixes my heat today I'm going to come down there and beat somebody."],
- ['Polite caller (should pass)','no abuse',"Hi, water is leaking through my bathroom ceiling at 222 East 21st Street, could you send an inspector this week?"],
+'use strict';
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const room=new URLSearchParams(location.search).get('room')||'r'+Math.random().toString(36).slice(2,10), wsBase=`${location.protocol==='https:'?'wss':'ws'}://${location.host}`;
+let ctx,originalGain,calmGain,agentWs,callerWs,sampleWs,sampleAudio,sampleNode,mstream,mctx,mnode,mmonitor;
+let samples=[],sampleBuffer=null,micPCM=[],inputMode=null,busy=false,micActive=false,sessionId=null,voiceIdx=null,voiceTime=0,epoch=0,agentConnect=null,callConnect=null,pendingCount=0;
+const cards=new Map(),sources=new Set(),voiceTimers=new Set(),levels={original:15,calm:100},enabled={original:true,calm:true};
+let facts={},issue=null,issueScore=-1,sending=false;
+function error(msg){$('error').textContent=msg;$('error').hidden=!msg}
+function state(text){$('status').textContent=text;$('status').classList.toggle('running',text==='Running')}
+function updateInput(){for(const id of ['sample-play','sample','mic-start','send','new-call'])$(id).disabled=busy; $('sample-play').disabled=busy||!samples.length;$('mic-stop').disabled=!micActive;for(const [idx,m] of cards){const b=$('original-'+idx)?.querySelector('button');if(b)b.disabled=busy||inputMode==='type';const c=$('replay-calm-'+idx);if(c)c.disabled=busy||!m._audioReady}}
+function audio(){if(!ctx){ctx=new AudioContext({sampleRate:16000});originalGain=ctx.createGain();calmGain=ctx.createGain();originalGain.connect(ctx.destination);calmGain.connect(ctx.destination)}ctx.resume().catch(()=>{});applyLevels()}
+function applyLevels(){if(ctx){originalGain.gain.setTargetAtTime(enabled.original?levels.original/100:0,ctx.currentTime,.015);calmGain.gain.setTargetAtTime(enabled.calm?levels.calm/100:0,ctx.currentTime,.015)}for(const kind of ['original','calm']){const b=$(kind+'-toggle');b.textContent=enabled[kind]?'ON':'OFF';b.setAttribute('aria-pressed',String(enabled[kind]));b.setAttribute('aria-label',`${kind==='calm'?'CalmLine':'Original'} voice ${enabled[kind]?'enabled':'disabled'}`);$(kind+'-value').textContent=levels[kind]+'%'}if(!enabled.calm||!levels.calm)window.speechSynthesis?.cancel()}
+for(const kind of ['original','calm']){$(kind+'-toggle').onclick=()=>{enabled[kind]=!enabled[kind];applyLevels()};$(kind+'-volume').oninput=e=>{levels[kind]=Number(e.target.value);applyLevels()}}
+function stopSources(){for(const source of sources){try{source.stop()}catch{}}sources.clear();for(const timer of voiceTimers)clearTimeout(timer);voiceTimers.clear();document.querySelectorAll('.playing').forEach(e=>e.classList.remove('playing'));window.speechSynthesis?.cancel();if(ctx)voiceTime=ctx.currentTime}
+function schedule(buffer,gain,when,idx){const source=ctx.createBufferSource();source.buffer=buffer;source.connect(gain);sources.add(source);source.onended=()=>sources.delete(source);source.start(when);if(idx!=null){const delay=Math.max(0,when-ctx.currentTime)*1000,version=epoch;const a=setTimeout(()=>{voiceTimers.delete(a);if(version===epoch)$('calm-'+idx)?.classList.add('playing')},delay);const b=setTimeout(()=>{voiceTimers.delete(b);if(version===epoch)$('calm-'+idx)?.classList.remove('playing')},delay+buffer.duration*1000);voiceTimers.add(a);voiceTimers.add(b)}return source}
+function onAudio(raw){if(!ctx)return;const kind=new Uint8Array(raw)[0];if(kind!==2&&kind!==3)return;const pcm=new Int16Array(raw.slice(1));if(!pcm.length)return;const buffer=ctx.createBuffer(1,pcm.length,16000),out=buffer.getChannelData(0);for(let i=0;i<pcm.length;i++)out[i]=pcm[i]/32768;voiceTime=Math.max(voiceTime,ctx.currentTime+.04);schedule(buffer,calmGain,voiceTime,kind===2?voiceIdx:null);voiceTime+=buffer.duration;if(kind===2&&cards.has(voiceIdx)){cards.get(voiceIdx)._audioReady=true;const replay=$('replay-calm-'+voiceIdx);if(replay)replay.disabled=busy}}
+function speechFallback(text){if(!enabled.calm||levels.calm===0||!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.volume=levels.calm/100;speechSynthesis.speak(u)}
+function resetView(){epoch++;stopSources();cards.clear();facts={};issue=null;issueScore=-1;voiceIdx=null;pendingCount=0;$('pending').hidden=true;$('alert').hidden=true;$('original-list').innerHTML='<p class="empty">The caller’s sentences will appear here.</p>';$('calm-list').innerHTML='<p class="empty">The transformed messages will appear here.</p>';renderFacts();error('')}
+function connectAgent(){if(agentWs?.readyState===1)return Promise.resolve();if(agentConnect)return agentConnect;agentConnect=new Promise((resolve,reject)=>{agentWs=new WebSocket(`${wsBase}/ws/agent/${room}`);agentWs.binaryType='arraybuffer';agentWs.onopen=()=>{agentWs.send(JSON.stringify({type:'protection',value:'calm_voice'}));agentWs.send(JSON.stringify({type:'filler',value:false}));resolve()};agentWs.onerror=()=>reject(new Error('Cannot connect to CalmLine. Check the server and try again.'));agentWs.onclose=()=>{agentConnect=null;state('Disconnected')};agentWs.onmessage=e=>{if(typeof e.data!=='string'){onAudio(e.data);return}const m=JSON.parse(e.data);if(m.type==='hello'){sessionId=m.session;for(const c of m.cards||[])renderCard(c)}if(m.type==='reset'){sessionId=m.session;resetView()}if(m.type==='card'){renderCard(m);pendingCount=Math.max(0,pendingCount-1);$('pending').hidden=pendingCount===0}if(m.type==='card_update')updateFacts(m);if(m.type==='utt'){pendingCount++;$('pending').hidden=false}if(m.type==='utt_empty'){pendingCount=Math.max(0,pendingCount-1);$('pending').hidden=pendingCount===0}if(m.type==='voice_meta')voiceIdx=m.idx;if(m.type==='voice_fallback'){speechFallback(m.text);error('Cloud voice unavailable. Using the browser voice.')}if(m.type==='alert')showAlert(m.label);if(m.type==='compare_ready'){busy=false;updateInput();state('Finished')}}});return agentConnect}
+function showAlert(label){$('alert').hidden=false;$('alert').textContent=label==='self_harm'?'Safety alert · self-harm statement detected.':'Safety alert · threat detected. Supervisor review required.'}
+function highlighted(text,spans){let out='',last=0;for(const [a,b] of (spans||[]).slice().sort((a,b)=>a[0]-b[0])){if(a<last||a<0||b>text.length)continue;out+=esc(text.slice(last,a))+'<mark>'+esc(text.slice(a,b))+'</mark>';last=b}return out+esc(text.slice(last))}
+function renderCard(m){if(cards.has(m.idx))return;cards.set(m.idx,m);for(const id of ['original-list','calm-list'])$(id).querySelector('.empty')?.remove();const n=String(cards.size).padStart(2,'0');const msg=m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,'');const withheld=m.withheld&&m.route!=='ESCALATE';const badge=m.route==='ESCALATE'?['alert','Safety alert']:withheld?['wh','Not relayed']:m.route==='PASS'?['','Unchanged']:['calm','Calm version'];
+ const left=document.createElement('article');left.className='sentence';left.id='original-'+m.idx;left.innerHTML=`<div class="sentence-top"><span class="sentence-id">SENTENCE ${n}</span><button class="replay" ${busy||inputMode==='type'?'disabled':''} aria-label="Replay original sentence ${n}">▶ Replay original</button></div><p>${highlighted(m.original||'',m.spans)}</p>`;left.querySelector('button').onclick=()=>replayOriginal(m);
+ const right=document.createElement('article');right.className='sentence'+(withheld?' withheld':'');right.id='calm-'+m.idx;right.innerHTML=`<div class="sentence-top"><span class="sentence-id">SENTENCE ${n}</span><span class="badge ${badge[0]}">${badge[1]}</span></div><p>${withheld?'Only abuse — nothing to relay.':esc(msg)}</p>${withheld?'':`<button id="replay-calm-${m.idx}" class="replay" style="margin-top:10px" disabled aria-label="Replay CalmLine sentence ${n}">▶ Replay CalmLine</button>`}`;right.querySelector('button')?.addEventListener('click',()=>replayCalm(m));$('original-list').append(left);$('calm-list').append(right);for(const id of ['original-list','calm-list'])$(id).scrollTop=Math.max(0,$(id).lastElementChild.offsetTop-4);updateFacts(m);if(m.route==='ESCALATE')showAlert((m.abuse_types||[]).includes('self_harm')?'self_harm':'threat')}
+const FIELD=[['address','Location'],['apartment','Apartment'],['time','When'],['duration','Duration'],['prior_contact','Previous contact'],['reference','Reference number'],['vehicle','Vehicle'],['plate','Plate'],['vulnerable','People affected'],['request','Requested action']];
+function cleanFact(value,m){let out=String(value);const card=cards.get(m.idx)||m;for(const [a,b] of card.spans||[]){const phrase=(card.original||'').slice(a,b);if(!phrase)continue;let i=out.toLowerCase().indexOf(phrase.toLowerCase());while(i>=0){out=out.slice(0,i)+' '+out.slice(i+phrase.length);i=out.toLowerCase().indexOf(phrase.toLowerCase())}}return out.replace(/\s+/g,' ').trim()}
+function updateFacts(m){if(m.intent&&m.intent!=='UNKNOWN'&&(m.intent_score||0)>=issueScore-.05){issue=m.intent_label||m.intent;issueScore=m.intent_score||0;facts._category=(m.nyc_types||[]).join(' / ')}for(const [k,values] of Object.entries(m.slots||{})){const key=['street','cross_street'].includes(k)?'address':k;facts[key]??=new Set();for(const v of values){const clean=cleanFact(v,m).replace(/^(at|on|in|near|corner of)\s+/i,'').replace(key==='apartment'?/^apartment\s+/i:/^$/,'');if(clean)facts[key].add(clean)}}renderFacts()}
+function renderFacts(){const fields=FIELD.filter(([k])=>facts[k]?.size);$('facts').innerHTML=(issue?`<div class="issue">${esc(issue)}</div><div class="category">${esc(facts._category||'')}</div>`:'')+(fields.length?'<div class="fact-grid">'+fields.map(([k,label])=>`<div class="fact ${k==='address'||k==='request'?'wide':''}"><label>${label}</label><p>${[...facts[k]].map(esc).join(' · ')}</p></div>`).join('')+'</div>':`<p class="fact-empty">${issue?'Listening for more details…':'Complaint details will build up here.'}</p>`)}
+async function replayOriginal(m){try{audio();stopSources();sampleAudio?.pause();let buffer=sampleBuffer;if(inputMode==='speak'){const size=micPCM.reduce((n,p)=>n+p.length,0);buffer=ctx.createBuffer(1,size,16000);let offset=0;for(const pcm of micPCM){buffer.getChannelData(0).set(pcm,offset);offset+=pcm.length}}if(!buffer||m.t[1]<=m.t[0])throw new Error('Original audio is not available for this message.');const start=Math.max(0,m.t[0]),duration=Math.min(buffer.duration,m.t[1])-start;if(duration<=0)throw new Error('Original audio is not available yet.');const source=ctx.createBufferSource();source.buffer=buffer;source.connect(originalGain);sources.add(source);source.onended=()=>sources.delete(source);source.start(0,start,duration)}catch(e){error(e.message)}}
+async function replayCalm(m){const version=epoch;try{audio();stopSources();sampleAudio?.pause();const r=await fetch(`/api/voice/${sessionId}/${m.idx}`);if(!r.ok)throw new Error('The CalmLine audio is still being prepared. Try again shortly.');const b=await ctx.decodeAudioData(await r.arrayBuffer());if(version!==epoch)return;schedule(b,calmGain,ctx.currentTime+.03,m.idx)}catch(e){error(e.message)}}
+function sampleDescription(){const s=samples.find(s=>s.id===$('sample').value);$('sample-summary').textContent=s?.text||'';$('sample-tags').innerHTML=(s?.tags||[]).map(t=>`<span class="badge">${esc(t)}</span>`).join('')}
+async function loadSamples(){try{const r=await fetch('/api/samples');if(!r.ok)throw new Error();samples=await r.json();$('sample').innerHTML=samples.map(s=>`<option value="${esc(s.id)}">${esc(s.title)}</option>`).join('');sampleDescription();updateInput()}catch{error('Could not load sample calls. Refresh to try again.')}}
+$('sample').onchange=sampleDescription;
+$('sample-play').onclick=async()=>{if(busy)return;busy=true;updateInput();inputMode='samples';sampleBuffer=null;micPCM=[];error('');try{audio();await freshCall();inputMode='samples';sampleAudio?.pause();if(sampleNode)sampleNode.disconnect();const s=samples.find(s=>s.id===$('sample').value);const r=await fetch(`/static/samples/${s.id}.wav`);if(!r.ok)throw new Error('Sample audio unavailable.');sampleBuffer=await ctx.decodeAudioData(await r.arrayBuffer());sampleAudio=new Audio(`/static/samples/${s.id}.wav`);sampleNode=ctx.createMediaElementSource(sampleAudio);sampleNode.connect(originalGain);sampleWs=new WebSocket(`${wsBase}/ws/sample/${room}/${s.id}`);sampleWs.onopen=async()=>{try{await sampleAudio.play();sampleWs.send(JSON.stringify({type:'go'}));state('Running')}catch(e){sampleWs.close();busy=false;updateInput();error('Audio playback was blocked. Press Play call again.')}};sampleWs.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='done'){busy=false;updateInput();state('Finished')}};sampleWs.onerror=()=>{sampleAudio.pause();busy=false;updateInput();error('Sample connection failed. Try again.')};sampleWs.onclose=()=>{busy=false;updateInput()}}catch(e){busy=false;updateInput();error(e.message)}};
+async function connectCaller(){await connectAgent();if(callerWs?.readyState===1)return;if(callConnect)return callConnect;callConnect=new Promise((resolve,reject)=>{callerWs=new WebSocket(`${wsBase}/ws/caller/${room}`);callerWs.onopen=resolve;callerWs.onerror=()=>reject(new Error('Caller connection failed.'));callerWs.onclose=()=>{callConnect=null}});return callConnect}
+async function freshCall(){sampleAudio?.pause();sampleNode?.disconnect();if(callerWs?.readyState===1){callerWs.send(JSON.stringify({type:'end'}));callerWs.close()}callerWs=null;callConnect=null;await connectAgent();const r=await fetch('/api/reset/'+room,{method:'POST'});if(!r.ok)throw new Error('Could not start a new call.');sampleBuffer=null;micPCM=[];inputMode=null;state('Ready')}
+$('new-call').onclick=async()=>{try{audio();await freshCall()}catch(e){error(e.message)}};
+$('mic-start').onclick=async()=>{if(busy)return;busy=true;updateInput();try{audio();mstream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}});await freshCall();inputMode='speak';micPCM=[];await connectCaller();mctx=new AudioContext();await mctx.resume();const source=mctx.createMediaStreamSource(mstream);mnode=mctx.createScriptProcessor(4096,1,1);const ratio=mctx.sampleRate/16000;mnode.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0),pcm=new Float32Array(Math.floor(x.length/ratio)),send=new Int16Array(pcm.length);for(let i=0;i<pcm.length;i++){pcm[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]));send[i]=pcm[i]*32767}micPCM.push(pcm);if(callerWs?.readyState===1)callerWs.send(send.buffer)};source.connect(mnode);mnode.connect(mctx.destination);mmonitor=ctx.createMediaStreamSource(mstream);mmonitor.connect(originalGain);micActive=true;state('Running');updateInput()}catch(e){mstream?.getTracks().forEach(t=>t.stop());busy=false;updateInput();error(e.name==='NotAllowedError'?'Microphone access was denied. Use a sample call or type instead.':e.message)}};
+$('mic-stop').onclick=()=>{mnode?.disconnect();mmonitor?.disconnect();mstream?.getTracks().forEach(t=>t.stop());mctx?.close();micActive=false;state('Finishing');updateInput();if(callerWs?.readyState===1)callerWs.send(JSON.stringify({type:'end'}))};
+async function sendText(){const text=$('message').value.trim();if(!text||busy||sending)return;sending=true;$('send').disabled=true;try{audio();if(inputMode!=='type'){await freshCall();inputMode='type'}await connectCaller();callerWs.send(JSON.stringify({type:'text',text}));$('message').value='';pendingCount++;$('pending').hidden=false;state('Running')}catch(e){error(e.message)}finally{sending=false;$('send').disabled=busy}}
+$('send').onclick=sendText;$('message').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendText()}};
+function selectTab(name){for(const b of document.querySelectorAll('[data-tab]')){const active=b.dataset.tab===name;b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;$('pane-'+b.dataset.tab).hidden=!active}}
+for(const b of document.querySelectorAll('[data-tab]')){b.onclick=()=>selectTab(b.dataset.tab);b.onkeydown=e=>{const tabs=[...document.querySelectorAll('[data-tab]')];let i=tabs.indexOf(b);if(e.key==='ArrowRight')i=(i+1)%tabs.length;else if(e.key==='ArrowLeft')i=(i+tabs.length-1)%tabs.length;else return;e.preventDefault();selectTab(tabs[i].dataset.tab);tabs[i].focus()}}
+window.addEventListener('pagehide',()=>{mstream?.getTracks().forEach(t=>t.stop());sampleAudio?.pause();callerWs?.close();sampleWs?.close();agentWs?.close()});
+// Restore the original microphone reference cases in a compact chooser.
+const microphoneExamples = [
+  [
+    "No heat",
+    "heat/hot water",
+    "This is the fourth damn time I've called! No heat at 1820 Walton Avenue apartment 2C since Wednesday, my kids are freezing!"
+  ],
+  [
+    "Noisy neighbor",
+    "residential noise",
+    "Are you deaf? The idiot upstairs in 5B has been blasting music since midnight and I have work at six."
+  ],
+  [
+    "Blocked driveway",
+    "blocked driveway",
+    "Some asshole parked a black Honda across my driveway at 23-15 31st Street, plate KXR 4471, and I have to get to the hospital."
+  ],
+  [
+    "Pothole",
+    "street condition",
+    "Write this down, genius: the pothole on Linden Boulevard near Euclid Avenue wrecked my tire yesterday."
+  ],
+  [
+    "Missed pickup",
+    "missed collection",
+    "You lazy bums skipped recycling on Bergen Street again, that's three weeks now."
+  ],
+  [
+    "Rats / dumping",
+    "rodents",
+    "These rats are killing me, there's trash piled behind the deli on Tremont Avenue every night."
+  ],
+  [
+    "Polite but belittling",
+    "passive-aggressive",
+    "I'll speak slowly so even you can follow: the street light at Church Avenue and East 18th Street has been out for two weeks."
+  ],
+  [
+    "Threat (tests escalation)",
+    "threat",
+    "If nobody fixes my heat today I'm going to come down there and beat somebody."
+  ],
+  [
+    "Polite caller (should pass)",
+    "no abuse",
+    "Hi, water is leaking through my bathroom ceiling at 222 East 21st Street, could you send an inspector this week?"
+  ]
 ];
-// ---------- audio ----------
-function ensureAudio(){if(!ctx){ctx=new AudioContext({sampleRate:16000});gain=ctx.createGain();gain.connect(ctx.destination)}applyListen();if(ctx.state==='suspended')ctx.resume()}
-let callerGain=null,callerAn=null,vadBuf=null,lastLoud=0,callerOn=false;
-function attachCallerAnalyser(node){ // node = MediaElementSource (sample) or MediaStreamSource (mic)
-  callerAn=ctx.createAnalyser();callerAn.fftSize=512;vadBuf=new Float32Array(callerAn.fftSize);node.connect(callerAn);
-  if(node.mediaElement){callerGain=ctx.createGain();node.connect(callerGain);callerGain.connect(ctx.destination);applyListen()}}
-function vadTick(){if(callerAn&&callerOn){callerAn.getFloatTimeDomainData(vadBuf);let e=0;for(let i=0;i<vadBuf.length;i++)e+=vadBuf[i]*vadBuf[i];
-    const db=10*Math.log10(e/vadBuf.length+1e-12);const now=Date.now();document.getElementById('clvl').style.height=Math.max(0,Math.min(100,(db+60)*2))+'%';
-    if(db>-42){if(lastVoiced&&now-lastVoiced>1500)needSep=true;lastLoud=now;lastVoiced=now;const L=TL.voiced[TL.voiced.length-1];if(L&&now-L[1]<300)L[1]=now;else TL.voiced.push([now,now])}}
-  turnUI()}
-setInterval(vadTick,50);
-function applyListen(){if(gain)gain.gain.value=listen==='caller'?0:1;if(callerGain)callerGain.gain.value=listen==='agent'?0:1;document.querySelectorAll('#listen button').forEach(b=>b.classList.toggle('on',b.dataset.v===listen))}
-function onAudio(buf){const kind=new Uint8Array(buf,0,1)[0];const pcm=new Int16Array(buf.slice(1));if(!pcm.length||!ctx)return;
-  const b=ctx.createBuffer(1,pcm.length,16000),ch=b.getChannelData(0);for(let i=0;i<pcm.length;i++)ch[i]=pcm[i]/32768;
-  const s=ctx.createBufferSource();s.buffer=b;s.connect(gain);
-  if(kind===3){if(skipUntil&&Date.now()<skipUntil)return;tVoice=Math.max(tVoice,ctx.currentTime+0.03);s.start(tVoice);voiceSrcs.push(s);
-    const wall=Date.now()+(tVoice-ctx.currentTime)*1000;TL.voice.push({idx:prefIdx,a:wall,b:wall+b.duration*1000,pre:true});
-    const sp=TL.sents.find(x=>x.idx===prefIdx);if(sp&&!sp.firstSound)sp.firstSound=wall;else if(!sp)prefWall[prefIdx]=prefWall[prefIdx]||wall;tVoice+=b.duration;return}
-  if(kind===2){if(skipUntil&&Date.now()<skipUntil)return;tVoice=Math.max(tVoice,ctx.currentTime+0.05);s.start(tVoice);voiceSrcs.push(s);s.onended=()=>{voiceSrcs=voiceSrcs.filter(x=>x!==s)};tlVoiceChunk(tVoice,b.duration);tVoice+=b.duration}else{tLine=Math.max(tLine,ctx.currentTime+0.05);s.start(tLine);tLine+=b.duration}}
-// ---------- live timeline ----------
-const TL={start:null,voiced:[],mutes:[],sents:[],voice:[],cur:null,lags:[]};
-function wallOf(ct){return TL.start===null?null:TL.start+ct*1000}
-function tlPartial(m){if(!TL.anchored){const est=Date.now()-m.ct*1000;TL.start=TL.start===null?est:Math.min(TL.start,est)}
-  if(!callerAn&&m.voiced){lastVoiced=Date.now();TL.voiced.push([wallOf(m.c0),wallOf(m.ct)])}}
-function tlReset(){TL.silences=[];for(const k in prefWall)delete prefWall[k];TL.anchored=false;TL.start=null;TL.voiced=[];TL.mutes=[];TL.sents=[];TL.voice=[];TL.cur=null;TL.lags=[];document.getElementById('laglast').textContent='delay: —';document.getElementById('lagavg').textContent=''}
-function drawTL(){const c=document.getElementById('tlc');const W=c.clientWidth,H=74;if(c.width!==W*devicePixelRatio){c.width=W*devicePixelRatio;c.height=H*devicePixelRatio}
-  const g=c.getContext('2d');g.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);g.clearRect(0,0,W,H);
-  const now=Date.now(),span=20000,L=64,x=t=>L+(t-(now-span))/span*(W-L-4);
-  g.font='11px IBM Plex Sans, sans-serif';g.fillStyle='#5E6D7B';g.fillText('Caller',4,22);g.fillText('You hear',4,56);
-  g.fillStyle='#F5F8F9';g.fillRect(L,8,W-L-4,24);g.fillRect(L,42,W-L-4,24);
-  for(let k=0;k<=20;k+=5){const xx=x(now-k*1000);g.fillStyle='#DAE1E6';g.fillRect(xx,6,1,62);g.fillStyle='#9AA7B2';g.fillText(k?`-${k}s`:'now',xx-(k?10:22),74)}
-  const bar=(a,b,y,h,col)=>{if(b<now-span||a>now)return;const xa=Math.max(L,x(a)),xb=Math.min(W-4,x(b));if(xb>xa){g.fillStyle=col;g.fillRect(xa,y,Math.max(1.5,xb-xa),h)}};
-  TL.voiced.forEach(([a,b])=>bar(a,b,12,16,'#9AA7B2'));
-  TL.mutes.forEach(([a,b])=>bar(a,b,10,20,'#C24A3A'));
-  TL.sents.forEach(s=>{if(s.end==null)return;const a=s.end,b=s.voiceStart||(s.withheld?s.cardAt:now);
-    if(!s.withheld&&s.voiceStart&&s.voiceStart-a>300&&x(s.voiceStart)>L){g.strokeStyle='#9AA7B2';g.setLineDash([3,3]);g.beginPath();g.moveTo(x(a),32);g.lineTo(x(s.voiceStart),46);g.stroke();g.setLineDash([]);
-      g.fillStyle='#5E6D7B';g.fillText(((s.voiceStart-a)/1000).toFixed(1)+'s',Math.max(L,(x(a)+x(s.voiceStart))/2-10),41)}
-    if(s.t0!=null){const xa=x(s.t0),xb=x(s.end);if(xb>L&&xa<W){g.strokeStyle='#5E6D7B';g.lineWidth=1;g.strokeRect(Math.max(L,xa)+.5,8.5,Math.max(2,xb-Math.max(L,xa)-1),23);g.fillStyle='#16202A';if(xa>L)g.fillText('#'+no(s.idx),xa+3,20)}}});
-  TL.voice.forEach(v=>{if(v.pre){bar(v.a,v.b,46,16,'#8FC3BB');return}bar(v.a,v.b,46,16,'#1D6E68');if(v.first&&x(v.a)>L){g.fillStyle='#fff';g.fillText('#'+no(v.idx),x(v.a)+3,58)}});
-  // status line
-  const speaking=TL.voiced.length&&now-TL.voiced[TL.voiced.length-1][1]<900;
-  const playing=TL.voice.find(v=>v.a<=now&&v.b>=now);const proc=TL.sents.filter(s=>s.end&&!s.voiceStart&&!s.withheld);
-  const parts=[];if(playing)parts.push(`You are hearing part #${no(playing.idx)}`);
-  else if(proc.length)parts.push(`Preparing part #${no(proc[0].idx)}…`);
-  else if(TL.start!==null)parts.push('Silence');
-  document.getElementById('now').textContent=parts.length?parts.join(' · '):'Waiting for a call';
-  requestAnimationFrame(drawTL)}
-let _h;function hatch(){if(_h)return _h;_h=document.createElement('canvas');_h.width=_h.height=6;const q=_h.getContext('2d');q.fillStyle='#F6E3C8';q.fillRect(0,0,6,6);q.strokeStyle='#E0A35F';q.lineWidth=2;q.beginPath();q.moveTo(0,6);q.lineTo(6,0);q.stroke();return _h}
-function tlCard(m){if(!m.t||!(m.t[1]>0)||TL.start===null)return;TL.sents.push({idx:m.idx,t0:wallOf(m.t[0]),end:wallOf(m.t[1]),withheld:m.withheld&&m.route!=='ESCALATE',cardAt:Date.now(),voiceStart:null,firstSound:prefWall[m.idx]||null})}
-let voiceIdx=null,voiceFirst=false;
-let prefIdx=-1;const prefWall={};let uttN=0,cardN=0,lagInfo={},voiceSrcs=[],skipUntil=0,lastVoiced=0,turnShown=false,lastCardAt=0;
-function skipNow(){document.querySelectorAll('.li .st').forEach(e=>{if(/queued|speaking|preparing/.test(e.textContent))e.textContent='skipped'});voiceSrcs.forEach(x=>{try{x.stop()}catch(e){}});voiceSrcs=[];if(ctx)tVoice=ctx.currentTime;skipUntil=Date.now()+400;
-  TL.voice=TL.voice.filter(v=>v.a<Date.now()).map(v=>({...v,b:Math.min(v.b,Date.now())}));agentWs&&agentWs.send(JSON.stringify({type:'skip_to_now'}))}
-let flags={abuse:0,threat:false,selfharm:false};
-const NEED={illegal_parking:['address','plate'],blocked_driveway:['address','plate'],abandoned_vehicle:['address','plate'],
-  heat_hot_water:['address','apartment'],plumbing_leak:['address','apartment'],building_repair:['address','apartment'],unsanitary_condition:['address','apartment'],elevator:['address'],
-  noise_residential:['address','apartment'],smoke_odor:['address','apartment']};
-const ASK={address:'Could you give me the exact address, please?',apartment:'And which apartment are you in?',plate:'Do you have the license plate number?'};
-function you(x){return String(x||'').replace(/\bmy\b/gi,'your').replace(/\bI\b/g,'you')}
-function suggestions(){const out=[];const loc=sr.address?[...sr.address][0]:null;const since=[...(sr.time||[]),...(sr.duration||[])].find(x=>/^(since|for|every|all)\b/i.test(x))||null;
-  if(flags.threat){out.push(['Safety','I want to help you, but I can’t continue if anyone is threatened. My supervisor is joining this call now.']);}
-  if(flags.selfharm){out.push(['Care','It sounds like you’re going through a lot. You’re not alone — I’m connecting you with someone who can help right now.']);}
-  if(sr.type&&sr.type!=='Listening…'){
-    const issue=you(sr.type);out.push(['Acknowledge',`I’m sorry you’re dealing with ${issue}${loc?` at ${loc}`:''}${since?` ${since}`:''}. Let me look into this for you right now.`]);
-    const intentKey=sr._intent;const missing=(NEED[intentKey]||['address']).filter(k=>!sr[k]);
-    if(missing.length)out.push(['Ask',ASK[missing[0]]]);else if(sr.prior_contact)out.push(['Reassure','I can see you’ve contacted us before — I’m going to make sure this gets followed up today.']);
-  }else if(flags.abuse){out.push(['De-escalate','I can hear you’re frustrated, and I want to help. Can you tell me what the problem is and where it is?'])}
-  if(flags.abuse>=2&&!flags.threat)out.push(['Boundary','I’m here to help, and I’ll keep going as long as we can talk respectfully.']);
-  return out.slice(0,3)}
-function renderSay(finished){const box=document.getElementById('say');const opts=suggestions();
-  box.classList.toggle('on',finished&&opts.length>0);
-  document.getElementById('sayopts').innerHTML=opts.map(([k,t])=>`<div class="opt"><b>${esc(k)}</b><span>${esc(t)}</span></div>`).join('')}
-function turnUI(){const now=Date.now();const cs=document.getElementById('cstate');
-  const speaking=lastVoiced&&now-lastVoiced<700;const finished=lastVoiced&&!speaking;
-  const pending=uttN>cardN;const voiceLeft=ctx?Math.max(0,tVoice-ctx.currentTime):0;
-  const sb=document.getElementById('skipBig');sb.disabled=voiceLeft<0.3;sb.innerHTML=voiceLeft<0.3?'Nothing<br>left to play':'Skip voice &<br>answer now';
-  if(!lastVoiced){cs.className='cstate';document.getElementById('cstateTxt').textContent='No call yet';document.getElementById('cstateSub').textContent='Play a sample call, speak, or type on the left.';return}
-  if(speaking){cs.className='cstate speaking';document.getElementById('cstateTxt').textContent='Caller is speaking…';document.getElementById('cstateSub').textContent='Listen — you will hear a calm version of each part as soon as it is ready.'}
-  else{cs.className='cstate done';document.getElementById('cstateTxt').textContent='Caller has finished — your turn to reply';
-    const since=((now-lastVoiced)/1000).toFixed(1);
-    document.getElementById('cstateSub').textContent=pending?`Stopped ${since} s ago · the last part is still being prepared…`:(voiceLeft>0.3?`Stopped ${since} s ago · ${voiceLeft.toFixed(1)} s of calm voice left — or press Skip and answer now`:`Stopped ${since} s ago · everything has been relayed`)}}
-function turnCheck(){const now=Date.now();if(TL.start===null)return;
-  const silent=lastVoiced&&now-lastVoiced>1200;const yt=document.getElementById('yourturn');
-  if(silent&&!turnShown&&lastCardAt&&cardN>=uttN){turnShown=true;yt.hidden=false;const conv=document.getElementById('conv');conv.insertBefore(yt,document.getElementById('speaking'));
-    const textLag=((lastCardAt-lastVoiced)/1000);const voiceLeft=Math.max(0,(tVoice-(ctx?ctx.currentTime:0)));
-    document.getElementById('turnstat').textContent=`last calm message on screen ${Math.max(0,textLag).toFixed(1)} s after the caller stopped · calm voice ${voiceLeft>0.2?'still has '+voiceLeft.toFixed(1)+' s to play':'finished'}`}
-  if(!silent&&turnShown){turnShown=false;yt.hidden=true}}
+$('mic-example').innerHTML = microphoneExamples.map(([title], index) => `<option value="${index}">${esc(title)}</option>`).join('');
+function showMicrophoneExample() {
+  const [, category, text] = microphoneExamples[Number($('mic-example').value)];
+  $('mic-example-text').textContent = '“' + text + '”';
+  $('mic-example-tag').textContent = category;
+}
+$('mic-example').onchange = showMicrophoneExample;
+showMicrophoneExample();
 
-function tlVoiceMeta(m){voiceIdx=m.idx;voiceFirst=true;lagInfo[m.idx]=m}
-function tlVoiceChunk(startCtx,dur){if(voiceFirst){const w=Math.max(0,startCtx-ctx.currentTime);setVoiceState(voiceIdx,w>0.3?`queued · ${w.toFixed(1)} s`:'speaking');
-    const id=voiceIdx;setTimeout(()=>setVoiceState(id,'speaking'),w*1000)}
-  {const id=voiceIdx,endAt=(startCtx-ctx.currentTime+dur)*1000;clearTimeout(window['vd'+id]);window['vd'+id]=setTimeout(()=>setVoiceState(id,'spoken ✓'),endAt+150)}const wallStart=Date.now()+(startCtx-ctx.currentTime)*1000;const v={idx:voiceIdx,a:wallStart,b:wallStart+dur*1000,first:voiceFirst};TL.voice.push(v);
-  if(voiceFirst){const s=TL.sents.find(x=>x.idx===voiceIdx);if(s&&!s.voiceStart){s.voiceStart=wallStart;
-      const li=lagInfo[voiceIdx]||{};const playWait=Math.max(0,(startCtx-ctx.currentTime)*1000);
-      const lag=li.lag_ms!=null?(li.lag_ms+playWait)/1000:(wallStart-s.end)/1000;TL.lags.push(lag);
-      const playingAtEnd=TL.voice.some(v=>v.a<=s.end&&v.b>=s.end);
-      const nextSound=Math.min(...TL.voice.filter(v=>v.a>=s.end).map(v=>v.a),wallStart);
-      const silence=playingAtEnd?0:Math.max(0,(nextSound-s.end)/1000);TL.silences=(TL.silences||[]);TL.silences.push(silence);
-      if(li.breakdown){const b=li.breakdown;const parts=[['sentence end detected',b.sentence_end_detect_ms],['waiting for previous sentence',b.wait_previous_sentence_ms],['ASR',b.asr_ms],['Gemini + checks',b.gemini_and_checks_ms],['waiting for previous voice to finish',b.wait_previous_voice_ms+playWait],['voice first sound',b.voice_first_sound_ms]];
-        const el=document.querySelector(`.turn[data-idx="${voiceIdx}"] .stat:last-child`);if(el)el.insertAdjacentHTML('afterend',`<div class="stat">delay ${lag.toFixed(1)} s = ${parts.filter(p=>p[1]>30).map(p=>`${p[0]} ${(p[1]/1000).toFixed(1)}s`).join(' + ')}</div>`)}
-      document.getElementById('laglast').textContent=`dead air ${silence.toFixed(1)} s · message ${lag.toFixed(1)} s`;
-      const avg=TL.lags.reduce((a,b)=>a+b,0)/TL.lags.length,avgS=TL.silences.reduce((a,b)=>a+b,0)/TL.silences.length;
-      document.getElementById('lagavg').textContent=`avg: dead air ${avgS.toFixed(1)} s · full message ${avg.toFixed(1)} s (${TL.lags.length} parts)`;
-      const el=document.getElementById('v'+voiceIdx);if(el)el.textContent+=` · heard ${lag.toFixed(1)} s after the caller finished`}}
-  voiceFirst=false}
-requestAnimationFrame(drawTL);
-// ---------- agent socket ----------
-function connectAgent(){return new Promise(res=>{if(agentWs&&agentWs.readyState===1)return res();
-  agentWs=new WebSocket(`${proto}://${location.host}/ws/agent/${room}`);agentWs.binaryType='arraybuffer';
-  agentWs.onopen=()=>{agentWs.send(JSON.stringify({type:'protection',value:'calm_voice'}));agentWs.send(JSON.stringify({type:'filler',value:document.getElementById('filler').checked}));res()};
-  agentWs.onmessage=e=>{if(typeof e.data!=='string'){onAudio(e.data);return}const m=JSON.parse(e.data);
-    if(m.type==='hello')sid=m.session;
-    if(m.type==='reset'){sid=m.session;resetView()}
-    if(m.type==='partial'){tlPartial(m);started();document.getElementById('g').style.width=Math.round(100*m.anger)+'%';showSpeaking()}
-    if(m.type==='mute'){if(TL.start!==null)TL.mutes.push([wallOf(m.start-0.25),wallOf(m.end+0.25)]);muted++;document.getElementById('blocked').textContent=muted+' word'+(muted>1?'s':'')+' muted'}
-    if(m.type==='alert')banner(m.label);
-    if(m.type==='typed'){started();lastVoiced=Date.now()-900}
-    if(m.type==='utt')uttN++;
-    if(m.type==='utt_empty')cardN++;
-    if(m.type==='card'){tlCard(m);turn(m);setLatest(m);lastCardAt=Date.now();cardN++}
-    if(m.type==='card_update')cardUpdate(m);
-    if(m.type==='preface'){prefIdx=m.idx;const L=document.getElementById('llist');if(!L.dataset.used){L.innerHTML='';L.dataset.used='1'}L.insertAdjacentHTML('beforeend',`<div class="li wh pre"><span class="n"></span><span>“${esc(m.text)}”</span><span class="st">filler</span></div>`);L.scrollTop=L.scrollHeight}
-    if(m.type==='voice_meta'){tlVoiceMeta(m);voiceMeta(m)}
-    if(m.type==='voice_fallback'&&listen!=='caller'&&'speechSynthesis' in window){speechSynthesis.speak(new SpeechSynthesisUtterance(m.text))}
-    if(m.type==='ended'){setState('call ended');clearInterval(timer);document.getElementById('speaking').hidden=true}
-    if(m.type==='compare_ready')showCompare()}})}
-function setState(t,live){const s=document.getElementById('state');s.textContent=t;s.className='pill'+(live?' live':'')}
-function started(){document.getElementById('empty').hidden=true;if(t0)return;t0=Date.now();setState('call in progress',true);timer=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);document.getElementById('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500)}
-function showSpeaking(){const s=document.getElementById('speaking');s.hidden=false;document.getElementById('conv').appendChild(s);clearTimeout(speakT);speakT=setTimeout(()=>s.hidden=true,1400)}
-function banner(label){if(document.querySelector('.banner'))return;const a=document.createElement('div');a.className='banner';
-  a.textContent=label==='self_harm'?'Caller expressed self-harm intent — crisis protocol and supervisor notified.':'Threat detected — your supervisor has been notified. You may end this call.';document.getElementById('alerts').prepend(a)}
-const LBL={address:'location',cross_street:'location',street:'location',apartment:'apt',floor:'floor',time:'when',duration:'how long',prior_contact:'previous contact',reference:'ref',vehicle:'vehicle',plate:'plate',vulnerable:'affected',request:'asks for'};
-function hl(text,spans){let o='',last=0;(spans||[]).slice().sort((a,b)=>a[0]-b[0]).forEach(([a,b,l])=>{if(a<last)return;o+=esc(text.slice(last,a))+`<mark title="${esc(l)}">${esc(text.slice(a,b))}</mark>`;last=b});return o+esc(text.slice(last))}
-function turn(m){started();document.getElementById('empty').hidden=true;
-  const msg=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;
-  const cls=m.withheld&&m.route!=='ESCALATE'?'withheld':(m.route==='ESCALATE'?'esc':'');
-  const tag=m.withheld&&m.route!=='ESCALATE'?'<span class="tag t-wh">withheld — abuse only</span>':m.route==='PASS'?'<span class="tag t-pass">relayed as spoken</span>':m.route==='ESCALATE'?'<span class="tag t-esc">threat · supervisor alerted</span>':'<span class="tag t-calm">calm version</span>';
-  const types=(m.abuse_types||[]).filter(x=>x!=='mild');
-  const slots=Object.entries(m.slots||{}).flatMap(([k,v])=>v.map(x=>`<span><i>${esc(LBL[k]||k)}:</i> ${esc(x)}</span>`)).join('');
-  const ck=m.checks&&Object.keys(m.checks).length?Object.entries(m.checks).filter(([k,v])=>k==='no abuse left'||k==='no new numbers').map(([k,v])=>`<span class="${v?'ok':'bad'}">${v?'✓':'✗'} ${k}</span>`).join(' · ')+(m.checks['fallback used']?' · <span class="bad">Gemini output rejected → template</span>':''):'';
-  const tm=m.timing||{};const lat=[m.path?`<b>${esc(m.path)}</b>`:null,tm.asr_ms?`ASR ${tm.asr_ms} ms`:null,tm.understand?`Gemini ${tm.understand} ms`:null,`<span id="v${m.idx}"></span>`].filter(Boolean).join(' · ');
-  const d=document.createElement('div');d.className='turn '+cls;d.dataset.idx=m.idx;
-  d.innerHTML=`<div class="bub">${m.withheld&&m.route!=='ESCALATE'?'':`<button class="play" title="Replay calm voice" aria-label="Replay" data-idx="${m.idx}">▶</button>`}<div>${m.withheld&&m.route!=='ESCALATE'?'Nothing relayed — the sentence was only abuse.':esc(msg)}</div></div>
-   <div class="tags">${tag}${m.intent&&m.intent!=='UNKNOWN'?`<span>${esc(m.intent_label||m.intent)} <span class="stat">${Math.round(100*(m.intent_score||0))}%</span></span>`:''}</div>
-   <div class="hood">${m.route==='PASS'?'<span class="lbl">No abuse found — relayed unchanged</span>':`<span class="lbl">Caller actually said (sealed, never shown to agents)</span><div class="orig">${hl(m.original,m.spans)}</div>`}
-   ${types.length?`<div><span class="lbl">Hidden</span> ${types.map(esc).join(', ')}</div>`:''}
-   ${slots?`<div><span class="lbl">Facts kept (verbatim)</span><div class="kv">${slots}</div></div>`:''}
-   ${(m.slots_dropped||[]).length?`<div class="bad">Dropped ${m.slots_dropped.length} fact(s) Gemini proposed that the caller never said</div>`:''}
-   <div class="stat">${ck?ck+' · ':''}${lat}</div></div>`;
-  const conv=document.getElementById('conv');conv.insertBefore(d,document.getElementById('speaking'));conv.scrollTop=conv.scrollHeight;
-  d.querySelector('.play')?.addEventListener('click',()=>{ensureAudio();const a=new Audio(`/api/voice/${sid}/${m.idx}?t=${Date.now()}`);a.play().catch(()=>{})});
-  // service request
-  if(m.intent&&m.intent!=='UNKNOWN'&&(m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score;sr._intent=m.intent}
-  if(m.route!=='PASS')flags.abuse++;if(m.route==='ESCALATE'){if((m.abuse_types||[]).includes('self_harm')&&!(m.abuse_types||[]).includes('threat'))flags.selfharm=true;else flags.threat=true}
-  for(const [k,v] of Object.entries(m.slots||{})){const key=['cross_street','street'].includes(k)?'address':k;sr[key]=sr[key]||new Set();v.forEach(x=>sr[key].add(x.replace(/^(at|on|in|near|corner of)\s+/i,'')))}
-  renderSR()}
-function cardUpdate(m){const d=document.querySelector(`.turn[data-idx="${m.idx}"]`);if(!d)return;
-  if(m.intent&&m.intent!=='UNKNOWN'){d.querySelector('.tags').insertAdjacentHTML('beforeend',`<span>${esc(m.intent_label)} <span class="stat">${Math.round(100*m.intent_score)}% · Gemini, arrived late</span></span>`);
-    if((m.intent_score||0)>=(sr._score||0)-0.05){sr.type=m.intent_label;sr.nyc=(m.nyc_types||[]).join(' / ');sr._score=m.intent_score;sr._intent=m.intent}}
-  for(const [k,v] of Object.entries(m.slots||{})){sr[k]=sr[k]||new Set();v.forEach(x=>sr[k].add(x))}renderSR()}
-let turnNo=0,needSep=false;
-function setLatest(m){const list=document.getElementById('llist');if(!list.dataset.used){list.innerHTML='';list.dataset.used='1'}
-  if(needSep||!turnNo){turnNo++;needSep=false;if(turnNo>1)list.insertAdjacentHTML('beforeend',`<div class="lsep">caller turn ${turnNo}</div>`)}
-  const msg=m.route==='ESCALATE'?m.delivered.replace(/^\[SAFETY ALERT[^\]]*\]\s*/,''):m.delivered;const wh=m.withheld&&m.route!=='ESCALATE';
-  list.querySelectorAll('.li.now').forEach(x=>x.classList.remove('now'));
-  const d=document.createElement('div');d.className='li now'+(wh?' wh':'')+(m.route==='ESCALATE'?' esc':'');d.id='li'+m.idx;
-  d.innerHTML=`<span class="n">#${no(m.idx)}</span><span>${wh?'(withheld — only abuse, nothing to relay)':(m.route==='ESCALATE'?'⚠ ':'')+esc(msg)}</span><span class="st">${wh?'not spoken':'preparing voice…'}</span>`;
-  list.appendChild(d);list.scrollTop=list.scrollHeight;latestIdx=m.idx}
-function setVoiceState(idx,txt){const e=document.querySelector('#li'+idx+' .st');if(e)e.textContent=txt}
-let latestIdx=null;const dispNo={};let dispN=0;const no=i=>dispNo[i]??(dispNo[i]=++dispN);
-function voiceMeta(m){const el=document.getElementById('v'+m.idx);if(el)el.textContent=`voice ${m.first_audio_ms} ms to first sound (${m.via&&m.via.startsWith('live')?'Gemini Live'+(m.via.includes('fast')?', fast pace':''):'Gemini TTS'})`}
-function renderSR(){const b=document.getElementById('srb');
-  b.innerHTML=`<div><div class="ctype">${esc(sr.type||'Listening…')}</div><div class="stat">${esc(sr.nyc||'29 NYC 311 complaint types · 88% of call volume')}</div>${sr._score?`<div class="conf"><i style="width:${Math.round(100*sr._score)}%"></i></div>`:''}</div>`+
-  SR_FIELDS.slice(2).map(([k,l])=>`<div class="srow"><span>${l}</span><b class="${sr[k]?'':'nil'}">${sr[k]?[...sr[k]].map(esc).join(' · '):'—'}</b></div>`).join('')}
-async function showCompare(){const j=await (await fetch('/api/compare/'+room)).json();if(!j.ready)return;
-  document.getElementById('aOrig').src=j.original+'?t='+Date.now();document.getElementById('aProt').src=j.protected+'?t='+Date.now();document.getElementById('cmp').hidden=false}
-function resetView(){flags={abuse:0,threat:false,selfharm:false};for(const k in dispNo)delete dispNo[k];dispN=0;tlReset();uttN=0;cardN=0;lastVoiced=0;lastCardAt=0;turnShown=false;const L=document.getElementById('llist');L.innerHTML='<div class="li wh"><span class="n"></span><span>Messages will build up here as the caller speaks.</span><span class="st"></span></div>';delete L.dataset.used;turnNo=0;needSep=false;document.querySelectorAll('.turn,.banner').forEach(x=>x.remove());document.getElementById('empty').hidden=false;sr={};renderSR();muted=0;
-  document.getElementById('blocked').textContent='0 words muted';t0=null;clearInterval(timer);document.getElementById('timer').textContent='00:00';setState('idle');document.getElementById('cmp').hidden=true;
-  if(ctx){tVoice=tLine=ctx.currentTime+0.1}}
-// ---------- caller: samples ----------
-async function loadSamples(){const list=await (await fetch('/api/samples')).json();const box=document.getElementById('t-samples');
-  list.forEach(s=>{const d=document.createElement('div');d.className='sample';
-    d.innerHTML=`<div class="row"><b>${esc(s.title)}</b><button class="btn primary">▶ Play</button></div><div>${(s.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div><p>${esc(s.text)}</p><span class="stat">voice: ${esc(s.voice||'synthetic')}</span>`;
-    const btn=d.querySelector('button');btn.onclick=async()=>{ensureAudio();await connectAgent();
-      if(sampleAudio){sampleAudio.pause()}sampleAudio=new Audio(`/static/samples/${s.id}.wav?v=3`);sampleAudio.crossOrigin='anonymous';
-      attachCallerAnalyser(ctx.createMediaElementSource(sampleAudio));callerOn=true;sampleAudio.onended=()=>{callerOn=false};applyListen();
-      const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
-      w.onopen=()=>{sampleAudio.onplaying=()=>{tlReset();TL.start=Date.now()-sampleAudio.currentTime*1000;TL.anchored=true;w.send(JSON.stringify({type:'go'}))};sampleAudio.play().catch(()=>w.send(JSON.stringify({type:'go'})))};w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='done')btn.disabled=false};w.onclose=()=>btn.disabled=false};
-    box.appendChild(d)})}
-// ---------- caller: mic ----------
-let mctx,msrc,mnode,mstream;
-document.getElementById('mic').onclick=async()=>{ensureAudio();await connectAgent();await fetch('/api/reset/'+room,{method:'POST'});
-  callerWs=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);callerWs.binaryType='arraybuffer';await new Promise(r=>callerWs.onopen=r);
-  try{mstream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}})}catch(e){document.getElementById('micstate').textContent='microphone blocked — use the Type tab';return}
-  mctx=new AudioContext();msrc=mctx.createMediaStreamSource(mstream);mnode=mctx.createScriptProcessor(4096,1,1);const ratio=mctx.sampleRate/16000;
-  let firstChunk=true;
-  mnode.onaudioprocess=e=>{if(firstChunk){firstChunk=false;tlReset();TL.start=Date.now()-e.inputBuffer.duration*1000;TL.anchored=true}const x=e.inputBuffer.getChannelData(0),n=Math.floor(x.length/ratio),o=new Int16Array(n);for(let i=0;i<n;i++)o[i]=Math.max(-1,Math.min(1,x[Math.floor(i*ratio)]))*32767;if(callerWs.readyState===1)callerWs.send(o.buffer)};
-  attachCallerAnalyser(ctx.createMediaStreamSource(mstream));callerOn=true;
-  msrc.connect(mnode);mnode.connect(mctx.destination);document.getElementById('mic').disabled=true;document.getElementById('micstop').disabled=false;document.getElementById('micstate').textContent='● live'};
-document.getElementById('micstop').onclick=()=>{callerOn=false;try{callerWs.send(JSON.stringify({type:'end'}))}catch(e){}mnode&&mnode.disconnect();mstream&&mstream.getTracks().forEach(t=>t.stop());
-  document.getElementById('mic').disabled=false;document.getElementById('micstop').disabled=true;document.getElementById('micstate').textContent=''};
-// ---------- caller: type ----------
-async function typedWs(){if(callerWs&&callerWs.readyState===1)return;await connectAgent();callerWs=new WebSocket(`${proto}://${location.host}/ws/caller/${room}`);await new Promise(r=>callerWs.onopen=r)}
-async function sendText(t){if(!t.trim())return;ensureAudio();await typedWs();callerWs.send(JSON.stringify({type:'text',text:t}))}
-document.getElementById('send').onclick=()=>{const t=document.getElementById('txt');sendText(t.value);t.value=''};
-document.getElementById('txt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('send').click()}});
-document.getElementById('newcall').onclick=async()=>{try{callerWs&&callerWs.send(JSON.stringify({type:'end'}))}catch(e){}callerWs=null;await connectAgent();await fetch('/api/reset/'+room,{method:'POST'})};
-// scenarios
-function scenEl(target,withUse){SCEN.forEach(([t,tag,line])=>{const d=document.createElement('div');d.className='scen';d.innerHTML=`<b>${esc(t)}</b> <span class="chip">${esc(tag)}</span><q>“${esc(line)}”</q>${withUse?'<button class="btn">Use this line</button>':''}`;
-  if(withUse)d.querySelector('button').onclick=()=>{document.getElementById('txt').value=line;document.getElementById('txt').focus()};target.appendChild(d)})}
-scenEl(document.getElementById('scen'),false);scenEl(document.getElementById('txtex'),true);
-// tabs + listen + judge
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));['samples','speak','type'].forEach(t=>document.getElementById('t-'+t).hidden=t!==b.dataset.t)});
-document.querySelectorAll('#listen button').forEach(b=>b.onclick=()=>{listen=b.dataset.v;applyListen()});
-document.getElementById('skipBig').onclick=skipNow;
-document.getElementById('filler').onchange=e=>{agentWs&&agentWs.send(JSON.stringify({type:'filler',value:e.target.checked}))};
-document.getElementById('judge').onchange=e=>document.body.classList.toggle('nojudge',!e.target.checked);
-renderSR();loadSamples();connectAgent();
-</script></body></html>
+loadSamples();connectAgent().catch(e=>error(e.message));
+</script>
+<script src="/static/tutorial.js"></script>
+</body>
+</html>
