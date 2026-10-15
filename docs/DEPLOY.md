@@ -14,13 +14,24 @@
    GEMINI_API_KEY=... .venv/bin/python scripts/gemini_s1_spike.py
    GEMINI_API_KEY=... .venv/bin/python -m eval.run_text v11 llm_all llm_raw --splits dev,test
    ```
-4. Deploy (CPU, models baked into the image; keep one warm instance during judging)
+4. Deploy (CPU, models baked into the image; keep one warm instance during judging). Gemini runs on Vertex AI with the
+   service account's credentials, so no API key is stored anywhere:
    ```bash
-   gcloud run deploy calmline --source . --region asia-northeast3 --memory 8Gi --cpu 4 \
-     --min-instances 1 --max-instances 3 --timeout 3600 --session-affinity \
-     --set-env-vars CALMLINE_VERSION=v11 --set-secrets GEMINI_API_KEY=gemini-key:latest --allow-unauthenticated
+   gcloud iam service-accounts create calmline-run
+   for r in roles/aiplatform.user roles/speech.client roles/logging.logWriter; do
+     gcloud projects add-iam-policy-binding YOUR_PROJECT --member=serviceAccount:calmline-run@YOUR_PROJECT.iam.gserviceaccount.com --role=$r
+   done
+   gcloud run deploy calmline --source . --region asia-northeast3 \
+     --service-account calmline-run@YOUR_PROJECT.iam.gserviceaccount.com \
+     --memory 4Gi --cpu 2 --min-instances 1 --max-instances 2 --concurrency 20 --timeout 3600 --session-affinity --cpu-boost \
+     --set-env-vars USE_VERTEX=1,GCP_PROJECT=YOUR_PROJECT,GCP_LOCATION=global,CALMLINE_LIVE_LOCATION=us-central1,CALMLINE_ASR=google \
+     --allow-unauthenticated
    ```
    WebSockets work on Cloud Run; `--session-affinity` keeps a caller and agent on the same instance (rooms are in-memory).
+   * Vertex model availability: the Gemini 3.x text/TTS models are served from the `global` endpoint; the Live model
+     (`gemini-live-2.5-flash-native-audio`) only from `us-central1`, hence the separate `CALMLINE_LIVE_LOCATION`.
+   * Public-demo usage guard (per instance): `CALMLINE_MAX_CALL_S` (300), `CALMLINE_DAILY_CALL_MIN` (300),
+     `CALMLINE_MAX_CONCURRENT` (4), `CALMLINE_DAILY_TYPED` (500). Set a billing budget alert as well.
 5. Production STT: switch `Settings.spotter` / pass-2 to `calmline/audio/google_stt.py` (Speech-to-Text v2 streaming,
    `profanity_filter=False`). Sealed evidence → Cloud Storage bucket with CMEK + Firestore audit log (current code writes to `./evidence`).
 

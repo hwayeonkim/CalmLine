@@ -50,6 +50,39 @@ app.mount("/static", StaticFiles(directory=os.path.join(ROOT, "static")), name="
 PIPE = None
 ROOMS: dict[str, dict] = {}
 
+# ---- usage guard for the public demo: bounds Speech-to-Text / Gemini spend (per instance; max-instances caps the total) ----
+MAX_CALL_S = float(os.getenv("CALMLINE_MAX_CALL_S", "300"))                 # one call
+DAILY_CALL_S = float(os.getenv("CALMLINE_DAILY_CALL_MIN", "300")) * 60      # all calls per UTC day
+MAX_LIVE_CALLS = int(os.getenv("CALMLINE_MAX_CONCURRENT", "4"))             # calls at the same time
+DAILY_TYPED = int(os.getenv("CALMLINE_DAILY_TYPED", "500"))                 # typed messages + /api/tts per UTC day
+USAGE = {"day": "", "call_s": 0.0, "typed": 0, "live": 0}
+
+
+def usage():
+    d = time.strftime("%Y-%m-%d", time.gmtime())
+    if USAGE["day"] != d:
+        USAGE.update(day=d, call_s=0.0, typed=0)
+    return USAGE
+
+
+def call_refusal():
+    u = usage()
+    if u["live"] >= MAX_LIVE_CALLS:
+        return "The demo is busy (too many calls at once). Please try again in a minute."
+    if u["call_s"] >= DAILY_CALL_S:
+        return "Today's demo limit has been reached. Please try again tomorrow."
+    return None
+
+
+async def refuse(ws, name, msg):
+    """Tell the caller page and the agents in the room why the call stopped."""
+    await broadcast(room(name), {"type": "limit", "message": msg})
+    try:
+        await ws.send_text(json.dumps({"type": "limit", "message": msg}))
+        await ws.close(code=1008)
+    except Exception:  # noqa: BLE001
+        pass
+
 
 def pipeline():
     global PIPE
@@ -146,6 +179,9 @@ def evidence(sid: str, fname: str):
 @app.get("/api/tts")
 def tts(text: str):
     from calmline import tts as T
+    if usage()["typed"] >= DAILY_TYPED:
+        return JSONResponse({"error": "Today's demo limit has been reached."}, status_code=429)
+    usage()["typed"] += 1
     try:
         wav = T.synthesize(text[:600])
     except Exception as e:
@@ -727,48 +763,65 @@ async def playback_loop(name):
 @app.websocket("/ws/caller/{name}")
 async def ws_caller(ws: WebSocket, name: str):
     await ws.accept()
-    r = room(name)
-    if r["session"].closed:
-        r = await reset_room(name)
-    s = r["session"]
-    asyncio.create_task(_reader_pool(r))
-    clock_started = False
-    buf = np.zeros(0, np.float32)
-    loop = asyncio.get_running_loop()
-    chunk = int(s.s.chunk_s * SR)
+    why = call_refusal()
+    if why:
+        await refuse(ws, name, why)
+        return
+    USAGE["live"] += 1
     try:
-        while True:
-            msg = await ws.receive()
-            if msg.get("bytes"):
-                if not clock_started:
-                    clock_started = True
-                    r["started"] = time.time()
-                    asyncio.create_task(playback_loop(name))
-                buf = np.concatenate([buf, np.frombuffer(msg["bytes"], "<i2").astype(np.float32) / 32768])
-                while len(buf) >= chunk:
-                    part, buf = buf[:chunk], buf[chunk:]
-                    async with r["lock"]:
-                        events = await loop.run_in_executor(None, s.ingest, part, False)
-                    for e in events:
-                        await broadcast(r, e)
-                    on_events(r, s, events)
-            elif msg.get("text"):
-                m = json.loads(msg["text"])
-                if m.get("type") == "end":
+        r = room(name)
+        if r["session"].closed:
+            r = await reset_room(name)
+        s = r["session"]
+        asyncio.create_task(_reader_pool(r))
+        clock_started = False
+        buf = np.zeros(0, np.float32)
+        loop = asyncio.get_running_loop()
+        chunk = int(s.s.chunk_s * SR)
+        try:
+            while True:
+                msg = await ws.receive()
+                if msg.get("bytes"):
+                    if not clock_started:
+                        clock_started = True
+                        r["started"] = time.time()
+                        asyncio.create_task(playback_loop(name))
+                    buf = np.concatenate([buf, np.frombuffer(msg["bytes"], "<i2").astype(np.float32) / 32768])
+                    usage()["call_s"] += len(msg["bytes"]) / 2 / SR
+                    if len(s.audio) / SR >= MAX_CALL_S or usage()["call_s"] >= DAILY_CALL_S:
+                        await refuse(ws, name, (f"Demo calls are limited to {MAX_CALL_S / 60:g} minutes." if MAX_CALL_S >= 60 else f"Demo calls are limited to {MAX_CALL_S:g} seconds.") if len(s.audio) / SR >= MAX_CALL_S
+                                     else "Today's demo limit has been reached. Please try again tomorrow.")
+                        break
+                    while len(buf) >= chunk:
+                        part, buf = buf[:chunk], buf[chunk:]
+                        async with r["lock"]:
+                            events = await loop.run_in_executor(None, s.ingest, part, False)
+                        for e in events:
+                            await broadcast(r, e)
+                        on_events(r, s, events)
+                elif msg.get("text"):
+                    m = json.loads(msg["text"])
+                    if m.get("type") == "end":
+                        break
+                    if m.get("type") == "text" and m.get("text", "").strip():
+                        if usage()["typed"] >= DAILY_TYPED:
+                            await broadcast(r, {"type": "limit", "message": "Today's demo limit has been reached. Please try again tomorrow."})
+                            continue
+                        usage()["typed"] += 1
+                        asyncio.create_task(process_typed(r, s, m["text"].strip()[:600]))
+                        continue
+                elif msg.get("type") == "websocket.disconnect":
                     break
-                if m.get("type") == "text" and m.get("text", "").strip():
-                    asyncio.create_task(process_typed(r, s, m["text"].strip()[:600]))
-                    continue
-            elif msg.get("type") == "websocket.disconnect":
-                break
-    except WebSocketDisconnect:
-        pass
-    async with r["lock"]:
-        events = await loop.run_in_executor(None, s.ingest, buf if len(buf) else np.zeros(1600, np.float32), True)
-    for e in events:
-        await broadcast(r, e)
-    on_events(r, s, events)
-    await finish(r, s)
+        except WebSocketDisconnect:
+            pass
+        async with r["lock"]:
+            events = await loop.run_in_executor(None, s.ingest, buf if len(buf) else np.zeros(1600, np.float32), True)
+        for e in events:
+            await broadcast(r, e)
+        on_events(r, s, events)
+        await finish(r, s)
+    finally:
+        USAGE["live"] -= 1
 
 
 @app.websocket("/ws/agent/{name}")
@@ -808,27 +861,36 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     """Server-side playback of a sample call into a room (for judges without a microphone)."""
     import soundfile as sf
     await ws.accept()
-    r = await reset_room(name); s = r["session"]
-    asyncio.create_task(_reader_pool(r))
-    try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
-        await asyncio.wait_for(ws.receive_text(), timeout=8)
-    except Exception:
-        pass
-    r["started"] = time.time()
-    asyncio.create_task(playback_loop(name))
-    x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
-    loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)
-    for k in range(0, len(x), chunk):
-        part = x[k:k + chunk]
-        await asyncio.sleep(max(0.0, (k + len(part)) / SR - (time.time() - r["started"])))   # real-time arrival
-        async with r["lock"]:
-            events = await loop.run_in_executor(None, s.ingest, part, k + chunk >= len(x))
-        for e in events:
-            await broadcast(r, e)
-        on_events(r, s, events)
-        try:
-            await ws.send_text(json.dumps({"type": "progress", "t": (k + len(part)) / SR, "dur": len(x) / SR}))
+    why = call_refusal()
+    if why:
+        await refuse(ws, name, why)
+        return
+    USAGE["live"] += 1
+    try:
+        r = await reset_room(name); s = r["session"]
+        asyncio.create_task(_reader_pool(r))
+        try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
+            await asyncio.wait_for(ws.receive_text(), timeout=8)
         except Exception:
             pass
-    await finish(r, s)
-    await ws.send_text(json.dumps({"type": "done", "session": s.id}))
+        r["started"] = time.time()
+        asyncio.create_task(playback_loop(name))
+        x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
+        usage()["call_s"] += len(x) / SR
+        loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)
+        for k in range(0, len(x), chunk):
+            part = x[k:k + chunk]
+            await asyncio.sleep(max(0.0, (k + len(part)) / SR - (time.time() - r["started"])))   # real-time arrival
+            async with r["lock"]:
+                events = await loop.run_in_executor(None, s.ingest, part, k + chunk >= len(x))
+            for e in events:
+                await broadcast(r, e)
+            on_events(r, s, events)
+            try:
+                await ws.send_text(json.dumps({"type": "progress", "t": (k + len(part)) / SR, "dur": len(x) / SR}))
+            except Exception:
+                pass
+        await finish(r, s)
+        await ws.send_text(json.dumps({"type": "done", "session": s.id}))
+    finally:
+        USAGE["live"] -= 1
