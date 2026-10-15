@@ -9,6 +9,6 @@ COPY calmline calmline
 COPY app app
 COPY data/raw data/raw
 COPY scripts/download_models.py scripts/download_models.py
-RUN python -c "from huggingface_hub import snapshot_download as d; [d(m) for m in ['unitary/toxic-bert','unitary/unbiased-toxic-roberta','BAAI/bge-small-en-v1.5','Systran/faster-whisper-base.en']]"
+RUN python -c "from huggingface_hub import snapshot_download as d; [d(m) for m in ['unitary/toxic-bert','unitary/unbiased-toxic-roberta','BAAI/bge-small-en-v1.5','Systran/faster-whisper-base.en','Systran/faster-whisper-tiny.en']]"
 ENV HF_HUB_OFFLINE=1
 CMD exec uvicorn app.server:app --host 0.0.0.0 --port ${PORT} --workers 1

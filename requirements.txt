@@ -10,4 +10,4 @@ sentence-transformers
 faster-whisper
 rapidfuzz
 google-genai          # Gemini tier-2 rewriter (optional at runtime: only used when GEMINI_API_KEY / Vertex is configured)
-# google-cloud-speech # enable for the Google STT path (calmline/audio/google_stt.py)
+google-cloud-speech   # Google STT streaming path (calmline/audio/google_stt.py)

@@ -39,6 +39,22 @@ def client():
     return _client
 
 
+_live_client = None
+
+
+def live_client():
+    """Client for the Live API. On Vertex, Live models are regional (us-central1) while the Gemini 3.x text/TTS
+    models are only served from the global endpoint, so Live gets its own client."""
+    global _live_client
+    if os.getenv("USE_VERTEX") != "1":
+        return client()
+    if _live_client is None:
+        from google import genai
+        _live_client = genai.Client(vertexai=True, project=os.environ["GCP_PROJECT"],
+                                    location=os.getenv("CALMLINE_LIVE_LOCATION", "us-central1"))
+    return _live_client
+
+
 def available():
     load_env()
     return bool(os.getenv("GEMINI_API_KEY") or os.getenv("USE_VERTEX") == "1")

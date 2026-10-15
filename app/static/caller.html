@@ -34,7 +34,7 @@ async function loadSamples(){
     btn.onclick=()=>{const w=new WebSocket(`${proto}://${location.host}/ws/sample/${room}/${s.id}`);btn.disabled=true;
       parent!==window&&parent.postMessage({type:'call_started'},'*');
       au.muted=!listenOn;setTimeout(()=>{au.currentTime=0;au.play().catch(()=>{})},150);
-      w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='progress')st.textContent=m.t.toFixed(1)+' / '+m.dur.toFixed(1)+' s';if(m.type==='done'){st.textContent='done';btn.disabled=false}}};
+      w.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==='limit'){st.textContent=m.message;btn.disabled=false}if(m.type==='progress')st.textContent=m.t.toFixed(1)+' / '+m.dur.toFixed(1)+' s';if(m.type==='done'){st.textContent='done';btn.disabled=false}}};
     box.appendChild(d)});
 }
 loadSamples();
