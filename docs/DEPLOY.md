@@ -32,6 +32,11 @@
      (`gemini-live-2.5-flash-native-audio`) only from `us-central1`, hence the separate `CALMLINE_LIVE_LOCATION`.
    * Public-demo usage guard (per instance): `CALMLINE_MAX_CALL_S` (300), `CALMLINE_DAILY_CALL_MIN` (300),
      `CALMLINE_MAX_CONCURRENT` (4), `CALMLINE_DAILY_TYPED` (500). Set a billing budget alert as well.
+   * Continuous deployment: `.github/workflows/deploy.yml` redeploys on every push to `main` through GitHub OIDC ->
+     Workload Identity Federation (pool `github`, provider `calmline-repo`, restricted to this repo's `main`) as the
+     `calmline-deployer` service account (`roles/run.sourceDeveloper`, `roles/serviceusage.serviceUsageConsumer`,
+     `roles/logging.viewer`, `roles/iam.serviceAccountUser` on `calmline-run`). It only replaces the image; env vars,
+     scaling and public access stay as configured. Run it by hand from the Actions tab (workflow_dispatch on `main`).
 5. Production STT: switch `Settings.spotter` / pass-2 to `calmline/audio/google_stt.py` (Speech-to-Text v2 streaming,
    `profanity_filter=False`). Sealed evidence → Cloud Storage bucket with CMEK + Firestore audit log (current code writes to `./evidence`).
 

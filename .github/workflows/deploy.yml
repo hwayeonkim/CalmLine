@@ -1,0 +1,50 @@
+# Redeploys the Cloud Run service on every push to main (a merged PR included).
+# Auth: GitHub OIDC -> Workload Identity Federation (no service-account keys). The provider only accepts tokens
+# from hwayeonkim/CalmLine on refs/heads/main.
+# The deploy only replaces the image; service settings (env vars, service account, scaling, public access) are kept.
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "results/**"
+      - "eval/**"
+      - "experiments/**"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: project-a86fde9c-208a-4edc-a0e
+  REGION: asia-northeast3
+  SERVICE: calmline
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/930584488838/locations/global/workloadIdentityPools/github/providers/calmline-repo
+          service_account: calmline-deployer@project-a86fde9c-208a-4edc-a0e.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and deploy
+        run: gcloud run deploy "$SERVICE" --source . --project "$PROJECT_ID" --region "$REGION" --quiet
+
+      - name: Smoke test
+        run: |
+          url=$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')
+          curl -fsS --retry 5 --retry-delay 10 --retry-all-errors "$url/api/health"
