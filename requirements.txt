@@ -11,3 +11,4 @@ faster-whisper
 rapidfuzz
 google-genai          # Gemini tier-2 rewriter (optional at runtime: only used when GEMINI_API_KEY / Vertex is configured)
 google-cloud-speech   # Google STT streaming path (calmline/audio/google_stt.py)
+google-cloud-storage  # optional shared sample cache (only imported when CALMLINE_CACHE_BUCKET is set)

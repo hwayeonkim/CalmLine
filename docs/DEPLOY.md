@@ -57,3 +57,28 @@ Restart the server. `GET /api/health` should report `"asr": "google-stt-streamin
 `CALMLINE_ASR=whisper` forces the local path; `CALMLINE_ASR=google` forces Google.
 Model: `CALMLINE_GOOGLE_STT_MODEL` (default `latest_short`; `phone_call` is an alternative for 8 kHz telephony audio).
 On Cloud Run the service account's credentials are used automatically (grant it `roles/speech.client`).
+
+## Sample-call cache and admin page
+
+Built-in sample calls are replayed from a cache by default: the first play of a sample (with "Cached replay" ON) runs
+live and stores its Speech-to-Text parts, cards and calm voice; later plays reuse them without calling Speech-to-Text,
+Gemini or Gemini Live, and do not count toward `CALMLINE_DAILY_CALL_MIN`. Switching "Cached replay" OFF in the demo
+runs every part live and stores nothing. Microphone and typed input are never cached. The offline-evaluation prompt
+cache (`data/cache/gemini`) is off in the server (`CALMLINE_PROMPT_CACHE=0`), so live mode always reaches Gemini.
+
+Entries are keyed by pipeline version, recognizer (`google-stt-streaming` / `whisper-local`), sample audio hash and a
+format epoch (`calmline/sample_cache.py: EPOCH`), so a changed sample or recognizer never replays stale results. A
+change to prompts or cut rules under the same version does: clear the cache after such a change.
+
+* Storage: `data/sample_cache/` by default. On Cloud Run that folder lives in the instance's memory, is lost on every
+  restart or new revision, and is not shared between instances. For a persistent shared cache set
+  `CALMLINE_CACHE_BUCKET=<bucket>` and grant the runtime service account `roles/storage.objectAdmin` on that bucket:
+  ```bash
+  gcloud storage buckets create gs://YOUR_BUCKET --location asia-northeast3 --uniform-bucket-level-access
+  gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET --member=serviceAccount:calmline-run@YOUR_PROJECT.iam.gserviceaccount.com --role=roles/storage.objectAdmin
+  gcloud run services update calmline --region asia-northeast3 --update-env-vars CALMLINE_CACHE_BUCKET=YOUR_BUCKET
+  ```
+* Admin page `/admin` (cache contents per sample, clear one sample or everything) exists only when
+  `CALMLINE_ADMIN_TOKEN` is set; without it `/admin` and `/api/admin/*` return 404, so the public deployment has no
+  clear function. Keep the token in Secret Manager (`--update-secrets CALMLINE_ADMIN_TOKEN=calmline-admin-token:latest`).
+* After a deploy or a clear, play each sample once with "Cached replay" ON so judges get the stored replay.

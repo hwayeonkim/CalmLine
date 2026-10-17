@@ -15,3 +15,5 @@ data/cache/
 # local-only
 .claude/
 docs/report_ko.html
+
+data/sample_cache/
