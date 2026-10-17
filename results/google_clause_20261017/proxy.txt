@@ -1,0 +1,78 @@
+civil     sentence parts= 3 words/part= 16.0 median=1.36s worst=4.46s
+    [  0.0-  4.2] +4.46s  I'm really frustrated. This is the third time I'm calling. Thank you for watching.
+    [  4.8- 20.2] +1.36s  Water is still leaking through my bathroom ceiling at 222 East 21st Street apartment 4B. My reference number is 311-208-71455. It's incredibly frustrating to keep repeating this.
+    [ 20.9- 23.3] +1.03s  Could you send an inspector this week?
+civil     clause   parts= 6 words/part=  8.8 median=1.4s worst=5.06s
+    [  0.0-  4.2] +5.06s  I'm really frustrated. This is the third time I'm calling. Thank you for watching.
+    [  4.8- 11.5] +0.81s  Water is still leaking through my bathroom ceiling at 222 East 21st Street apartment 4B.
+    [ 11.9- 14.4] +4.83s  My reference number is 311. 1, 2, 3.
+    [ 14.4- 20.2] +0.79s  208-714-55. It's incredibly frustrating to keep repeating this.
+    [ 20.6- 23.3] +1.03s  Could you send an inspector this week?
+    [ 23.8- 24.0] +1.76s  You
+driveway  sentence parts= 3 words/part= 12.7 median=1.43s worst=1.74s
+    [  0.0-  7.3] +1.43s  Listen, you idiot. Some asshole parked a white van across my driveway at 2315 31st Street in Astoria.
+    [  8.1- 15.1] +1.74s  I need to get my mother to dialysis by 10. The plate is KXR4471.
+    [ 16.1- 18.5] +1.27s  Get a tow truck here now!
+driveway  clause   parts= 4 words/part=  9.5 median=1.12s worst=1.39s
+    [  0.0-  7.3] +1.12s  Listen, you idiot. Some asshole parked a white van across my driveway at 2315 31st Street in Astoria.
+    [  7.8- 11.5] +1.12s  I need to get my mother to dialysis by 10.
+    [ 12.1- 15.1] +1.39s  The plate is KXR4471.
+    [ 16.6- 18.5] +0.98s  Get a tow truck here now!
+harass    sentence parts= 3 words/part=  9.7 median=1.26s worst=1.53s
+    [  0.0-  5.3] +1.26s  Hey, sweetheart, you sound cute. What are you wearing right now?
+    [  6.2- 14.1] +1.53s  Anyway, my upstairs neighbor in apartment 9C at 75 Heart Street plays drums every night after midnight.
+    [ 14.9- 15.7] +0.78s  You
+harass    clause   parts= 2 words/part= 14.0 median=1.23s worst=1.26s
+    [  0.0-  5.3] +1.26s  Hey, sweetheart, you sound cute. What are you wearing right now?
+    [  6.2- 14.1] +1.21s  Anyway, my upstairs neighbor in apartment 9C at 75 Heart Street plays drums every night after midnight.
+heat      sentence parts= 4 words/part= 10.0 median=1.16s worst=1.34s
+    [  0.0-  2.3] +0.98s  Hi, I'm calling about the heat again.
+    [  3.0-  5.7] +1.20s  This is the fourth fucking time I've called!
+    [  6.5- 12.7] +1.11s  We've had no heat at 1820 Walton Avenue, apartment 2C since Wednesday.
+    [ 13.5- 17.6] +1.34s  I have three kids freezing in here, so get your lazy asses moving!
+heat      clause   parts= 4 words/part= 10.0 median=1.02s worst=1.13s
+    [  0.0-  2.3] +1.00s  Hi, I'm calling about the heat again.
+    [  2.8-  5.7] +0.95s  This is the fourth fucking time I've called.
+    [  6.2- 12.7] +1.13s  We've had no heat at 1820 Walton Avenue, apartment 2C since Wednesday.
+    [ 13.3- 17.6] +1.05s  I have three kids freezing in here, so get your lazy asses moving!
+identity  sentence parts= 4 words/part=  6.8 median=1.31s worst=1.35s
+    [  0.0-  2.9] +1.34s  Put someone on who speaks real English.
+    [  3.7-  9.5] +1.29s  A hydrange is open on Kingston Avenue at Eastern Parkway and the street is flooding.
+    [ 10.3- 12.5] +1.35s  You people are useless.
+    [ 13.4- 14.1] +0.80s  You
+identity  clause   parts= 3 words/part=  8.7 median=1.05s worst=1.34s
+    [  0.0-  2.9] +1.34s  Put someone on who speaks real English.
+    [  3.7-  9.5] +0.98s  A hydrange is open on Kingston Avenue at Eastern Parkway and the street is flooding.
+    [ 10.1- 12.5] +1.05s  You people are useless.
+pothole   sentence parts= 5 words/part=  8.2 median=1.09s worst=1.56s
+    [  0.0-  1.6] +1.09s  Are you people stupid or something?
+    [  2.4-  9.2] +1.56s  There is a pothole on Linden Boulevard near Euclid Avenue. It blew out my tire yesterday.
+    [ 10.0- 13.4] +1.05s  Write it down, genius, or is that too hard for you?
+    [ 14.0- 16.2] +1.23s  I want someone to call me back.
+    [ 17.0- 17.7] +0.85s  You
+pothole   clause   parts= 5 words/part=  7.8 median=0.9s worst=1.27s
+    [  0.0-  1.6] +0.81s  Are you people stupid or something?
+    [  2.1-  6.8] +1.27s  There's a pothole on Linden Boulevard near Euclid Avenue.
+    [  7.5-  9.3] +0.93s  It blew out my tire yesterday.
+    [ 10.4- 13.4] +0.75s  Write it down, genius, or is that too hard for you?
+    [ 14.2- 16.2] +0.90s  I want someone to call me back.
+rats      sentence parts= 4 words/part=  8.2 median=1.81s worst=3.79s
+    [  0.0-  1.8] +1.21s  These rats are killing me.
+    [  2.6-  9.7] +3.79s  There's garbage piled up behind the deli at 410 Tremon Avenue, and the rats come out every night. Great.
+    [ 10.3- 12.1] +2.42s  My son is scared to walk to school.
+    [ 12.9- 13.6] +0.94s  You
+rats      clause   parts= 4 words/part=  8.0 median=1.03s worst=1.48s
+    [  0.0-  1.8] +0.93s  These rats are killing me.
+    [  2.3-  9.6] +0.92s  There's garbage piled up behind the deli at 410 Tremon Avenue, and the rats come out every night.
+    [ 10.0- 12.1] +1.14s  My son is scared to walk to school.
+    [ 12.7- 12.9] +1.48s  You
+threat    sentence parts= 3 words/part= 13.0 median=1.27s worst=1.51s
+    [  0.0-  4.1] +1.27s  I've called six times about the truck parked on the hydron on Court Street.
+    [  5.0- 15.3] +1.51s  I know where your office is. If nobody toes it today, I'm going to come down there and beat the crap out of somebody.
+    [ 16.1- 16.8] +0.60s  You
+threat    clause   parts= 3 words/part= 12.7 median=1.21s worst=1.26s
+    [  0.0-  4.1] +1.26s  I've called six times about the truck parked on the hydron on Court Street.
+    [  5.0-  8.6] +0.72s  I know where your office is.
+    [  8.9- 15.3] +1.21s  If nobody toes it today, I'm going to come down there and beat the crap out of somebody.
+ALL sentence {'parts': 29, 'words_per_part': 10.2, 'median_delay_s': 1.27, 'worst_delay_s': 4.46, 'parts_per_call': 3.6}
+ALL clause   {'parts': 31, 'words_per_part': 9.5, 'median_delay_s': 1.05, 'worst_delay_s': 5.06, 'parts_per_call': 3.9}
