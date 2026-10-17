@@ -44,6 +44,11 @@ jobs:
       - name: Build and deploy
         run: gcloud run deploy "$SERVICE" --source . --project "$PROJECT_ID" --region "$REGION" --quiet
 
+      # A deploy with --no-traffic (e.g. a tagged preview) pins traffic to a fixed revision, after which new revisions
+      # get none. Always send traffic back to the latest revision.
+      - name: Route traffic to the latest revision
+        run: gcloud run services update-traffic "$SERVICE" --to-latest --project "$PROJECT_ID" --region "$REGION" --quiet
+
       - name: Smoke test
         run: |
           url=$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')
