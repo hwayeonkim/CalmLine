@@ -75,8 +75,8 @@ class CallSession:
 
     def ingest(self, pcm: np.ndarray, final=False):
         """Called (in a worker thread) for every caller chunk. Returns list of events.
-        With a sample-cache trace the recognizer is not called: recorded parts are re-emitted at the call time the
-        recognizer produced them. Otherwise the recognizer's part and mute events are recorded with that call time."""
+        With a sample-cache trace the recognizer is not called: recorded parts are re-emitted when the caller audio
+        reaches the end of each part's speech. Otherwise the recognizer's part and mute events are recorded."""
         if self.replay is not None:
             return self._ingest_replay(pcm, final)
         ev = self._ingest(pcm, final)
@@ -97,8 +97,11 @@ class CallSession:
         while self._ri < len(self.replay):
             item = self.replay[self._ri]
             e = item["e"]
+            # a stored part is released as soon as the caller has finished saying it (its speech end, not the moment
+            # the recognizer finalized it the first time), so replay never shows words before they are heard;
             # on the closing chunk, also flush parts whose speech was fully heard (a stopped sample keeps its last part)
-            if not (item["ct"] <= now + 1e-6 or (final and e.get("t1", e.get("end", 1e9)) <= now + 0.5)):
+            end = e.get("t1", e.get("end", item["ct"]))
+            if not (end <= now + 1e-6 or (final and end <= now + 0.5)):
                 break
             self._ri += 1
             e = dict(e)
