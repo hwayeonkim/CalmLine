@@ -64,7 +64,8 @@ class GoogleStreamingSTT:
             profanity_filter=False,                       # we must see the abuse to remove it
             speech_contexts=[sp.SpeechContext(phrases=phrase_hints or [], boost=8.0)] if phrase_hints else None)
         self.stream_cfg = sp.StreamingRecognitionConfig(config=cfg, interim_results=True, single_utterance=False)
-        self.q_in: queue.Queue = queue.Queue()
+        self.q_in: queue.Queue | None = None     # current stream's audio queue; None until audio arrives
+        self.thread = None
         self.q_out: queue.Queue = queue.Queue()
         self.offset = 0.0           # call time at which the current stream started
         self.sent = 0.0             # seconds of audio sent in the current stream
@@ -75,7 +76,6 @@ class GoogleStreamingSTT:
         self.fed = 0.0              # call time fed so far
         self.last_voice = 0.0       # call time of the last speech frame
         self.voiced = False         # speech sent to the current stream since it started
-        self._start()
 
     # ---- streaming thread ----
     def _requests(self, q):
@@ -107,6 +107,9 @@ class GoogleStreamingSTT:
             self.q_out.put(("error", self.error))
 
     def _start(self):
+        # streams open lazily on the first audio after a cut, so a paused call never holds an idle stream open
+        # (Google drops a stream that gets no audio for ~10 s), and offset is the call time the stream starts at
+        self.offset = self.fed
         self.q_in = queue.Queue()
         self.sent = 0.0
         self.voiced = False
@@ -118,7 +121,9 @@ class GoogleStreamingSTT:
         if self.closed:
             return
         if self.sent > STREAM_LIMIT_S:            # roll over to a fresh stream before Google's limit
-            self._cut()
+            self.cut()
+        if self.q_in is None:
+            self._start()
         self.q_in.put((np.clip(chunk, -1, 1) * 32767).astype("<i2").tobytes())
         self.sent += len(chunk) / SR
         voiced = _voiced_frames(chunk)
@@ -127,18 +132,19 @@ class GoogleStreamingSTT:
             self.last_voice = self.fed + (voiced[-1] * 160 + 400) / SR
         self.fed += len(chunk) / SR
         if self.voiced and self.fed - self.last_voice >= self.pause_s:
-            self._cut()                           # the caller paused: finalize this part now
+            self.cut()                            # the caller paused: finalize this part now
 
-    def _cut(self):
-        """Half-close the current stream (Google returns its final right away) and continue on a new one."""
-        self.q_in.put(None)
-        self.offset += self.sent
-        self._start()
+    def cut(self):
+        """Half-close the current stream (Google returns its final right away); the next audio opens a new one."""
+        if self.q_in is not None:
+            self.q_in.put(None)
+            self.q_in = None
 
     def close(self, wait=3.0):
         self.closed = True
-        self.q_in.put(None)
-        self.thread.join(timeout=wait)
+        self.cut()
+        if self.thread is not None:
+            self.thread.join(timeout=wait)
 
     def poll(self):
         out = []

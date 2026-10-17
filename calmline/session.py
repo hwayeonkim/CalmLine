@@ -172,6 +172,11 @@ class CallSession:
                 self._g = GoogleStreamingSTT()
         return self._g_mode == "google"
 
+    def pause_asr(self):
+        """The caller audio is paused (sample playback): finalize the open part now instead of leaving a stream idle."""
+        if getattr(self, "_g_mode", None) == "google":
+            self._g.cut()
+
     def _ingest_google(self, pcm, start, final):
         """Google streaming: its endpointer closes each part; the final result is the part's transcript."""
         ev = []
