@@ -55,7 +55,9 @@ gcloud auth application-default set-quota-project YOUR_PROJECT
 
 Restart the server. `GET /api/health` should report `"asr": "google-stt-streaming"`.
 `CALMLINE_ASR=whisper` forces the local path; `CALMLINE_ASR=google` forces Google.
-Model: `CALMLINE_GOOGLE_STT_MODEL` (default `latest_short`; `phone_call` is an alternative for 8 kHz telephony audio).
+Model for microphone calls: `CALMLINE_GOOGLE_STT_MODEL_MIC` (falls back to the default below; we run `latest_long`,
+which kept clauses that `latest_short` dropped from live speech). Default model (sample calls, which their replay cache
+was recorded with): `CALMLINE_GOOGLE_STT_MODEL` (default `latest_short`; `phone_call` is an alternative for 8 kHz telephony audio).
 On Cloud Run the service account's credentials are used automatically (grant it `roles/speech.client`).
 
 ## Sample-call cache and admin page

@@ -34,6 +34,7 @@ class Settings:
     pause_s: float = 0.45           # pause that closes a sentence-level utterance
     chunking: str = "clause"        # "sentence" (v17) or "clause" (v18: syntax/prosody-aware sub-sentence parts)
     asr: str = os.getenv("CALMLINE_ASR", "auto")   # "whisper" (local two-pass) | "google" (Cloud STT streaming) | "auto"
+    stt_model: str | None = None    # Google STT model for this call; None = CALMLINE_GOOGLE_STT_MODEL (latest_short)
 
 
 class CallSession:
@@ -212,7 +213,7 @@ class CallSession:
             self._g_mode = mode
             if mode == "google":
                 from .audio.google_stt import GoogleStreamingSTT
-                self._g = GoogleStreamingSTT(clause=self.s.chunking == "clause")
+                self._g = GoogleStreamingSTT(model=self.s.stt_model, clause=self.s.chunking == "clause")
         return self._g_mode == "google"
 
     def pause_asr(self):
