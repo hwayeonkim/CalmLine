@@ -122,8 +122,8 @@ class GoogleStreamingSTT:
             return
         if self.sent > STREAM_LIMIT_S:            # roll over to a fresh stream before Google's limit
             self.cut()
-        if self.q_in is None:
-            self._start()
+        if self.q_in is None or not self.thread.is_alive():
+            self._start()           # first audio after a cut, or the stream ended on an error: open a new one
         self.q_in.put((np.clip(chunk, -1, 1) * 32767).astype("<i2").tobytes())
         self.sent += len(chunk) / SR
         voiced = _voiced_frames(chunk)
