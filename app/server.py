@@ -211,10 +211,15 @@ def asr_mode():
     return ("google-stt-streaming" if (mode == "google" or (mode == "auto" and ok)) else "whisper-local"), why
 
 
+MIC_STT_MODEL = os.getenv("CALMLINE_GOOGLE_STT_MODEL_MIC") or None
+
+
 @app.get("/api/health")
 def health():
     asr, why = asr_mode()
-    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST), "asr": asr, "asr_note": why}
+    default_model = os.getenv("CALMLINE_GOOGLE_STT_MODEL", "latest_short")
+    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST), "asr": asr, "asr_note": why,
+            "stt_model": {"sample": default_model, "microphone": MIC_STT_MODEL or default_model}}
 
 
 # ---- sample cache (calmline/sample_cache.py) ----
@@ -880,6 +885,10 @@ async def ws_caller(ws: WebSocket, name: str):
         if r["session"].closed:
             r = await reset_room(name)
         s = r["session"]
+        # Live microphone calls may use their own STT model. Sample calls keep the default model, which is also what
+        # their replay cache was recorded with (latest_short dropped whole clauses of live speech in our A/B tests;
+        # latest_long kept them). The recognizer is created on the first audio, so setting it here takes effect.
+        s.s.stt_model = MIC_STT_MODEL
         asyncio.create_task(_reader_pool(r))
         clock_started = False
         buf = np.zeros(0, np.float32)
