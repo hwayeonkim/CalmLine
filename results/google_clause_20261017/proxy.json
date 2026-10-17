@@ -1,0 +1,585 @@
+{
+ "client": "proxy",
+ "total": {
+  "sentence": {
+   "parts": 29,
+   "words_per_part": 10.2,
+   "median_delay_s": 1.27,
+   "worst_delay_s": 4.46,
+   "parts_per_call": 3.6
+  },
+  "clause": {
+   "parts": 31,
+   "words_per_part": 9.5,
+   "median_delay_s": 1.05,
+   "worst_delay_s": 5.06,
+   "parts_per_call": 3.9
+  }
+ },
+ "calls": {
+  "civil": {
+   "sentence": {
+    "parts": 3,
+    "words_per_part": 16,
+    "median_delay_s": 1.36,
+    "worst_delay_s": 4.46,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 4.24,
+      "text": "I'm really frustrated. This is the third time I'm calling. Thank you for watching.",
+      "n_words": 14,
+      "delay_s": 4.46
+     },
+     {
+      "t0": 4.8,
+      "t1": 20.24,
+      "text": "Water is still leaking through my bathroom ceiling at 222 East 21st Street apartment 4B. My reference number is 311-208-71455. It's incredibly frustrating to keep repeating this.",
+      "n_words": 27,
+      "delay_s": 1.36
+     },
+     {
+      "t0": 20.9,
+      "t1": 23.28,
+      "text": "Could you send an inspector this week?",
+      "n_words": 7,
+      "delay_s": 1.03
+     }
+    ]
+   },
+   "clause": {
+    "parts": 6,
+    "words_per_part": 8.8,
+    "median_delay_s": 1.4,
+    "worst_delay_s": 5.06,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 4.24,
+      "text": "I'm really frustrated. This is the third time I'm calling. Thank you for watching.",
+      "n_words": 14,
+      "delay_s": 5.06
+     },
+     {
+      "t0": 4.8,
+      "t1": 11.5,
+      "text": "Water is still leaking through my bathroom ceiling at 222 East 21st Street apartment 4B.",
+      "n_words": 15,
+      "delay_s": 0.81
+     },
+     {
+      "t0": 11.9,
+      "t1": 14.38,
+      "text": "My reference number is 311. 1, 2, 3.",
+      "n_words": 8,
+      "delay_s": 4.83
+     },
+     {
+      "t0": 14.4,
+      "t1": 20.22,
+      "text": "208-714-55. It's incredibly frustrating to keep repeating this.",
+      "n_words": 8,
+      "delay_s": 0.79
+     },
+     {
+      "t0": 20.6,
+      "t1": 23.28,
+      "text": "Could you send an inspector this week?",
+      "n_words": 7,
+      "delay_s": 1.03
+     },
+     {
+      "t0": 23.8,
+      "t1": 23.98,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 1.76
+     }
+    ]
+   }
+  },
+  "driveway": {
+   "sentence": {
+    "parts": 3,
+    "words_per_part": 12.7,
+    "median_delay_s": 1.43,
+    "worst_delay_s": 1.74,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 7.28,
+      "text": "Listen, you idiot. Some asshole parked a white van across my driveway at 2315 31st Street in Astoria.",
+      "n_words": 18,
+      "delay_s": 1.43
+     },
+     {
+      "t0": 8.1,
+      "t1": 15.06,
+      "text": "I need to get my mother to dialysis by 10. The plate is KXR4471.",
+      "n_words": 14,
+      "delay_s": 1.74
+     },
+     {
+      "t0": 16.1,
+      "t1": 18.54,
+      "text": "Get a tow truck here now!",
+      "n_words": 6,
+      "delay_s": 1.27
+     }
+    ]
+   },
+   "clause": {
+    "parts": 4,
+    "words_per_part": 9.5,
+    "median_delay_s": 1.12,
+    "worst_delay_s": 1.39,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 7.28,
+      "text": "Listen, you idiot. Some asshole parked a white van across my driveway at 2315 31st Street in Astoria.",
+      "n_words": 18,
+      "delay_s": 1.12
+     },
+     {
+      "t0": 7.8,
+      "t1": 11.48,
+      "text": "I need to get my mother to dialysis by 10.",
+      "n_words": 10,
+      "delay_s": 1.12
+     },
+     {
+      "t0": 12.1,
+      "t1": 15.12,
+      "text": "The plate is KXR4471.",
+      "n_words": 4,
+      "delay_s": 1.39
+     },
+     {
+      "t0": 16.62,
+      "t1": 18.52,
+      "text": "Get a tow truck here now!",
+      "n_words": 6,
+      "delay_s": 0.98
+     }
+    ]
+   }
+  },
+  "harass": {
+   "sentence": {
+    "parts": 3,
+    "words_per_part": 9.7,
+    "median_delay_s": 1.26,
+    "worst_delay_s": 1.53,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 5.34,
+      "text": "Hey, sweetheart, you sound cute. What are you wearing right now?",
+      "n_words": 11,
+      "delay_s": 1.26
+     },
+     {
+      "t0": 6.2,
+      "t1": 14.08,
+      "text": "Anyway, my upstairs neighbor in apartment 9C at 75 Heart Street plays drums every night after midnight.",
+      "n_words": 17,
+      "delay_s": 1.53
+     },
+     {
+      "t0": 14.9,
+      "t1": 15.66,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 0.78
+     }
+    ]
+   },
+   "clause": {
+    "parts": 2,
+    "words_per_part": 14,
+    "median_delay_s": 1.23,
+    "worst_delay_s": 1.26,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 5.34,
+      "text": "Hey, sweetheart, you sound cute. What are you wearing right now?",
+      "n_words": 11,
+      "delay_s": 1.26
+     },
+     {
+      "t0": 6.2,
+      "t1": 14.1,
+      "text": "Anyway, my upstairs neighbor in apartment 9C at 75 Heart Street plays drums every night after midnight.",
+      "n_words": 17,
+      "delay_s": 1.21
+     }
+    ]
+   }
+  },
+  "heat": {
+   "sentence": {
+    "parts": 4,
+    "words_per_part": 10,
+    "median_delay_s": 1.16,
+    "worst_delay_s": 1.34,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 2.32,
+      "text": "Hi, I'm calling about the heat again.",
+      "n_words": 7,
+      "delay_s": 0.98
+     },
+     {
+      "t0": 3.0,
+      "t1": 5.7,
+      "text": "This is the fourth fucking time I've called!",
+      "n_words": 8,
+      "delay_s": 1.2
+     },
+     {
+      "t0": 6.5,
+      "t1": 12.7,
+      "text": "We've had no heat at 1820 Walton Avenue, apartment 2C since Wednesday.",
+      "n_words": 12,
+      "delay_s": 1.11
+     },
+     {
+      "t0": 13.5,
+      "t1": 17.56,
+      "text": "I have three kids freezing in here, so get your lazy asses moving!",
+      "n_words": 13,
+      "delay_s": 1.34
+     }
+    ]
+   },
+   "clause": {
+    "parts": 4,
+    "words_per_part": 10,
+    "median_delay_s": 1.02,
+    "worst_delay_s": 1.13,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 2.3,
+      "text": "Hi, I'm calling about the heat again.",
+      "n_words": 7,
+      "delay_s": 1.0
+     },
+     {
+      "t0": 2.8,
+      "t1": 5.66,
+      "text": "This is the fourth fucking time I've called.",
+      "n_words": 8,
+      "delay_s": 0.95
+     },
+     {
+      "t0": 6.2,
+      "t1": 12.68,
+      "text": "We've had no heat at 1820 Walton Avenue, apartment 2C since Wednesday.",
+      "n_words": 12,
+      "delay_s": 1.13
+     },
+     {
+      "t0": 13.3,
+      "t1": 17.56,
+      "text": "I have three kids freezing in here, so get your lazy asses moving!",
+      "n_words": 13,
+      "delay_s": 1.05
+     }
+    ]
+   }
+  },
+  "identity": {
+   "sentence": {
+    "parts": 4,
+    "words_per_part": 6.8,
+    "median_delay_s": 1.31,
+    "worst_delay_s": 1.35,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 2.86,
+      "text": "Put someone on who speaks real English.",
+      "n_words": 7,
+      "delay_s": 1.34
+     },
+     {
+      "t0": 3.7,
+      "t1": 9.52,
+      "text": "A hydrange is open on Kingston Avenue at Eastern Parkway and the street is flooding.",
+      "n_words": 15,
+      "delay_s": 1.29
+     },
+     {
+      "t0": 10.3,
+      "t1": 12.46,
+      "text": "You people are useless.",
+      "n_words": 4,
+      "delay_s": 1.35
+     },
+     {
+      "t0": 13.4,
+      "t1": 14.14,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 0.8
+     }
+    ]
+   },
+   "clause": {
+    "parts": 3,
+    "words_per_part": 8.7,
+    "median_delay_s": 1.05,
+    "worst_delay_s": 1.34,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 2.86,
+      "text": "Put someone on who speaks real English.",
+      "n_words": 7,
+      "delay_s": 1.34
+     },
+     {
+      "t0": 3.7,
+      "t1": 9.52,
+      "text": "A hydrange is open on Kingston Avenue at Eastern Parkway and the street is flooding.",
+      "n_words": 15,
+      "delay_s": 0.98
+     },
+     {
+      "t0": 10.1,
+      "t1": 12.46,
+      "text": "You people are useless.",
+      "n_words": 4,
+      "delay_s": 1.05
+     }
+    ]
+   }
+  },
+  "pothole": {
+   "sentence": {
+    "parts": 5,
+    "words_per_part": 8.2,
+    "median_delay_s": 1.09,
+    "worst_delay_s": 1.56,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 1.62,
+      "text": "Are you people stupid or something?",
+      "n_words": 6,
+      "delay_s": 1.09
+     },
+     {
+      "t0": 2.4,
+      "t1": 9.24,
+      "text": "There is a pothole on Linden Boulevard near Euclid Avenue. It blew out my tire yesterday.",
+      "n_words": 16,
+      "delay_s": 1.56
+     },
+     {
+      "t0": 10.0,
+      "t1": 13.36,
+      "text": "Write it down, genius, or is that too hard for you?",
+      "n_words": 11,
+      "delay_s": 1.05
+     },
+     {
+      "t0": 14.0,
+      "t1": 16.18,
+      "text": "I want someone to call me back.",
+      "n_words": 7,
+      "delay_s": 1.23
+     },
+     {
+      "t0": 17.0,
+      "t1": 17.7,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 0.85
+     }
+    ]
+   },
+   "clause": {
+    "parts": 5,
+    "words_per_part": 7.8,
+    "median_delay_s": 0.9,
+    "worst_delay_s": 1.27,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 1.6,
+      "text": "Are you people stupid or something?",
+      "n_words": 6,
+      "delay_s": 0.81
+     },
+     {
+      "t0": 2.1,
+      "t1": 6.84,
+      "text": "There's a pothole on Linden Boulevard near Euclid Avenue.",
+      "n_words": 9,
+      "delay_s": 1.27
+     },
+     {
+      "t0": 7.5,
+      "t1": 9.28,
+      "text": "It blew out my tire yesterday.",
+      "n_words": 6,
+      "delay_s": 0.93
+     },
+     {
+      "t0": 10.38,
+      "t1": 13.36,
+      "text": "Write it down, genius, or is that too hard for you?",
+      "n_words": 11,
+      "delay_s": 0.75
+     },
+     {
+      "t0": 14.24,
+      "t1": 16.2,
+      "text": "I want someone to call me back.",
+      "n_words": 7,
+      "delay_s": 0.9
+     }
+    ]
+   }
+  },
+  "rats": {
+   "sentence": {
+    "parts": 4,
+    "words_per_part": 8.2,
+    "median_delay_s": 1.81,
+    "worst_delay_s": 3.79,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 1.8,
+      "text": "These rats are killing me.",
+      "n_words": 5,
+      "delay_s": 1.21
+     },
+     {
+      "t0": 2.6,
+      "t1": 9.72,
+      "text": "There's garbage piled up behind the deli at 410 Tremon Avenue, and the rats come out every night. Great.",
+      "n_words": 19,
+      "delay_s": 3.79
+     },
+     {
+      "t0": 10.3,
+      "t1": 12.1,
+      "text": "My son is scared to walk to school.",
+      "n_words": 8,
+      "delay_s": 2.42
+     },
+     {
+      "t0": 12.9,
+      "t1": 13.58,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 0.94
+     }
+    ]
+   },
+   "clause": {
+    "parts": 4,
+    "words_per_part": 8,
+    "median_delay_s": 1.03,
+    "worst_delay_s": 1.48,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 1.78,
+      "text": "These rats are killing me.",
+      "n_words": 5,
+      "delay_s": 0.93
+     },
+     {
+      "t0": 2.3,
+      "t1": 9.58,
+      "text": "There's garbage piled up behind the deli at 410 Tremon Avenue, and the rats come out every night.",
+      "n_words": 18,
+      "delay_s": 0.92
+     },
+     {
+      "t0": 10.0,
+      "t1": 12.06,
+      "text": "My son is scared to walk to school.",
+      "n_words": 8,
+      "delay_s": 1.14
+     },
+     {
+      "t0": 12.7,
+      "t1": 12.86,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 1.48
+     }
+    ]
+   }
+  },
+  "threat": {
+   "sentence": {
+    "parts": 3,
+    "words_per_part": 13,
+    "median_delay_s": 1.27,
+    "worst_delay_s": 1.51,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 4.14,
+      "text": "I've called six times about the truck parked on the hydron on Court Street.",
+      "n_words": 14,
+      "delay_s": 1.27
+     },
+     {
+      "t0": 5.0,
+      "t1": 15.3,
+      "text": "I know where your office is. If nobody toes it today, I'm going to come down there and beat the crap out of somebody.",
+      "n_words": 24,
+      "delay_s": 1.51
+     },
+     {
+      "t0": 16.1,
+      "t1": 16.76,
+      "text": "You",
+      "n_words": 1,
+      "delay_s": 0.6
+     }
+    ]
+   },
+   "clause": {
+    "parts": 3,
+    "words_per_part": 12.7,
+    "median_delay_s": 1.21,
+    "worst_delay_s": 1.26,
+    "detail": [
+     {
+      "t0": 0.0,
+      "t1": 4.14,
+      "text": "I've called six times about the truck parked on the hydron on Court Street.",
+      "n_words": 14,
+      "delay_s": 1.26
+     },
+     {
+      "t0": 5.0,
+      "t1": 8.58,
+      "text": "I know where your office is.",
+      "n_words": 6,
+      "delay_s": 0.72
+     },
+     {
+      "t0": 8.9,
+      "t1": 15.3,
+      "text": "If nobody toes it today, I'm going to come down there and beat the crap out of somebody.",
+      "n_words": 18,
+      "delay_s": 1.21
+     }
+    ]
+   }
+  }
+ }
+}

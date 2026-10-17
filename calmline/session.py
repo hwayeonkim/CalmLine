@@ -169,7 +169,7 @@ class CallSession:
             self._g_mode = mode
             if mode == "google":
                 from .audio.google_stt import GoogleStreamingSTT
-                self._g = GoogleStreamingSTT()
+                self._g = GoogleStreamingSTT(clause=self.s.chunking == "clause")
         return self._g_mode == "google"
 
     def pause_asr(self):
