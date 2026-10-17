@@ -7,7 +7,7 @@ Text, Gemini or Gemini Live. Microphone and typed input are never cached.
 Layout (one namespace per sample, pipeline version, ASR mode and audio file, so a stale entry is never mixed in):
     <EPOCH>/<version>-<asr>/<sample>-<wav sha8>/stt.json          parts as the recognizer emitted them, with call time
     <EPOCH>/<version>-<asr>/<sample>-<wav sha8>/cards/<key>.json   card (+ late card update) per (part index, text)
-    <EPOCH>/<version>-<asr>/<sample>-<wav sha8>/voice/<key>.pcm    calm voice, PCM16 @16 kHz, per spoken text
+    <EPOCH>/<version>-<asr>/<sample>-<wav sha8>/voice/<VOICE_EPOCH>/<key>.pcm    calm voice, PCM16 @16 kHz, per spoken text
 
 Storage: a local folder (data/sample_cache) by default, or a Cloud Storage bucket when CALMLINE_CACHE_BUCKET is set.
 On Cloud Run the local folder lives in the instance's memory and is lost on restart; a bucket is shared and persistent.
@@ -23,6 +23,7 @@ import time
 
 import numpy as np
 
+VOICE_EPOCH = "sentence-turns-v2"  # new reader must not replay old, truncated PCM
 EPOCH = "e1"     # bump when the cached formats or the meaning of a cached result change
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "sample_cache")
 _lock = threading.Lock()
@@ -161,7 +162,7 @@ class SampleCache:
 
     # ---- calm voice ----
     def _voice_key(self, text):
-        return f"{self.ns}/voice/{_h(text)}.pcm"
+        return f"{self.ns}/voice/{VOICE_EPOCH}/{_h(text)}.pcm"
 
     def get_voice(self, text):
         raw = self._get(self._voice_key(text))
@@ -186,7 +187,7 @@ def status():
             e["stt"] = True
         elif parts[3] == "cards":
             e["cards"] += 1
-        elif parts[3] == "voice":
+        elif parts[3] == "voice" and len(parts) > 4 and parts[4] == VOICE_EPOCH:
             e["voice"] += 1
     return {"backend": store().name, "epoch": EPOCH, "entries": sorted(out.values(), key=lambda e: (e["config"], e["sample"]))}
 

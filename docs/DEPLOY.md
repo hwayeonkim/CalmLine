@@ -52,7 +52,10 @@ Shared by all modes:
 * Sentence parts: cut after a 0.45 s pause (`CALMLINE_GOOGLE_PAUSE_S`) or at a clause boundary (v18 clause chunking,
   `CALMLINE_GOOGLE_CLAUSE_PAUSE_S` 0.25 s). The stream is half-closed at each cut so Google finalizes immediately.
 * Calm voice: Gemini Live `gemini-live-2.5-flash-native-audio` in `us-central1` (`CALMLINE_LIVE_LOCATION`), one
-  fresh session per sentence with a plain "Read aloud" prompt; Gemini TTS is the fallback, then the browser voice.
+  fresh session per spoken sentence with a plain "Read aloud" prompt. A multi-sentence verified part is
+  split into ordered speech turns (including short tails such as "I've called."); partial output transcriptions
+  are audited and excluded from the voice cache (Live transcripts can lag complete PCM). Voice cache keys
+  include the reader revision so older truncated voices are regenerated; Gemini TTS is the fallback, then the browser voice.
 * Text: Gemini 3.x Flash-Lite on the `global` endpoint (`GCP_LOCATION=global`). Live models are not served there.
 * Sample calls: replayed from the cache bucket when "Cached replay" is ON (§6); pause / resume / stop supported.
 * Public-demo usage guard (per instance, defaults in code): 5 min per call (`CALMLINE_MAX_CALL_S`), 300 call-minutes

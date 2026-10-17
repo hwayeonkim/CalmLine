@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import os
 import re
+from difflib import SequenceMatcher
 
 import numpy as np
 
@@ -43,12 +44,58 @@ def drifted(script: str, said: str) -> bool:
     return len(novel) > max(2, 0.25 * len(w))
 
 
+def speech_parts(text: str) -> list[str]:
+    """Keep native-audio turns to one sentence; preserve address abbreviations."""
+    parts, start = [], 0
+    for boundary in re.finditer(r"[.!?]+\s+(?=[A-Z])", text):
+        before = text[:boundary.start() + 1]
+        if re.search(r"\b(?:Mr|Mrs|Ms|Dr|St|Ave|Rd|Blvd|Apt|No|\d+(?:st|nd|rd|th))\.$", before, re.I):
+            continue
+        # STT sometimes inserts a full stop inside an address ("75 Hart. Street").
+        if re.match(r"(?:Street|Avenue|Boulevard|Road)\b", text[boundary.end():]):
+            continue
+        parts.append(text[start:boundary.start() + 1].strip())
+        start = boundary.end()
+    tail = text[start:].strip()
+    if tail:
+        parts.append(tail)
+    return parts
+
+
+def _coverage_words(text: str) -> list[str]:
+    text = re.sub(r"</?script>|read aloud:?", " ", text, flags=re.I).lower().replace("’", "'")
+    for short, expanded in {"i've": "i have", "we've": "we have", "i'm": "i am", "we're": "we are",
+                            "don't": "do not", "can't": "can not", "won't": "will not", "it's": "it is"}.items():
+        text = re.sub(r"\b" + re.escape(short) + r"\b", expanded, text)
+    return _words(text)
+
+
+def omitted(script: str, said: str) -> bool:
+    """Detect missing phrases, separately from the existing added-word guard.
+
+    Allow one-word transcription variations (including numeric spellings). This is a
+    phrase-completeness check, not an ASR-based guarantee of every fact's fidelity.
+    """
+    expected, actual = _coverage_words(script), _coverage_words(said)
+    if not expected:
+        return False
+    if not actual:
+        return True
+    alignment = SequenceMatcher(None, expected, actual, autojunk=False)
+    return any(tag in ("delete", "replace") and b - a >= 2
+               for tag, a, b, _, _ in alignment.get_opcodes())
+
+
 class LiveReader:
     def __init__(self, voice="Kore", pace="normal"):
         self.voice, self.pace = voice, pace
         self._cm = None
         self.session = None
         self.lock = asyncio.Lock()
+        self.script_lock = asyncio.Lock()
+        self.last_transcript = ""
+        self.last_voice_warnings = []
+        self.last_coverage_warning = False
         self._next = None
 
     async def connect(self):
@@ -74,6 +121,19 @@ class LiveReader:
             self._cm = self.session = None
 
     async def speak(self, text: str):
+        """Read all sentences in order without interleaving another script."""
+        async with self.script_lock:
+            transcripts = []
+            self.last_voice_warnings = []
+            for part in speech_parts(text) if PLAIN else [text]:
+                async for chunk in self._speak_part(part):
+                    yield chunk
+                transcripts.append(self.last_transcript)
+                if self.last_coverage_warning:
+                    self.last_voice_warnings.append({"script": part, "transcript": self.last_transcript})
+            self.last_transcript = " ".join(transcripts)
+
+    async def _speak_part(self, text: str):
         """Async generator of 16 kHz float32 chunks. Raises RuntimeError('drift') if the reader goes off-script."""
         import librosa
         from google.genai import types
@@ -115,6 +175,11 @@ class LiveReader:
                     yield librosa.resample(x, orig_sr=24000, target_sr=16000)
                 elif not n:
                     raise RuntimeError("no audio")   # silent turn: callers fall back to TTS / the browser voice
+                self.last_transcript = said
+                # Native Live transcription can end early even when PCM is complete.
+                # Flag this for audit/cache exclusion; do not replay a second voice over
+                # already-correct streamed audio based on the transcript alone.
+                self.last_coverage_warning = omitted(text, said)
             finally:
                 if PLAIN:
                     # The native-audio model carries context across turns (after a question it kept repeating the

@@ -445,7 +445,10 @@ async def enqueue_voice(r, s, text, idx):
                     first = False; meta["gen_first_ms"] = round((time.time() - t0) * 1000)
                 got.append(ch)
                 await chunks.put(ch)
-            ok = bool(got)
+            warnings = rd.last_voice_warnings
+            if warnings:
+                s.audit.append([time.time(), "voice_transcript_coverage_warning", {"idx": idx, "parts": warnings}])
+            ok = bool(got) and not warnings
         except Exception as e:  # noqa: BLE001
             await chunks.put(e)
         await chunks.put(None)
