@@ -172,6 +172,16 @@ class CallSession:
                 self._g = GoogleStreamingSTT()
         return self._g_mode == "google"
 
+    def pause_asr(self):
+        """The caller audio is paused (sample playback): finalize the open part now instead of leaving a stream idle,
+        and return its events so the card for what was said before the pause appears during the pause."""
+        if getattr(self, "_g_mode", None) != "google":
+            return []
+        import time as _t
+        self._g.cut()
+        _t.sleep(0.6)               # Google answers a half-closed stream in ~0.3 s
+        return self._google_events()
+
     def _ingest_google(self, pcm, start, final):
         """Google streaming: its endpointer closes each part; the final result is the part's transcript."""
         ev = []
@@ -184,6 +194,13 @@ class CallSession:
             import time as _t
             self._g.close(wait=4.0)
             _t.sleep(0.3)
+        ev += self._google_events()
+        ev.append({"type": "partial", "anger": round(self.anger, 2), "ct": round(start + len(pcm) / SR, 3), "c0": round(start, 3), "voiced": bool(db > -45)})
+        return ev
+
+    def _google_events(self):
+        """Turn the recognizer's finals / interims / errors into session events (mutes from word offsets, parts)."""
+        ev = []
         for e in self._g.poll():
             if e[0] == "final" and e[3]:
                 _, t0, t1, text, words = e
@@ -208,7 +225,6 @@ class CallSession:
                         self.mutes.append((max(0.0, t_end - 0.9), t_end + 0.3, "interim"))
             elif e[0] == "error":
                 ev.append({"type": "asr_error", "error": e[1]})
-        ev.append({"type": "partial", "anger": round(self.anger, 2), "ct": round(start + len(pcm) / SR, 3), "c0": round(start, 3), "voiced": bool(db > -45)})
         return ev
 
     def _quietest(self, a, b):

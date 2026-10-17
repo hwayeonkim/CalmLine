@@ -121,6 +121,8 @@ async def reset_room(name):
     prot = old.s.protection
     r["session"] = new_session(); r["session"].s.protection = prot
     r["started"] = None
+    r["paused_at"] = None
+    r["stopped"] = False
     r["utt_seq"] = 0; r["emitted"] = 0; r["voice_end"] = 0; r["lag"] = {}; r["streamed"] = {}; r["utt_end"] = {}
     await broadcast(r, {"type": "reset", "session": r["session"].id})
     return r
@@ -208,7 +210,7 @@ async def finish(r, s):
         await asyncio.gather(*pend, return_exceptions=True)
     r["pending"] = []
     t_wait = time.time()
-    while time.time() - t_wait < 40 and ((r.get("playq") is not None and not r["playq"].empty()) or r.get("voice_end", 0) > time.time() - 0.2):
+    while not r.get("stopped") and time.time() - t_wait < 40 and ((r.get("playq") is not None and not r["playq"].empty()) or r.get("voice_end", 0) > time.time() - 0.2):
         await asyncio.sleep(0.2)
     async with r.setdefault("voice_lock", asyncio.Lock()):
         s.save_evidence()
@@ -339,6 +341,8 @@ def _ensure_playout(r, s):
 
 async def enqueue_voice(r, s, text, idx):
     """Start generating now (prefetch) and queue the part for ordered playout. Returns immediately."""
+    if r.get("stopped"):          # the caller stopped the sample: no more calm voice for this call
+        return
     _ensure_playout(r, s)
     chunks: asyncio.Queue = asyncio.Queue()
     meta = {"t_req": time.time(), "gen": r.get("voice_gen", 0), "text": text}
@@ -741,12 +745,15 @@ def on_events(r, s, events):
 
 async def playback_loop(name):
     """Sends caller audio to agents at real-time pace, `delay_s` behind the caller."""
-    r = room(name); s = r["session"]; t_start = r["started"]
+    r = room(name); s = r["session"]
     played = 0.0; step = 0.1
     while not s.closed or played < len(s.audio) / SR:
         if r["session"] is not s:
             return
-        now = time.time() - t_start
+        if r.get("paused_at") is not None:          # sample paused: the call clock is frozen
+            await asyncio.sleep(0.05)
+            continue
+        now = time.time() - r["started"]
         target = now - s.s.delay_s
         avail = len(s.audio) / SR
         while played + step <= min(target, avail):
@@ -874,13 +881,59 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
         except Exception:
             pass
         r["started"] = time.time()
+        r["paused_at"] = None
         asyncio.create_task(playback_loop(name))
         x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
         usage()["call_s"] += len(x) / SR
         loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)
+        ctl = {"stop": False}
+
+        async def controls():
+            """Pause / resume / stop from the browser. A pause freezes the call clock (r["started"] moves forward by the
+            paused time), so arrival pacing, the agent delay and the lag figures all exclude it."""
+            try:
+                while True:
+                    m = json.loads(await ws.receive_text())
+                    if m.get("type") == "pause" and r.get("paused_at") is None:
+                        r["paused_at"] = time.time()
+                        async with r["lock"]:
+                            events = await loop.run_in_executor(None, s.pause_asr)
+                        for e in events:
+                            await broadcast(r, e)
+                        on_events(r, s, events)
+                        s.audit.append([time.time(), "sample_pause"])
+                    elif m.get("type") == "resume" and r.get("paused_at") is not None:
+                        r["started"] += time.time() - r["paused_at"]
+                        r["paused_at"] = None
+                        s.audit.append([time.time(), "sample_resume"])
+                    elif m.get("type") == "stop":
+                        ctl["stop"] = True
+                        r["stopped"] = True                                   # drop queued calm voice, generate no more
+                        r["voice_gen"] = r.get("voice_gen", 0) + 1; r["voice_end"] = time.time()
+                        if r.get("paused_at") is not None:
+                            r["started"] += time.time() - r["paused_at"]
+                            r["paused_at"] = None
+                        s.audit.append([time.time(), "sample_stop"])
+                        return
+            except Exception:  # noqa: BLE001  (browser gone: treat as stop)
+                ctl["stop"] = True
+                r["paused_at"] = None
+
+        ctl_task = asyncio.create_task(controls())
+        last = len(x)
         for k in range(0, len(x), chunk):
             part = x[k:k + chunk]
-            await asyncio.sleep(max(0.0, (k + len(part)) / SR - (time.time() - r["started"])))   # real-time arrival
+            while not ctl["stop"]:      # real-time arrival; a pause during the wait holds this chunk back
+                if r.get("paused_at") is not None:
+                    await asyncio.sleep(0.1)
+                    continue
+                wait = (k + len(part)) / SR - (time.time() - r["started"])
+                if wait <= 0:
+                    break
+                await asyncio.sleep(min(wait, 0.1))
+            if ctl["stop"]:
+                last = k
+                break
             async with r["lock"]:
                 events = await loop.run_in_executor(None, s.ingest, part, k + chunk >= len(x))
             for e in events:
@@ -890,7 +943,17 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
                 await ws.send_text(json.dumps({"type": "progress", "t": (k + len(part)) / SR, "dur": len(x) / SR}))
             except Exception:
                 pass
+        if last < len(x):     # stopped early: close the open part so what was said so far still gets its card
+            async with r["lock"]:
+                events = await loop.run_in_executor(None, s.ingest, np.zeros(1600, np.float32), True)
+            for e in events:
+                await broadcast(r, e)
+            on_events(r, s, events)
+        ctl_task.cancel()
         await finish(r, s)
-        await ws.send_text(json.dumps({"type": "done", "session": s.id}))
+        try:
+            await ws.send_text(json.dumps({"type": "done", "session": s.id, "stopped": last < len(x)}))
+        except Exception:  # noqa: BLE001
+            pass
     finally:
         USAGE["live"] -= 1
