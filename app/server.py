@@ -6,6 +6,8 @@
 /ws/caller/{room} caller PCM16 @16 kHz in
 /ws/agent/{room}  agent: events + PCM16 out
 /api/samples      list of sample calls (pre-rendered WAVs)
+/api/cache/status which sample calls can be replayed from the sample cache
+/admin            sample-cache admin (only when CALMLINE_ADMIN_TOKEN is set)
 """
 from __future__ import annotations
 import asyncio
@@ -18,7 +20,10 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+# a live call must reach Gemini: the offline-eval prompt cache stays off here (phrase streaming reuses it for the card)
+os.environ.setdefault("CALMLINE_PROMPT_CACHE", "1" if os.getenv("CALMLINE_PHRASE_STREAM", "0") == "1" else "0")
+import hmac
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -124,6 +129,7 @@ async def reset_room(name):
     r["paused_at"] = None
     r["stopped"] = False
     r["utt_seq"] = 0; r["emitted"] = 0; r["voice_end"] = 0; r["lag"] = {}; r["streamed"] = {}; r["utt_end"] = {}
+    r["cache"] = None
     await broadcast(r, {"type": "reset", "session": r["session"].id})
     return r
 
@@ -193,13 +199,78 @@ def tts(text: str):
     return Response(wav, media_type="audio/wav")
 
 
-@app.get("/api/health")
-def health():
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
+def asr_mode():
+    """Recognizer this instance uses (credentials do not change while it runs)."""
     from calmline.audio.google_stt import available
     mode = os.getenv("CALMLINE_ASR", "auto")
     ok, why = available() if mode in ("auto", "google") else (False, "disabled")
-    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST),
-            "asr": "google-stt-streaming" if (mode == "google" or (mode == "auto" and ok)) else "whisper-local", "asr_note": why}
+    return ("google-stt-streaming" if (mode == "google" or (mode == "auto" and ok)) else "whisper-local"), why
+
+
+@app.get("/api/health")
+def health():
+    asr, why = asr_mode()
+    return {"ok": True, "version": os.getenv("CALMLINE_VERSION", BEST), "asr": asr, "asr_note": why}
+
+
+# ---- sample cache (calmline/sample_cache.py) ----
+SAMPLES_DIR = os.path.join(ROOT, "static", "samples")
+ADMIN_TOKEN = os.getenv("CALMLINE_ADMIN_TOKEN", "")
+
+
+def sample_cache(sid):
+    from calmline.sample_cache import SampleCache
+    path = os.path.join(SAMPLES_DIR, f"{sid}.wav")
+    return SampleCache(sid, path, os.getenv("CALMLINE_VERSION", BEST), asr_mode()[0]) if os.path.exists(path) else None
+
+
+@app.get("/api/cache/status")
+def cache_status():
+    """Per sample call: is it fully replayable from the cache under the current version and recognizer?"""
+    from calmline.sample_cache import status
+    st = {e["sample"] + "|" + e["config"]: e for e in status()["entries"]}
+    out = {}
+    path = os.path.join(SAMPLES_DIR, "samples.json")
+    for smp in (json.load(open(path)) if os.path.exists(path) else []):
+        sc = sample_cache(smp["id"])
+        e = sc and st.get(smp["id"] + "|" + sc.ns.split("/")[1])
+        out[smp["id"]] = {"stt": bool(e and e["stt"]), "cards": e["cards"] if e else 0, "voice": e["voice"] if e else 0}
+    return out
+
+
+def _admin(request: Request):
+    tok = request.headers.get("x-admin-token", "")
+    return bool(ADMIN_TOKEN) and hmac.compare_digest(tok.encode(), ADMIN_TOKEN.encode())
+
+
+@app.get("/admin")
+def admin_page():
+    if not ADMIN_TOKEN:
+        return Response(status_code=404)
+    return FileResponse(os.path.join(ROOT, "static", "admin.html"))
+
+
+@app.get("/api/admin/cache")
+def admin_cache(request: Request):
+    if not _admin(request):
+        return Response(status_code=404 if not ADMIN_TOKEN else 401)
+    from calmline.sample_cache import status
+    return {**status(), "current_config": f"{os.getenv('CALMLINE_VERSION', BEST)}-{asr_mode()[0]}"}
+
+
+@app.post("/api/admin/cache/clear")
+async def admin_cache_clear(request: Request):
+    if not _admin(request):
+        return Response(status_code=404 if not ADMIN_TOKEN else 401)
+    from calmline.sample_cache import clear
+    body = await request.json() if (await request.body()) else {}
+    n = await asyncio.get_running_loop().run_in_executor(None, clear, body.get("sample"))
+    print("ADMIN cache clear", body.get("sample") or "all", n, flush=True)
+    return {"ok": True, "deleted": n}
 
 
 async def finish(r, s):
@@ -311,7 +382,7 @@ async def _playout_loop(r, s):
             if first and kind == "voice":
                 first = False
                 info = dict(queued_ms=round((time.time() - meta["t_req"]) * 1000 - meta.get("gen_first_ms", 0)),
-                            first_audio_ms=meta.get("gen_first_ms", 0), via="live (prefetched)")
+                            first_audio_ms=meta.get("gen_first_ms", 0), via=meta.get("via", "live (prefetched)"))
                 if idx in r.get("lag", {}):
                     end_wall, lag = r["lag"][idx]
                     lag.update(wait_previous_voice_ms=max(0, info["queued_ms"]), voice_first_sound_ms=info["first_audio_ms"])
@@ -348,18 +419,33 @@ async def enqueue_voice(r, s, text, idx):
     meta = {"t_req": time.time(), "gen": r.get("voice_gen", 0), "text": text}
     r["playq"].put_nowait(("voice", idx, chunks, meta))
 
+    sc = r.get("cache")
+    loop = asyncio.get_running_loop()
+
     async def gen():
+        got, ok = [], False
         try:
+            hit = await loop.run_in_executor(None, sc.get_voice, text) if sc else None
+            if hit is not None:                       # sample cache: no Gemini Live call
+                meta["gen_first_ms"] = 0; meta["via"] = "sample cache"
+                for k in range(0, len(hit), 3200):
+                    await chunks.put(hit[k:k + 3200])
+                await chunks.put(None)
+                return
             pool = await _reader_pool(r)
             rd = pool[r.get("pool_i", 0) % 2]; r["pool_i"] = r.get("pool_i", 0) + 1
             t0 = time.time(); first = True
             async for ch in rd.speak(text):
                 if first:
                     first = False; meta["gen_first_ms"] = round((time.time() - t0) * 1000)
+                got.append(ch)
                 await chunks.put(ch)
+            ok = bool(got)
         except Exception as e:  # noqa: BLE001
             await chunks.put(e)
         await chunks.put(None)
+        if ok and sc:                                 # store only a voice that was generated completely
+            await loop.run_in_executor(None, sc.put_voice, text, np.concatenate(got))
     asyncio.create_task(gen())
 
 
@@ -618,7 +704,11 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0, text=None):
     else:
         from calmline.audio.stt import normalize_asr
         text, asr_ms = normalize_asr(text), 0.0          # Google streaming: the final result is the transcript
-    if text and s.s.protection == "calm_voice" and r.get("filler", False):
+    sc = r.get("cache")
+    cached = await loop.run_in_executor(None, sc.get_card, seq, text) if (sc and text) else None
+    if cached:
+        card = s.card_from_cache(cached["card"], t0, t1, seq)
+    elif text and s.s.protection == "calm_voice" and r.get("filler", False):
         from calmline.pipeline import needs_gemini
         tox = await loop.run_in_executor(None, s.det, text)
         from calmline.offline_calm import offline_calm
@@ -657,7 +747,11 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0, text=None):
         card["timing"]["queued_ms"] = 0
         lag.update(asr_ms=card["timing"]["asr_ms"], gemini_and_checks_ms=card["timing"]["rewrite_pipeline_ms"])
         r.setdefault("lag", {})[card["idx"]] = (end_wall, lag)
-        asyncio.create_task(late_update(r, s, card["idx"]))
+        if cached:
+            if cached.get("update"):
+                asyncio.create_task(broadcast(r, cached["update"]))
+        else:
+            asyncio.create_task(late_update(r, s, card["idx"], (sc, seq, text, dict(card)) if sc else None))
         print("TIMING card", card["timing"], "speech_end", round(t1, 2), "emitted_at_call_s", round(time.time() - (r["started"] or time.time()), 2), flush=True)
         if card["t"][1] > 0 and r["started"]:
             card["ready_lag_ms"] = round((time.time() - (r["started"] + card["t"][1])) * 1000)
@@ -681,24 +775,30 @@ async def process_utt(r, s, t0, t1, detected_at=None, seq=0, text=None):
         await _done(r)
 
 
-async def late_update(r, s, idx):
-    """Gemini answered after the latency budget: refresh the complaint type and facts on screen (no re-speaking)."""
+async def late_update(r, s, idx, store=None):
+    """Gemini answered after the latency budget: refresh the complaint type and facts on screen (no re-speaking).
+    store = (sample cache, part index, text, card): save the card with its update once the update is known."""
     fut = getattr(s, "late", {}).pop(idx, None)
-    if fut is None:
-        return
-    try:
-        u = await asyncio.wrap_future(fut)
-    except Exception:  # noqa: BLE001
-        return
-    if not u:
-        return
-    from calmline.intents import INTENTS_ALL
-    from calmline.understand import TO_REGEX
-    it = u.get("intent", "UNKNOWN")
-    await broadcast(r, {"type": "card_update", "idx": idx, "intent": it, "intent_score": round(float(u.get("intent_confidence") or 0), 2),
-                        "intent_label": INTENTS_ALL[it]["issue"] if it in INTENTS_ALL else None,
-                        "nyc_types": INTENTS_ALL[it]["nyc"] if it in INTENTS_ALL else [],
-                        "slots": {TO_REGEX.get(k, k): [v] for k, v in (u.get("slots") or {}).items()}})
+    msg = None
+    if fut is not None:
+        try:
+            u = await asyncio.wrap_future(fut)
+        except Exception:  # noqa: BLE001
+            u = None
+        if u:
+            from calmline.intents import INTENTS_ALL
+            from calmline.understand import TO_REGEX
+            it = u.get("intent", "UNKNOWN")
+            msg = {"type": "card_update", "idx": idx, "intent": it, "intent_score": round(float(u.get("intent_confidence") or 0), 2),
+                   "intent_label": INTENTS_ALL[it]["issue"] if it in INTENTS_ALL else None,
+                   "nyc_types": INTENTS_ALL[it]["nyc"] if it in INTENTS_ALL else [],
+                   "slots": {TO_REGEX.get(k, k): [v] for k, v in (u.get("slots") or {}).items()}}
+            await broadcast(r, msg)
+        elif fut is not None and store:
+            return          # Gemini failed late: do not cache a card that may lack its refined complaint type
+    if store:
+        sc, seq, text, card = store
+        await asyncio.get_running_loop().run_in_executor(None, sc.put_card, seq, text, card, msg)
 
 
 async def process_typed(r, s, text):
@@ -875,7 +975,18 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
     USAGE["live"] += 1
     try:
         r = await reset_room(name); s = r["session"]
-        asyncio.create_task(_reader_pool(r))
+        # sample cache (default on; ?cache=0 = live mode: every part goes to Speech-to-Text, Gemini and Gemini Live)
+        sc = sample_cache(sid) if ws.query_params.get("cache", "1") != "0" else None
+        trace = await asyncio.get_running_loop().run_in_executor(None, sc.get_stt) if sc else None
+        if trace:
+            s.replay = trace["events"]
+        elif sc:
+            s.record = []
+        r["cache"] = sc
+        r["cache_clean_run"] = True          # the recognizer trace is saved only for an uninterrupted play-through
+        await broadcast(r, {"type": "cache_mode", "mode": "off" if sc is None else ("replay" if trace else "record")})
+        if not trace:
+            asyncio.create_task(_reader_pool(r))
         try:   # start the clock when the browser actually starts playing the caller audio, so the timeline matches what you hear
             await asyncio.wait_for(ws.receive_text(), timeout=8)
         except Exception:
@@ -884,7 +995,8 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
         r["paused_at"] = None
         asyncio.create_task(playback_loop(name))
         x = sf.read(os.path.join(ROOT, "static", "samples", f"{sid}.wav"))[0].astype(np.float32)
-        usage()["call_s"] += len(x) / SR
+        if not trace:
+            usage()["call_s"] += len(x) / SR          # a replayed call costs no Speech-to-Text minutes
         loop = asyncio.get_running_loop(); chunk = int(s.s.chunk_s * SR)
         ctl = {"stop": False}
 
@@ -896,6 +1008,7 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
                     m = json.loads(await ws.receive_text())
                     if m.get("type") == "pause" and r.get("paused_at") is None:
                         r["paused_at"] = time.time()
+                        r["cache_clean_run"] = False
                         async with r["lock"]:
                             events = await loop.run_in_executor(None, s.pause_asr)
                         for e in events:
@@ -908,6 +1021,7 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
                         s.audit.append([time.time(), "sample_resume"])
                     elif m.get("type") == "stop":
                         ctl["stop"] = True
+                        r["cache_clean_run"] = False
                         r["stopped"] = True                                   # drop queued calm voice, generate no more
                         r["voice_gen"] = r.get("voice_gen", 0) + 1; r["voice_end"] = time.time()
                         if r.get("paused_at") is not None:
@@ -950,6 +1064,8 @@ async def ws_sample(ws: WebSocket, name: str, sid: str):
                 await broadcast(r, e)
             on_events(r, s, events)
         ctl_task.cancel()
+        if sc and s.record is not None and r.get("cache_clean_run") and last >= len(x):
+            await loop.run_in_executor(None, sc.put_stt, s.record)
         await finish(r, s)
         try:
             await ws.send_text(json.dumps({"type": "done", "session": s.id, "stopped": last < len(x)}))

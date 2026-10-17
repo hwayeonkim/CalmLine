@@ -64,7 +64,15 @@ def _key(kind, payload):
     return hashlib.sha256(json.dumps([kind, payload], sort_keys=True).encode()).hexdigest()[:32]
 
 
+def prompt_cache_on():
+    """The prompt cache saves quota in offline evaluation. The demo server turns it off (CALMLINE_PROMPT_CACHE=0) so a
+    live call always reaches Gemini; replayed sample calls use calmline.sample_cache instead."""
+    return os.getenv("CALMLINE_PROMPT_CACHE", "1") == "1"
+
+
 def cache_get(kind, payload, ext="json"):
+    if not prompt_cache_on():
+        return None
     p = os.path.join(CACHE, f"{kind}_{_key(kind, payload)}.{ext}")
     if os.path.exists(p):
         return open(p, "rb").read() if ext != "json" else json.load(open(p))
@@ -72,6 +80,8 @@ def cache_get(kind, payload, ext="json"):
 
 
 def cache_put(kind, payload, value, ext="json"):
+    if not prompt_cache_on():
+        return
     os.makedirs(CACHE, exist_ok=True)
     p = os.path.join(CACHE, f"{kind}_{_key(kind, payload)}.{ext}")
     if ext == "json":

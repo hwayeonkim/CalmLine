@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CalmLine · Admin</title>
+<style>
+:root{--bg:#f2f4f3;--paper:#fff;--ink:#23312e;--muted:#71807a;--line:#e0e7e3;--green:#176c58;--soft:#edf6f1;--red:#aa403a}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:960px;margin:auto;padding:28px 16px}h1{font-size:22px;margin:0 0 4px}.brand span{color:var(--green)}p.lead{color:var(--muted);margin:0 0 20px;font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}input{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;min-width:240px}
+.btn{font:inherit;border:1px solid var(--line);background:white;border-radius:8px;padding:7px 14px;cursor:pointer}.btn.primary{background:var(--green);color:white;border-color:var(--green)}.btn.danger{color:var(--red);border-color:#e8c9c6}.btn:disabled{opacity:.45;cursor:default}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}td.num{text-align:right;font-variant-numeric:tabular-nums}
+.tag{font-size:11px;border-radius:5px;padding:2px 7px;background:#f0f3f1;color:var(--muted)}.tag.ok{background:var(--soft);color:var(--green)}.tag.cur{background:#fff4e8;color:#a76639}
+.meta{font-size:13px;color:var(--muted)}.msg{font-size:13px;margin-top:10px}.msg.err{color:var(--red)}
+.table-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+ <div class="brand"><h1>Calm<span>Line</span> admin</h1></div>
+ <p class="lead">Sample-call cache. A cached sample replays its stored transcripts, cards and calm voice without calling Speech-to-Text, Gemini or Gemini Live. After a clear, the next play of each sample runs live and stores its results again.</p>
+ <section class="card" id="login">
+  <div class="row"><input id="token" type="password" autocomplete="off" placeholder="Admin token" aria-label="Admin token"><button class="btn primary" id="go">Open</button></div>
+  <div class="msg err" id="login-msg" role="alert" hidden></div>
+ </section>
+ <section class="card" id="panel" hidden>
+  <div class="row" style="justify-content:space-between"><div class="meta" id="meta"></div><div class="row"><button class="btn" id="refresh">Refresh</button><button class="btn danger" id="clear-all">Clear all</button></div></div>
+  <div class="table-wrap"><table style="margin-top:12px"><thead><tr><th>Sample</th><th>Config</th><th>Transcript</th><th class="num">Cards</th><th class="num">Voices</th><th class="num">Size</th><th>Updated</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="msg" id="msg" role="status"></div>
+ </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let token='';
+try{token=sessionStorage.getItem('calmline-admin')||''}catch{}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(path,opts={}){const r=await fetch(path,{...opts,headers:{'x-admin-token':token,'content-type':'application/json',...(opts.headers||{})}});if(r.status===401)throw new Error('Wrong token.');if(!r.ok)throw new Error('Request failed ('+r.status+').');return r.json()}
+function kb(n){return n>1e6?(n/1e6).toFixed(1)+' MB':Math.ceil(n/1e3)+' KB'}
+async function load(){const d=await api('/api/admin/cache');$('login').hidden=true;$('panel').hidden=false;
+ const total=d.entries.reduce((a,e)=>a+e.bytes,0);
+ $('meta').textContent=`Storage: ${d.backend} · format ${d.epoch} · this instance serves ${d.current_config} · ${kb(total)} total`;
+ $('rows').innerHTML=d.entries.length?d.entries.map(e=>`<tr><td>${esc(e.sample)}</td><td><span class="tag${e.config===d.current_config?' cur':''}">${esc(e.config)}</span></td><td>${e.stt?'<span class="tag ok">stored</span>':'<span class="tag">missing</span>'}</td><td class="num">${e.cards}</td><td class="num">${e.voice}</td><td class="num">${kb(e.bytes)}</td><td>${new Date(e.updated*1000).toLocaleString()}</td><td><button class="btn danger" data-s="${esc(e.sample)}">Clear</button></td></tr>`).join(''):'<tr><td colspan="8" class="meta">Nothing cached. Play a sample call with cached replay ON to store it.</td></tr>';
+ for(const b of document.querySelectorAll('button[data-s]'))b.onclick=()=>clear(b.dataset.s)}
+async function clear(sample){if(!confirm(sample?`Clear the cache for “${sample}”?`:'Clear the whole sample cache?'))return;try{const d=await api('/api/admin/cache/clear',{method:'POST',body:JSON.stringify(sample?{sample}:{})});$('msg').textContent=`Deleted ${d.deleted} file${d.deleted===1?'':'s'}.`;await load()}catch(e){$('msg').textContent=e.message}}
+$('go').onclick=async()=>{token=$('token').value.trim();try{await load();try{sessionStorage.setItem('calmline-admin',token)}catch{}}catch(e){$('login-msg').hidden=false;$('login-msg').textContent=e.message}};
+$('token').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
+$('refresh').onclick=()=>load().catch(e=>$('msg').textContent=e.message);$('clear-all').onclick=()=>clear(null);
+if(token)load().catch(()=>{$('login').hidden=false});
+</script>
+</body>
+</html>

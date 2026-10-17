@@ -59,6 +59,9 @@ class CallSession:
         self.closed = False
         self.audit = []
         self.voice_log: list[tuple[float, np.ndarray]] = []   # (seconds since call start, 16 kHz chunk) of the calm voice
+        self.replay = None          # sample cache: recorded recognizer events to replay instead of calling STT
+        self._ri = 0
+        self.record = None          # sample cache: recognizer events of this call, saved when the sample plays through
 
     @property
     def stt(self):
@@ -68,8 +71,45 @@ class CallSession:
         return self._stt
 
     # ---------------- ingest ----------------
+    STT_EVENTS = ("utt", "utt_text", "mute")
+
     def ingest(self, pcm: np.ndarray, final=False):
         """Called (in a worker thread) for every caller chunk. Returns list of events.
+        With a sample-cache trace the recognizer is not called: recorded parts are re-emitted at the call time the
+        recognizer produced them. Otherwise the recognizer's part and mute events are recorded with that call time."""
+        if self.replay is not None:
+            return self._ingest_replay(pcm, final)
+        ev = self._ingest(pcm, final)
+        if self.record is not None:
+            now = round(len(self.audio) / SR, 3)
+            self.record += [{"ct": now, "e": e} for e in ev if e.get("type") in self.STT_EVENTS]
+        return ev
+
+    def _ingest_replay(self, pcm, final):
+        start = len(self.audio) / SR
+        self.audio = np.concatenate([self.audio, pcm.astype(np.float32)])
+        now = start + len(pcm) / SR
+        db = 20 * np.log10(frame_rms(pcm).mean() + 1e-9)
+        if db > -45:
+            self.baseline_db = db if self.baseline_db is None else 0.97 * self.baseline_db + 0.03 * min(db, self.baseline_db + 3)
+            self.anger = float(np.clip(0.8 * self.anger + 0.2 * np.clip((db - self.baseline_db) / 12, 0, 1), 0, 1))
+        ev = []
+        while self._ri < len(self.replay):
+            item = self.replay[self._ri]
+            e = item["e"]
+            # on the closing chunk, also flush parts whose speech was fully heard (a stopped sample keeps its last part)
+            if not (item["ct"] <= now + 1e-6 or (final and e.get("t1", e.get("end", 1e9)) <= now + 0.5)):
+                break
+            self._ri += 1
+            e = dict(e)
+            if e["type"] == "mute":
+                self.mutes.append((e["start"] - 0.15, e["end"] + 0.15, e["label"]))
+            ev.append(e)
+        ev.append({"type": "partial", "anger": round(self.anger, 2), "ct": round(now, 3), "c0": round(start, 3), "voiced": bool(db > -45)})
+        return ev
+
+    def _ingest(self, pcm: np.ndarray, final=False):
+        """Live recognizer path.
 
         Two-pass design: pass 1 (small model, last 3 s window) decides mutes immediately;
         pass 2 (larger model, whole utterance) produces the calm card when a pause ends the utterance."""
@@ -258,6 +298,14 @@ class CallSession:
 
     def card_from_text(self, text, t0, t1, asr_ms, idx=None):
         return self._card(text, [t0, t1], asr_ms, idx) if text else None
+
+    def card_from_cache(self, card, t0, t1, idx):
+        """A stored card for this part of a sample call: same bookkeeping as a fresh card, no Gemini call."""
+        c = dict(card, idx=idx, t=[t0, t1], cached=True)
+        with open(os.path.join(self.evidence_dir, "transcript.jsonl"), "a") as f:
+            f.write(json.dumps({"t": c["t"], "original": c["original"], "route": c["route"], "abuse_types": c["abuse_types"], "cached": True}) + "\n")
+        self.cards.append(c)
+        return c
 
     def _close_utterance(self, t0, t1, idx=None):
         import time as _t
