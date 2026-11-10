@@ -4,15 +4,9 @@
 # The deploy only replaces the image; service settings (env vars, service account, scaling, public access) are kept.
 name: Deploy to Cloud Run
 
+# Auto-deploy disabled: the GCP project was shut down after the hackathon, so push-triggered runs would only fail.
+# To revive, restore the push trigger below and point the workflow at a live project.
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - "results/**"
-      - "eval/**"
-      - "experiments/**"
   workflow_dispatch:
 
 concurrency:
